@@ -2,8 +2,8 @@
 
 `/report`와 `/pr-description`을 **병렬로 동시 실행**하여 한 번에 두 산출물을 생성한다.
 
-- `.report/{YYYYMMDD}_{ISSUE#}_{설명}.md` — 구현 보고서
-- `.pr/{YYYYMMDD}_{ISSUE#}_{설명}.md` — PR 본문
+- `.report/{YYYYMMDD}_{N}_{설명}.md` — 구현 보고서
+- `.pr/{YYYYMMDD}_{N}_{설명}.md` — PR 본문
 
 ## 핵심 원칙
 
@@ -25,7 +25,7 @@ git log main..HEAD --oneline
 git diff main --name-only
 ```
 
-브랜치명에서 `#숫자` 추출 → 이슈 번호 확정. 없으면 ARGUMENTS에서 추출.
+브랜치명에서 타입·이슈 번호 추출 (`^(feat|fix|refactor|chore|docs)_[0-9]+_`) → 이슈 번호 확정. 없으면 ARGUMENTS에서 추출.
 
 ### 2단계: 두 Agent 병렬 디스패치 (필수)
 
@@ -39,7 +39,7 @@ git diff main --name-only
 - 반드시 Skill 도구로 `report` 스킬 호출 또는 `.claude/commands/report.md`의 지침을 그대로 따라 `.report/`에 파일 생성
 
 ```
-프로젝트: /Users/luca/workspace/greedy/quickness-game
+프로젝트: /Users/luca/Documents/GitHub/festa/frontend
 브랜치: {브랜치명}
 이슈 번호: #{N}
 
@@ -58,7 +58,7 @@ git diff main --name-only
 
 # 작업
 `.claude/commands/report.md`에 정의된 Report Mode 지침을 그대로 따라
-`.report/{YYYYMMDD}_#{N}_{한글설명}.md` 파일을 생성하라.
+`.report/{YYYYMMDD}_{N}_{한글설명}.md` 파일을 생성하라.
 
 - 위 git 컨텍스트만 사용. 추가 git 명령 실행 금지.
 - 변경 파일을 직접 Read해서 분석.
@@ -74,7 +74,7 @@ git diff main --name-only
 - `prompt`: 아래 템플릿
 
 ```
-프로젝트: /Users/luca/workspace/greedy/quickness-game
+프로젝트: /Users/luca/Documents/GitHub/festa/frontend
 브랜치: {브랜치명}
 이슈 번호: #{N}
 
@@ -97,11 +97,11 @@ git diff main --name-only
 
 # 작업
 `.claude/commands/pr-description.md`에 정의된 PR Description Mode 지침을 따라
-`.pr/{YYYYMMDD}_#{N}_{한글설명}.md` 파일을 생성하라.
+`.pr/{YYYYMMDD}_{N}_{한글설명}.md` 파일을 생성하라.
 
-- Summary / Changes / Behavior Change / Test Plan / Notes / Closes #N 구조.
+- Summary / Changes / Behavior Change / Test Plan / Notes / 관련 이슈 구조.
 - AI/작성자 메타 정보 금지. 시크릿 마스킹.
-- 마지막 줄에 `Closes #{N}` 포함.
+- 마지막 줄에 `관련 이슈: #{N}` 포함. `Closes`는 쓰지 않는다.
 - 완료 시 저장된 파일 경로 + PR 제목 제안 한 줄로 보고.
 ```
 
