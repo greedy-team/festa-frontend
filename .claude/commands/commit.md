@@ -18,49 +18,44 @@
 
 ## 커밋 메시지 형식
 
-### 이슈 번호 추출
+### 이슈 번호·타입 추출
 
-브랜치 이름에서 `#숫자` 패턴으로 이슈 번호를 자동 추출합니다:
+브랜치 이름에서 타입과 이슈 번호를 **함께** 추출합니다.
 
-- `20260225_#44_프로필_화면_실데이터_연동` → `#44`
-- `20260301_#12_로그인_페이지_구현` → `#12`
-- `feature/#45-button-fix` → `#45`
-- `main` 또는 `#` 없는 브랜치 → 이슈 번호 생략
+```bash
+git branch --show-current | grep -oE "^(feat|fix|refactor|chore|docs)_[0-9]+_"
+```
 
-### 타입 추출
+- `fix_31_로그인_시_500_에러` → 타입 `fix`, 번호 `31`
+- `feat_112_설치_배너_추가` → 타입 `feat`, 번호 `112`
+- `develop`, `main` → 매칭 없음
 
-브랜치 이름 prefix 또는 변경 내용으로 판단:
-
-- `feature/`, `feat/` → `feat`
-- `fix/`, `bugfix/` → `fix`
-- `refactor/` → `refactor`
-- `style/` → `style`
-- `chore/` → `chore`
-- `docs/` → `docs`
-- `test/` → `test`
-- prefix 없으면 변경 내용으로 판단
+타입을 브랜치에서 바로 얻으므로 이슈를 다시 조회해 타입을 추론하지 않습니다.
+매칭되지 않아도 **에러로 처리하지 않습니다.** 타입·번호를 생략한 채로 진행합니다.
 
 ### 제목 형식
 
 ```
-<type> : <한글 설명> #이슈번호
+<이슈 제목> : <타입> : <변경 사항 설명> <이슈 URL>
 ```
 
-**주의:** type은 소문자, 콜론 앞뒤 공백 포함, 이슈번호는 `#` 붙여서 끝에 배치
+이슈 제목과 URL은 번호가 있을 때만 아래로 가져옵니다.
+
+```bash
+gh issue view <번호> --json title,url --jq '.title, .url'
+```
 
 예시:
 
 ```
-feat : 로그인 페이지 구현 #12
-fix : 버튼 클릭 이벤트 미동작 수정 #45
-style : 카드 컴포넌트 radius 조정 #12
-refactor : API 호출 로직 공통 훅 추출 #23
+로그인 시 500 에러 : fix : 세션 만료 시 401 반환하도록 수정 https://github.com/greedy-team/festa-frontend/issues/31
+설치 배너 추가 : feat : 스크롤 80% 도달 시 배너 노출 https://github.com/greedy-team/festa-frontend/issues/112
 ```
 
-이슈 번호가 없는 브랜치(main 등)에서는 이슈 번호 생략:
+이슈 번호가 없는 브랜치(`develop` 등)에서는 설명만 남깁니다:
 
 ```
-style : 카드 컴포넌트 radius 조정
+카드 컴포넌트 radius 조정
 ```
 
 ### 본문
@@ -81,10 +76,10 @@ feat : 프로필 화면 구현 #44
 
 ### 1단계: 코드 포맷팅
 
-커밋 전 Dart 코드 스타일을 정리합니다:
+커밋 전 코드 스타일을 정리합니다:
 
 ```bash
-dart format .
+pnpm lint
 ```
 
 - 포맷으로 변경된 파일도 이번 커밋 대상에 포함한다
