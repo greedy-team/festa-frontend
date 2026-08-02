@@ -50,6 +50,8 @@ DEFAULT_COMMIT_TYPE_MAP = {
     "시험요청": "test",
 }
 
+FALLBACK_TYPE = "feat"   # 제목에 타입 태그가 없을 때. 경고와 함께 쓴다.
+
 _TAG = re.compile(r"\[([^\]]*)\]")
 _NON_SLUG = re.compile(r"[^a-z0-9]+")   # ASCII 소문자/숫자 외 → -
 
@@ -79,8 +81,12 @@ def slugify(title: str) -> str:
     return _NON_SLUG.sub("-", title.lower()).strip("-")
 
 
-def infer_commit_type(raw_title: str, type_map: dict | None = None) -> str:
-    """원본 제목의 [태그]들을 순서대로 매핑 조회. 미매치 시 feat."""
+def infer_commit_type(raw_title: str, type_map: dict | None = None) -> str | None:
+    """원본 제목의 [태그]들을 순서대로 매핑 조회. 매치되는 태그가 없으면 None.
+
+    None을 기본값으로 뭉개지 않는 이유: 태그 없는 제목에 feat을 붙이면 버그 이슈가
+    feat_ 브랜치를 받고도 아무도 모른다. 호출부가 FALLBACK_TYPE과 경고를 함께 붙인다.
+    """
     merged = dict(DEFAULT_COMMIT_TYPE_MAP)
     if type_map:
         merged.update(type_map)
@@ -88,7 +94,7 @@ def infer_commit_type(raw_title: str, type_map: dict | None = None) -> str:
         commit_type = merged.get(tag.strip())
         if commit_type:
             return commit_type
-    return "feat"
+    return None
 
 
 def create_branch_name(
@@ -228,7 +234,8 @@ def build_guide(workflows_dir: Path) -> str:
     )
 
 
-def build_comment_body(cfg: dict, branch_name: str, commit_message: str, guide: str) -> str:
+def build_comment_body(cfg: dict, branch_name: str, commit_message: str,
+                       guide: str, notice: str = "") -> str:
     """불변 계약 2: 서명 한 줄 + ### 브랜치 코드블록 구조 유지 (구 파서 하위호환)."""
     marker = cfg["comment_marker"]
     guide_block = f"\n{guide}\n" if (cfg.get("show_guide", True) and guide) else ""
@@ -236,6 +243,7 @@ def build_comment_body(cfg: dict, branch_name: str, commit_message: str, guide: 
         f"{marker}\n\n"
         "이슈 브랜치 가이드\n"
         "---\n\n"
+        f"{notice}"
         "### 브랜치\n"
         f"```\n{branch_name}\n```\n\n"
         "### 커밋 메시지\n"
@@ -269,7 +277,17 @@ def prepare_comment(payload: dict, cfg: dict, workflows_dir: Path, date_yyyymmdd
     raw_title = issue["title"]
     title = extract_issue_title(raw_title)
     issue_number = str(issue["number"])
+
     commit_type = infer_commit_type(raw_title, cfg["commit_type_map"])
+    notice = ""
+    if commit_type is None:
+        commit_type = FALLBACK_TYPE
+        tags = " ".join(f"`[{t}]`" for t in sorted(set(DEFAULT_COMMIT_TYPE_MAP)))
+        notice = (
+            f"> ⚠️ 제목에 타입 태그가 없어 `{FALLBACK_TYPE}`으로 추정했습니다.\n"
+            f"> 제목 앞에 {tags} 중 하나를 붙이면 타입이 정확해집니다 "
+            "(제목을 수정하면 이 댓글도 갱신됩니다).\n\n"
+        )
 
     branch = create_branch_name(
         title, issue_number, commit_type,
@@ -286,7 +304,7 @@ def prepare_comment(payload: dict, cfg: dict, workflows_dir: Path, date_yyyymmdd
         "assignees": ", ".join(a["login"] for a in issue.get("assignees", [])),
     }
     commit_message = render_commit_message(cfg["commit_template"], ctx)
-    body = build_comment_body(cfg, branch, commit_message, build_guide(workflows_dir))
+    body = build_comment_body(cfg, branch, commit_message, build_guide(workflows_dir), notice)
     return branch, commit_message, body
 
 

@@ -1,6 +1,7 @@
 ---
 name: 📄 문서
 about: README, 컨벤션, 가이드 등 문서 작성·수정
+title: "📄 [문서] "
 labels: [작업전, 문서]
 ---
 
