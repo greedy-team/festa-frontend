@@ -126,7 +126,7 @@ if (isExpired(token)) {
 - **`Closes #N`을 쓰지 않습니다.** 이 워크플로우에서는 동작하지 않습니다:
   작업 PR은 `develop`으로 머지되는데 GitHub의 closing keyword는 기본 브랜치(`main`)
   머지에서만 동작하고, 릴리스 PR 본문은 RELEASE-CHANGELOG가 CHANGELOG로 덮어씁니다
-- 이슈는 `작업완료` 라벨을 붙이고 수동으로 닫습니다
+- 이슈는 **PR 머지 시 자동으로 닫힙니다** — CLOSE-ISSUE-ON-MERGE 워크플로우가 브랜치명에서 이슈 번호를 뽑아 `작업완료` 라벨로 바꾸고 종료합니다
 
 ## 출력 형식
 
