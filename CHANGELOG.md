@@ -1,7 +1,36 @@
 # Changelog
 
-**현재 버전:** 0.1.6  
-**마지막 업데이트:** 2026-08-02T14:34:29Z  
+**현재 버전:** 0.1.7  
+**마지막 업데이트:** 2026-08-02T19:34:32Z  
+
+---
+
+## [0.1.7] - 2026-08-02
+
+**PR:** #26  
+
+**기타**
+- Merge pull request from greedy-team/chore_24_codex에서도_프로젝트_커맨드를_쓸_수_있게_설정
+- chore : Codex 프로젝트 커맨드 지원
+- Merge pull request from greedy-team/chore_22_issue_branch가_브랜치_생성_직후_원격에_푸시하도록_수정
+- chore : /issue-branch가 브랜치 생성 직후 빈 상태로 원격에 푸시하도록 수정
+- Merge pull request from greedy-team/chore_19_작업_pr_머지_시_이슈_자동_종료
+- chore : 작업 PR 머지 시 이슈 자동 종료 워크플로우 추가
+- Merge pull request from greedy-team/chore_17_claude_커맨드_정리_및_프로젝트_규칙_정합화
+- chore : 산출물 경로를 docs/ 아래로 옮기고 추적 서술 정정
+- chore : 커밋 메시지의 이슈 참조를 URL에서 #번호로 교체
+- chore : /rp·/cr에 이슈번호 추출·산출물 경로·관련 이슈 표기 반영
+- chore : /pr-description의 타입 목록을 유효 5종으로 정리
+- chore : /pr-description의 Closes #N을 관련 이슈 표기로 교체
+- chore : 커밋 메시지 형식에서 선행 이슈 제목 제거
+- chore : /report에 결정 기록(ADR) 섹션 추가
+- chore : /issue-branch를 develop 분기와 새 브랜치 규칙으로 교체
+- chore : /issue 출력 템플릿을 실제 이슈 템플릿 파일과 일치시킴
+- chore : /issue를 현재 이슈 템플릿 5종에 맞춰 재작성
+- chore : commit.md에 남은 구 형식 커밋 메시지 예시 정리
+- chore : /commit의 이슈번호 추출과 커밋 메시지 형식을 현재 규칙으로 교체
+- chore : .claude 커맨드를 이 프로젝트에 쓰는 7개로 정리
+- chore : Superpowers 산출물과 SDD 워크스페이스를 gitignore
 
 ---
 
