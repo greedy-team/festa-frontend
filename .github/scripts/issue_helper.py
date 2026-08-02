@@ -37,7 +37,19 @@ DEFAULT_CONFIG = {
     "show_guide": True,
 }
 
-# 제목 태그 → 타입 (브랜치명·커밋 메시지 공용). 설정 commit_type_map이 병합됨.
+# GitHub 네이티브 이슈 타입(org 설정) → 타입. 제목 태그보다 우선한다 —
+# 드롭다운으로 고르는 구조라 사람이 제목에 태그를 빠뜨려도 정확하다.
+# Task는 다른 팀 레포에서 쓰는 org 공용 타입이라 남겨두고 chore로 흡수한다.
+ISSUE_TYPE_MAP = {
+    "Bug": "fix",
+    "Feature": "feat",
+    "Refactor": "refactor",
+    "Chore": "chore",
+    "Docs": "docs",
+    "Task": "chore",
+}
+
+# 제목 태그 → 타입 (이슈 타입이 없을 때의 폴백). 설정 commit_type_map이 병합됨.
 DEFAULT_COMMIT_TYPE_MAP = {
     "버그": "fix",
     "기능요청": "feat",
@@ -81,16 +93,20 @@ def slugify(title: str) -> str:
     return _NON_SLUG.sub("-", title.lower()).strip("-")
 
 
-def infer_commit_type(raw_title: str, type_map: dict | None = None) -> str | None:
-    """원본 제목의 [태그]들을 순서대로 매핑 조회. 매치되는 태그가 없으면 None.
+def infer_commit_type(issue: dict, type_map: dict | None = None) -> str | None:
+    """이슈 타입(우선) → 제목 [태그] 순으로 조회. 둘 다 없으면 None.
 
-    None을 기본값으로 뭉개지 않는 이유: 태그 없는 제목에 feat을 붙이면 버그 이슈가
+    None을 기본값으로 뭉개지 않는 이유: 타입 없는 이슈에 feat을 붙이면 버그 이슈가
     feat_ 브랜치를 받고도 아무도 모른다. 호출부가 FALLBACK_TYPE과 경고를 함께 붙인다.
     """
+    issue_type = (issue.get("type") or {}).get("name")
+    if issue_type and issue_type in ISSUE_TYPE_MAP:
+        return ISSUE_TYPE_MAP[issue_type]
+
     merged = dict(DEFAULT_COMMIT_TYPE_MAP)
     if type_map:
         merged.update(type_map)
-    for tag in _TAG.findall(raw_title):
+    for tag in _TAG.findall(issue.get("title") or ""):
         commit_type = merged.get(tag.strip())
         if commit_type:
             return commit_type
@@ -218,16 +234,19 @@ def build_guide(workflows_dir: Path) -> str:
         "<details>\n"
         "<summary>💡 브랜치 규칙</summary>\n\n"
         f"{_BRANCH_STRATEGY}\n"
-        "**이름 규칙** — `타입_이슈번호_영문-슬러그` (타입은 이슈 제목의 `[태그]`에서 결정)\n\n"
-        "| 태그 | 타입 | 예시 |\n"
-        "| --- | --- | --- |\n"
-        "| `[기능요청]` `[기능추가]` `[기능개선]` | `feat` | `feat_112_install-banner` |\n"
-        "| `[버그]` | `fix` | `fix_118_icon-404` |\n"
-        "| `[리팩토링]` | `refactor` | `refactor_125_api-client` |\n"
-        "| `[설정]` | `chore` | `chore_131_ci-setup` |\n"
-        "| `[문서]` | `docs` | `docs_132_ground-rule` |\n\n"
-        "슬러그는 영문 소문자 kebab-case만 씁니다 — 한글 브랜치명은 PR 생성 시 "
-        "`422 Validation Failed`를 일으킵니다. 제목이 한글뿐이면 뒤에 영문 요약을 직접 붙이세요.\n\n"
+        "**이름 규칙** — `타입_이슈번호_영문-슬러그`\n"
+        "타입은 사이드바 **Type**(이슈 타입)에서 결정됩니다. 없으면 제목의 `[태그]`로 폴백.\n\n"
+        "| 이슈 타입 | 제목 태그 | 브랜치 | 예시 |\n"
+        "| --- | --- | --- | --- |\n"
+        "| `Bug` | `[버그]` | `fix` | `fix_118_icon-404` |\n"
+        "| `Feature` | `[기능요청]` | `feat` | `feat_112_install-banner` |\n"
+        "| `Refactor` | `[리팩토링]` | `refactor` | `refactor_125_api-client` |\n"
+        "| `Chore` | `[설정]` | `chore` | `chore_131_ci-setup` |\n"
+        "| `Docs` | `[문서]` | `docs` | `docs_132_ground-rule` |\n\n"
+        "⚠️ **제목의 핵심 단어는 영문으로 적어주세요.** 슬러그는 영문 소문자 kebab-case만 "
+        "남깁니다 — 한글 브랜치명은 PR 생성 시 `422 Validation Failed`를 일으키기 때문입니다.\n"
+        "예: `로그인 시 500 에러` → `fix_31_500` (쓸모없음) / `login 500 error` → "
+        "`fix_31_login-500-error`\n\n"
         "이 형식을 쓰면 아래가 자동으로 연동됩니다:\n"
         f"{items}\n"
         "</details>"
@@ -255,9 +274,9 @@ def build_comment_body(cfg: dict, branch_name: str, commit_message: str,
 
 # ── 이벤트 처리 ──────────────────────────────────────────────────────────
 def should_process(payload: dict) -> bool:
-    """opened 또는 edited(제목 변경)만 처리 — 구 워크플로우 if 조건과 동일."""
+    """브랜치명을 바꿀 수 있는 이벤트만 처리 — 생성 / 제목 변경 / 타입 지정·해제."""
     action = payload.get("action")
-    if action == "opened":
+    if action in ("opened", "typed", "untyped"):
         return True
     return action == "edited" and bool(payload.get("changes", {}).get("title"))
 
@@ -278,15 +297,15 @@ def prepare_comment(payload: dict, cfg: dict, workflows_dir: Path, date_yyyymmdd
     title = extract_issue_title(raw_title)
     issue_number = str(issue["number"])
 
-    commit_type = infer_commit_type(raw_title, cfg["commit_type_map"])
+    commit_type = infer_commit_type(issue, cfg["commit_type_map"])
     notice = ""
     if commit_type is None:
         commit_type = FALLBACK_TYPE
-        tags = " ".join(f"`[{t}]`" for t in sorted(set(DEFAULT_COMMIT_TYPE_MAP)))
+        types = " · ".join(f"`{t}`" for t in ISSUE_TYPE_MAP if t != "Task")
         notice = (
-            f"> ⚠️ 제목에 타입 태그가 없어 `{FALLBACK_TYPE}`으로 추정했습니다.\n"
-            f"> 제목 앞에 {tags} 중 하나를 붙이면 타입이 정확해집니다 "
-            "(제목을 수정하면 이 댓글도 갱신됩니다).\n\n"
+            f"> ⚠️ 이슈 타입이 지정되지 않아 `{FALLBACK_TYPE}`으로 추정했습니다.\n"
+            f"> 오른쪽 사이드바 **Type**에서 {types} 중 하나를 고르면 타입이 정확해집니다 "
+            "(고르면 이 댓글이 자동 갱신됩니다).\n\n"
         )
 
     branch = create_branch_name(
