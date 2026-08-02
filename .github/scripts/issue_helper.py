@@ -3,10 +3,14 @@
 
 구 외부 액션(Cassiiopeia/github-issue-helper@deploy)을 대체한다. stdlib 전용.
 
-브랜치 규칙: `{타입}_{이슈번호}_{영문-슬러그}`  (예: feat_112_install-banner)
-  타입은 이슈 제목의 [태그]에서 추론한다 — COMMIT_TYPE_MAP 참조.
-  슬러그는 ASCII 소문자 kebab-case. 한글은 넣지 않는다 — 한글 브랜치명은
-  GitHub API PR 생성 시 `422 Validation Failed: head invalid`를 유발한다.
+브랜치 규칙: `{타입}_{이슈번호}_{슬러그}`  (예: feat_112_install_banner)
+  타입은 `type:` 라벨 → 이슈 타입 → 제목 [태그] 순으로 추론한다.
+  슬러그는 한글·영문소문자·숫자를 밑줄로 잇는다.
+
+  한글 허용 근거: 과거 "한글 브랜치명은 PR 생성 시 422" 보고가 있었으나
+  실측 결과 push·REST API PR 생성·Actions 모두 정상이었다. 그 422는 Windows
+  PowerShell ConvertTo-Json 인코딩 버그로 보이며 gh/git 경로에는 해당 없다.
+  단 한글은 UTF-8 3바이트라 길이는 문자 수가 아니라 바이트로 제한한다.
 
 ⚠️ 불변 계약 — 아래 형식을 기계 파싱하는 소비자가 있으므로 절대 깨지 마라:
   1. 이슈 번호가 `_숫자_`(또는 끝)로 구분돼 등장할 것
@@ -67,8 +71,13 @@ BRANCH_TYPES = ("feat", "fix", "refactor", "chore", "docs")
 
 FALLBACK_TYPE = "feat"   # 타입을 어디서도 못 찾았을 때. 경고와 함께 쓴다.
 
+# 느슨한 ref는 `.git/refs/heads/<name>` 파일이라 파일명 한계(255B)를 넘으면 안 된다.
+# 한글 3바이트/자 × 100자 = 300바이트라 문자 수 제한만으로는 못 막는다.
+MAX_REF_BYTES = 200
+
+_SLUG_SEP = "_"
 _TAG = re.compile(r"\[([^\]]*)\]")
-_NON_SLUG = re.compile(r"[^a-z0-9]+")   # ASCII 소문자/숫자 외 → -
+_NON_SLUG = re.compile(r"[^가-힣a-z0-9]+")   # 한글/영문소문자/숫자 외 → 구분자
 
 
 def _strip_emoji(text: str) -> str:
@@ -92,8 +101,12 @@ def extract_issue_title(raw_title: str) -> str:
 
 
 def slugify(title: str) -> str:
-    """ASCII 소문자 kebab-case. 한글 등 비ASCII는 버린다 (전부 버려지면 빈 문자열)."""
-    return _NON_SLUG.sub("-", title.lower()).strip("-")
+    """한글·영문소문자·숫자를 밑줄로 잇는다.
+
+    영문을 소문자로 통일하는 이유: macOS/Windows는 파일명 대소문자를 구분하지 않아
+    `Feat_1_API`와 `feat_1_api`가 같은 ref 파일로 충돌한다.
+    """
+    return _NON_SLUG.sub(_SLUG_SEP, title.lower()).strip(_SLUG_SEP)
 
 
 def infer_commit_type(issue: dict, type_map: dict | None = None) -> str | None:
@@ -130,14 +143,16 @@ def create_branch_name(
     branch_prefix: str = "",
     max_branch_length: int = 100,
 ) -> str:
-    """`{타입}_{번호}_{슬러그}`. 슬러그가 비면(한글 전용 제목) 타입_번호까지만."""
+    """`{타입}_{번호}_{슬러그}`. 슬러그가 비면(기호뿐인 제목) 타입_번호까지만."""
     slug = slugify(title)
     base = f"{commit_type}_{issue_number}"
     if slug:
-        base = f"{base}_{slug}"
+        base = f"{base}{_SLUG_SEP}{slug}"
     if max_branch_length > 0:
-        base = base[:max_branch_length].rstrip("-_")
-    return f"{branch_prefix}{base}"
+        base = base[:max_branch_length]
+    while len(base.encode("utf-8")) > MAX_REF_BYTES:   # 한글 3B/자 — 문자 수로는 못 막는다
+        base = base[:-1]
+    return f"{branch_prefix}{base.rstrip(_SLUG_SEP)}"
 
 
 def render_commit_message(template: str, ctx: dict) -> str:
@@ -248,17 +263,15 @@ def build_guide(workflows_dir: Path) -> str:
         "타입은 **`type:` 라벨**에서 결정됩니다 (템플릿을 고르면 자동으로 붙습니다).\n\n"
         "| 라벨 | 브랜치 | 예시 |\n"
         "| --- | --- | --- |\n"
-        "| `type: fix` | `fix` | `fix_118_icon-404` |\n"
-        "| `type: feat` | `feat` | `feat_112_install-banner` |\n"
-        "| `type: refactor` | `refactor` | `refactor_125_api-client` |\n"
-        "| `type: chore` | `chore` | `chore_131_ci-setup` |\n"
-        "| `type: docs` | `docs` | `docs_132_ground-rule` |\n\n"
+        "| `type: fix` | `fix` | `fix_118_로그인_500_에러` |\n"
+        "| `type: feat` | `feat` | `feat_112_설치_배너` |\n"
+        "| `type: refactor` | `refactor` | `refactor_125_api_client` |\n"
+        "| `type: chore` | `chore` | `chore_131_ci_setup` |\n"
+        "| `type: docs` | `docs` | `docs_132_그라운드_룰` |\n\n"
         "라벨을 바꾸면 이 댓글도 자동으로 갱신됩니다. 라벨이 없으면 사이드바 **Type**(이슈 타입) "
         "→ 제목의 `[버그]` `[기능요청]` `[리팩토링]` `[설정]` `[문서]` 태그 순으로 폴백합니다.\n\n"
-        "⚠️ **제목의 핵심 단어는 영문으로 적어주세요.** 슬러그는 영문 소문자 kebab-case만 "
-        "남깁니다 — 한글 브랜치명은 PR 생성 시 `422 Validation Failed`를 일으키기 때문입니다.\n"
-        "예: `로그인 시 500 에러` → `fix_31_500` (쓸모없음) / `login 500 error` → "
-        "`fix_31_login-500-error`\n\n"
+        "제목은 **한글로 써도 됩니다.** 한글·영문소문자·숫자만 남기고 나머지는 `_`로 잇습니다 "
+        "(영문 대문자는 소문자로 통일 — 대소문자를 구분하지 않는 파일시스템에서의 충돌 방지).\n\n"
         "이 형식을 쓰면 아래가 자동으로 연동됩니다:\n"
         f"{items}\n"
         "</details>"
