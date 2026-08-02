@@ -42,7 +42,7 @@
 
   - `fix_31_로그인_시_500_에러` → 타입 `fix`, 번호 `31`
   - 매칭 안 되면 `관련 이슈` 줄 생략
-- **커밋 타입 분류**: `feat`/`fix`/`refactor`/`chore`/`docs`/`test`/`style`
+- **커밋 타입 분류**: `feat`/`fix`/`refactor`/`chore`/`docs`
   - PR 제목 prefix 결정용
 - **변경 파일 그룹핑**: 같은 기능·도메인끼리 묶기
 
