@@ -70,4 +70,4 @@ deploy:                          # 마법사가 기억하는 배포 설정 (비�
       issue_helper:
         # 기본값의 앞 ${issueTitle}을 뺀다 — 이슈 제목이 브랜치 슬러그와 거의 같아
         # 커밋 제목이 같은 내용을 두 번 말하게 된다. 타입·설명·이슈 URL만 남긴다.
-        commit_template: "${commitType} : {변경 사항에 대한 설명} ${issueUrl}"
+        commit_template: "${commitType} : {변경 사항에 대한 설명} #${issueNumber}"
