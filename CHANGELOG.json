@@ -1,14 +1,39 @@
 {
   "metadata": {
-    "lastUpdated": "2026-08-02T13:37:46Z",
-    "currentVersion": "0.1.4",
+    "lastUpdated": "2026-08-02T13:40:07Z",
+    "currentVersion": "0.1.5",
     "projectType": "react",
     "projectTypes": [
       "react"
     ],
-    "totalReleases": 4
+    "totalReleases": 5
   },
   "releases": [
+    {
+      "version": "0.1.5",
+      "project_type": "react",
+      "project_types": [
+        "react"
+      ],
+      "date": "2026-08-02",
+      "pr_number": 15,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **문서**\n  * 봇 가이드의 낡은 '영문-슬러그' 표현 수정\n\n* **기타**\n  * origin/develop 동기화",
+      "parsed_changes": {
+        "문서": {
+          "title": "문서",
+          "items": [
+            "봇 가이드의 낡은 '영문-슬러그' 표현 수정"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "origin/develop 동기화"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "0.1.4",
       "project_type": "react",
