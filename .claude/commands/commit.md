@@ -36,7 +36,7 @@ git branch --show-current | grep -oE "^(feat|fix|refactor|chore|docs)_[0-9]+_"
 ### 제목 형식
 
 ```
-<이슈 제목> : <타입> : <변경 사항 설명> <이슈 URL>
+<타입> : <변경 사항 설명> <이슈 URL>
 ```
 
 이슈 제목과 URL은 번호가 있을 때만 아래로 가져옵니다.
@@ -48,8 +48,8 @@ gh issue view <번호> --json title,url --jq '.title, .url'
 예시:
 
 ```
-로그인 시 500 에러 : fix : 세션 만료 시 401 반환하도록 수정 https://github.com/greedy-team/festa-frontend/issues/31
-설치 배너 추가 : feat : 스크롤 80% 도달 시 배너 노출 https://github.com/greedy-team/festa-frontend/issues/112
+fix : 세션 만료 시 401 반환하도록 수정 https://github.com/greedy-team/festa-frontend/issues/31
+feat : 스크롤 80% 도달 시 배너 노출 https://github.com/greedy-team/festa-frontend/issues/112
 ```
 
 이슈 번호가 없는 브랜치(`develop` 등)에서는 설명만 남깁니다:
@@ -63,7 +63,7 @@ gh issue view <번호> --json title,url --jq '.title, .url'
 변경 파일이 3개 이상이거나 여러 영역에 걸친 경우, 간단한 불릿 리스트로 요약:
 
 ```
-설치 배너 추가 : feat : 헤더에 배너 컴포넌트 추가 https://github.com/greedy-team/festa-frontend/issues/112
+feat : 헤더에 배너 컴포넌트 추가 https://github.com/greedy-team/festa-frontend/issues/112
 
 - 배너 컴포넌트 추가
 - 배지 목록 API 연동
@@ -108,7 +108,7 @@ pnpm lint
 ```bash
 git add <해당 파일들>
 git commit -m "$(cat <<'EOF'
-<이슈 제목> : <타입> : <변경 사항 설명> <이슈 URL>
+<타입> : <변경 사항 설명> <이슈 URL>
 EOF
 )"
 ```
@@ -127,8 +127,8 @@ git log --oneline -<커밋수>
 
 | #   | 커밋    | 메시지                                                               | 파일 수 |
 | --- | ------- | --------------------------------------------------------------------- | ------- |
-| 1   | abc1234 | 설치 배너 추가 : feat : 배너 컴포넌트 추가 https://github.com/greedy-team/festa-frontend/issues/112 | 3       |
-| 2   | def5678 | 로그인 시 500 에러 : fix : 401 반환 처리 수정 https://github.com/greedy-team/festa-frontend/issues/31 | 2       |
+| 1   | abc1234 | feat : 배너 컴포넌트 추가 https://github.com/greedy-team/festa-frontend/issues/112 | 3       |
+| 2   | def5678 | fix : 401 반환 처리 수정 https://github.com/greedy-team/festa-frontend/issues/31 | 2       |
 
 **브랜치:** feat_112_설치_배너_추가
 **상태:** 워킹 트리 클린, origin 대비 N커밋 ahead
