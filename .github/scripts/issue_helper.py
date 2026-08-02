@@ -259,7 +259,7 @@ def build_guide(workflows_dir: Path) -> str:
         "<details>\n"
         "<summary>💡 브랜치 규칙</summary>\n\n"
         f"{_BRANCH_STRATEGY}\n"
-        "**이름 규칙** — `타입_이슈번호_영문-슬러그`\n"
+        "**이름 규칙** — `타입_이슈번호_슬러그`\n"
         "타입은 **`type:` 라벨**에서 결정됩니다 (템플릿을 고르면 자동으로 붙습니다).\n\n"
         "| 라벨 | 브랜치 | 예시 |\n"
         "| --- | --- | --- |\n"
