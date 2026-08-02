@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ====================================================================
+# projectops: Auto-added entries
+# ====================================================================
+/.idea
+/.claude/settings.local.json
+
+# Python (.github/scripts)
+__pycache__/
+*.py[cod]
