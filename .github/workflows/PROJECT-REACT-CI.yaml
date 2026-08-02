@@ -1,0 +1,50 @@
+# ===================================================================
+# React CI (PR 빌드 검증)
+# ===================================================================
+#
+# main / develop 으로 향하는 PR에서 빌드가 깨지는지 머지 전에 잡습니다.
+# 배포는 하지 않습니다 — 배포는 PROJECT-COMMON-VERCEL-DEPLOY.yaml 담당.
+#   main    → Vercel Production
+#   develop → Vercel Preview
+#
+# 환경변수는 Vercel 프로젝트 Settings에서 관리합니다 (빌드가 Vercel에서 돌기 때문).
+# 여기에 Secret을 넣을 필요 없습니다. 빌드 타임 환경변수가 필요해지면 그때 추가하세요.
+# ===================================================================
+
+name: PROJECT-REACT-CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: 빌드 검증
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v5
+
+      - name: pnpm 설정
+        uses: pnpm/action-setup@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: 의존성 설치
+        run: pnpm install --frozen-lockfile
+
+      - name: 빌드
+        run: pnpm build
