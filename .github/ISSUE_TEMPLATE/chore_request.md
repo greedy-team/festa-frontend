@@ -3,7 +3,7 @@ name: 🔧 설정 · 빌드
 about: 의존성, 설정 파일, CI/CD, 빌드 등 제품 코드 외 작업
 title: "🔧 [설정] "
 type: Chore
-labels: [작업전]
+labels: [작업전, "type: chore"]
 ---
 
 <!-- ⚠️ 제목의 핵심 단어는 영문으로 적어주세요.

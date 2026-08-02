@@ -3,7 +3,7 @@ name: ❗ 버그 이슈
 about: 버그 이슈 보고 작성
 title: "❗ [버그] "
 type: Bug
-labels: [작업전]
+labels: [작업전, "type: fix"]
 ---
 
 <!-- ⚠️ 제목의 핵심 단어는 영문으로 적어주세요.

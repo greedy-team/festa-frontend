@@ -49,7 +49,7 @@ ISSUE_TYPE_MAP = {
     "Task": "chore",
 }
 
-# 제목 태그 → 타입 (이슈 타입이 없을 때의 폴백). 설정 commit_type_map이 병합됨.
+# 제목 태그 → 타입 (이슈 타입·라벨이 둘 다 없을 때의 폴백). 설정 commit_type_map이 병합됨.
 DEFAULT_COMMIT_TYPE_MAP = {
     "버그": "fix",
     "기능요청": "feat",
@@ -58,11 +58,14 @@ DEFAULT_COMMIT_TYPE_MAP = {
     "리팩토링": "refactor",
     "설정": "chore",
     "문서": "docs",
-    "디자인": "design",
-    "시험요청": "test",
 }
 
-FALLBACK_TYPE = "feat"   # 제목에 타입 태그가 없을 때. 경고와 함께 쓴다.
+# 라벨 `type: xxx` → 타입. 이슈 타입(org owner 권한 필요)을 만들 수 없어도
+# 레포 admin만으로 굴러가는 경로 — 이 레포의 실질적인 1차 소스다.
+LABEL_TYPE_PREFIX = "type: "
+BRANCH_TYPES = ("feat", "fix", "refactor", "chore", "docs")
+
+FALLBACK_TYPE = "feat"   # 타입을 어디서도 못 찾았을 때. 경고와 함께 쓴다.
 
 _TAG = re.compile(r"\[([^\]]*)\]")
 _NON_SLUG = re.compile(r"[^a-z0-9]+")   # ASCII 소문자/숫자 외 → -
@@ -94,7 +97,7 @@ def slugify(title: str) -> str:
 
 
 def infer_commit_type(issue: dict, type_map: dict | None = None) -> str | None:
-    """이슈 타입(우선) → 제목 [태그] 순으로 조회. 둘 다 없으면 None.
+    """이슈 타입 → `type:` 라벨 → 제목 [태그] 순으로 조회. 전부 없으면 None.
 
     None을 기본값으로 뭉개지 않는 이유: 타입 없는 이슈에 feat을 붙이면 버그 이슈가
     feat_ 브랜치를 받고도 아무도 모른다. 호출부가 FALLBACK_TYPE과 경고를 함께 붙인다.
@@ -102,6 +105,13 @@ def infer_commit_type(issue: dict, type_map: dict | None = None) -> str | None:
     issue_type = (issue.get("type") or {}).get("name")
     if issue_type and issue_type in ISSUE_TYPE_MAP:
         return ISSUE_TYPE_MAP[issue_type]
+
+    for label in issue.get("labels") or []:
+        name = label.get("name") or ""
+        if name.startswith(LABEL_TYPE_PREFIX):
+            candidate = name[len(LABEL_TYPE_PREFIX):].strip()
+            if candidate in BRANCH_TYPES:
+                return candidate
 
     merged = dict(DEFAULT_COMMIT_TYPE_MAP)
     if type_map:
@@ -235,14 +245,16 @@ def build_guide(workflows_dir: Path) -> str:
         "<summary>💡 브랜치 규칙</summary>\n\n"
         f"{_BRANCH_STRATEGY}\n"
         "**이름 규칙** — `타입_이슈번호_영문-슬러그`\n"
-        "타입은 사이드바 **Type**(이슈 타입)에서 결정됩니다. 없으면 제목의 `[태그]`로 폴백.\n\n"
-        "| 이슈 타입 | 제목 태그 | 브랜치 | 예시 |\n"
-        "| --- | --- | --- | --- |\n"
-        "| `Bug` | `[버그]` | `fix` | `fix_118_icon-404` |\n"
-        "| `Feature` | `[기능요청]` | `feat` | `feat_112_install-banner` |\n"
-        "| `Refactor` | `[리팩토링]` | `refactor` | `refactor_125_api-client` |\n"
-        "| `Chore` | `[설정]` | `chore` | `chore_131_ci-setup` |\n"
-        "| `Docs` | `[문서]` | `docs` | `docs_132_ground-rule` |\n\n"
+        "타입은 **`type:` 라벨**에서 결정됩니다 (템플릿을 고르면 자동으로 붙습니다).\n\n"
+        "| 라벨 | 브랜치 | 예시 |\n"
+        "| --- | --- | --- |\n"
+        "| `type: fix` | `fix` | `fix_118_icon-404` |\n"
+        "| `type: feat` | `feat` | `feat_112_install-banner` |\n"
+        "| `type: refactor` | `refactor` | `refactor_125_api-client` |\n"
+        "| `type: chore` | `chore` | `chore_131_ci-setup` |\n"
+        "| `type: docs` | `docs` | `docs_132_ground-rule` |\n\n"
+        "라벨을 바꾸면 이 댓글도 자동으로 갱신됩니다. 라벨이 없으면 사이드바 **Type**(이슈 타입) "
+        "→ 제목의 `[버그]` `[기능요청]` `[리팩토링]` `[설정]` `[문서]` 태그 순으로 폴백합니다.\n\n"
         "⚠️ **제목의 핵심 단어는 영문으로 적어주세요.** 슬러그는 영문 소문자 kebab-case만 "
         "남깁니다 — 한글 브랜치명은 PR 생성 시 `422 Validation Failed`를 일으키기 때문입니다.\n"
         "예: `로그인 시 500 에러` → `fix_31_500` (쓸모없음) / `login 500 error` → "
@@ -274,10 +286,16 @@ def build_comment_body(cfg: dict, branch_name: str, commit_message: str,
 
 # ── 이벤트 처리 ──────────────────────────────────────────────────────────
 def should_process(payload: dict) -> bool:
-    """브랜치명을 바꿀 수 있는 이벤트만 처리 — 생성 / 제목 변경 / 타입 지정·해제."""
+    """브랜치명을 바꿀 수 있는 이벤트만 처리 — 생성 / 제목 변경 / 타입·타입라벨 변경.
+
+    라벨은 `type:` 접두사가 붙은 것만 본다. 상태 라벨(작업중 등)까지 받으면
+    라벨 하나 옮길 때마다 워크플로우가 도는데, 브랜치명은 그대로다.
+    """
     action = payload.get("action")
     if action in ("opened", "typed", "untyped"):
         return True
+    if action in ("labeled", "unlabeled"):
+        return ((payload.get("label") or {}).get("name") or "").startswith(LABEL_TYPE_PREFIX)
     return action == "edited" and bool(payload.get("changes", {}).get("title"))
 
 
@@ -301,11 +319,11 @@ def prepare_comment(payload: dict, cfg: dict, workflows_dir: Path, date_yyyymmdd
     notice = ""
     if commit_type is None:
         commit_type = FALLBACK_TYPE
-        types = " · ".join(f"`{t}`" for t in ISSUE_TYPE_MAP if t != "Task")
+        labels = " · ".join(f"`{LABEL_TYPE_PREFIX}{t}`" for t in BRANCH_TYPES)
         notice = (
-            f"> ⚠️ 이슈 타입이 지정되지 않아 `{FALLBACK_TYPE}`으로 추정했습니다.\n"
-            f"> 오른쪽 사이드바 **Type**에서 {types} 중 하나를 고르면 타입이 정확해집니다 "
-            "(고르면 이 댓글이 자동 갱신됩니다).\n\n"
+            f"> ⚠️ 타입을 찾을 수 없어 `{FALLBACK_TYPE}`으로 추정했습니다.\n"
+            f"> {labels} 중 하나를 라벨로 붙이면 타입이 정확해집니다 "
+            "(붙이면 이 댓글이 자동 갱신됩니다).\n\n"
         )
 
     branch = create_branch_name(

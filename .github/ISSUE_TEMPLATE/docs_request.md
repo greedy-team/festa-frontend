@@ -3,7 +3,7 @@ name: 📄 문서
 about: README, 컨벤션, 가이드 등 문서 작성·수정
 title: "📄 [문서] "
 type: Docs
-labels: [작업전, 문서]
+labels: [작업전, "type: docs"]
 ---
 
 <!-- ⚠️ 제목의 핵심 단어는 영문으로 적어주세요.

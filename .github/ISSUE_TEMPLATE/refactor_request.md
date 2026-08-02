@@ -3,7 +3,7 @@ name: ♻️ 리팩토링
 about: 동작 변경 없이 구조·가독성·성능을 개선하는 작업
 title: "♻️ [리팩토링] "
 type: Refactor
-labels: [작업전]
+labels: [작업전, "type: refactor"]
 ---
 
 <!-- ⚠️ 제목의 핵심 단어는 영문으로 적어주세요.
