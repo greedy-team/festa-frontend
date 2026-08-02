@@ -24,7 +24,8 @@ name: PROJECT-COMMON-ISSUE-HELPER
 
 on:
   issues:
-    types: [opened, edited]
+    # typed/untyped: GitHub 이슈 타입 지정·해제 — 브랜치 타입이 바뀌므로 댓글을 갱신한다
+    types: [opened, edited, typed, untyped]
 
 permissions:
   issues: write
@@ -32,7 +33,7 @@ permissions:
 
 jobs:
   generate-comment:
-    if: github.event.action == 'opened' || (github.event.action == 'edited' && github.event.changes.title)
+    if: contains(fromJSON('["opened", "typed", "untyped"]'), github.event.action) || (github.event.action == 'edited' && github.event.changes.title)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
