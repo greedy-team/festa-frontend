@@ -289,3 +289,38 @@ jobs:
               exit 1
             fi
           fi
+
+      # 이 워크플로우는 기본 브랜치에만 커밋한다. 그대로 두면 릴리스마다 main이
+      # develop보다 1커밋씩 앞서 영구히 벌어지고, 나중에 README를 건드리는 순간
+      # 릴리스 PR에서 충돌이 난다. 그래서 여기서 develop으로 되돌려 병합한다.
+      # (README 동기화는 릴리스를 막을 만한 일이 아니므로 실패해도 워크플로우는 통과시킨다)
+      - name: develop 브랜치에 역병합
+        run: |
+          if ! git ls-remote --exit-code --heads origin develop >/dev/null 2>&1; then
+            echo "ℹ️ develop 브랜치 없음 → 동기화 건너뜀"
+            exit 0
+          fi
+
+          SHA=$(git rev-parse HEAD)
+          git fetch origin +refs/heads/develop:refs/remotes/origin/develop
+
+          if git merge-base --is-ancestor "$SHA" origin/develop; then
+            echo "ℹ️ develop이 이미 최신 → 건너뜀"
+            exit 0
+          fi
+
+          git checkout -B __sync_develop origin/develop
+
+          # -m 지정 이유: fast-forward면 커밋이 안 생겨 head가 [skip ci] 커밋 그대로 남고,
+          # 아니면 [skip ci] 머지 커밋이 생긴다. 어느 쪽이든 develop push가
+          # 배포 워크플로우를 다시 깨우지 않는다.
+          if git merge --no-edit -m "chore: README 버전 정보 develop 동기화 [skip ci]" "$SHA"; then
+            if git push origin __sync_develop:develop; then
+              echo "✅ develop 동기화 완료"
+            else
+              echo "⚠️ develop push 실패 — 수동: git switch develop && git merge origin/main && git push"
+            fi
+          else
+            git merge --abort 2>/dev/null || true
+            echo "⚠️ develop 병합 충돌 — 수동 병합 필요"
+          fi
