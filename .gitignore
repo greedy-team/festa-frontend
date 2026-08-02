@@ -49,3 +49,6 @@ next-env.d.ts
 # Python (.github/scripts)
 __pycache__/
 *.py[cod]
+
+# 릴리스 워크플로우 임시 파일 (git add -A에 쓸려 들어감)
+pr_body.md
