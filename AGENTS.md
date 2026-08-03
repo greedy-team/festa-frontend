@@ -2,17 +2,7 @@
 
 축제 정보 서비스 프론트엔드. Next.js App Router 기반이며 Vercel에 배포합니다.
 
-## 하드 제약
-
-깨면 안 되는 것들입니다. 어긴 채 진행하지 마세요.
-
-- **패키지 매니저는 pnpm.** `npm`·`yarn` 금지 — `package-lock.json`이 생기면 CI가 깨집니다
-- **`main`에 직접 푸시 금지.** `main` 푸시는 곧 Vercel Production 배포입니다
-- **앱 환경변수는 Vercel에 등록.** 빌드가 Vercel에서 돌기 때문에 GitHub Secrets에 넣어도 앱에 들어가지 않습니다
-- **커밋 메시지에 `Co-Authored-By` 금지**
-- **커밋·푸시는 사용자가 요청할 때만.** 알아서 하지 않습니다
-
-## 셋업
+## 빠른 시작
 
 ```bash
 pnpm install
@@ -26,6 +16,39 @@ pnpm lint         # ESLint
 ```bash
 vercel env pull .env.local
 ```
+
+## 작업 원칙
+
+**코드를 만지기 전에 [`.claude/rules/coding-principles.md`](./.claude/rules/coding-principles.md)를 읽으세요.**
+
+가정을 말하고 시작하기 / 최소한으로 만들기 / 외과적으로 바꾸기 / 검증 기준 먼저 세우기 /
+같은 규칙을 두 곳에 적지 않기 — 다섯 가지이며, 각각 이 프로젝트에서 실제로 터진 사례가
+근거로 붙어 있습니다.
+
+## 지침 파일 지도
+
+**내용은 전부 `.claude/` 아래에 둡니다. 다른 도구는 그것을 읽습니다.**
+같은 규칙을 두 벌로 관리하면 반드시 어긋나기 때문입니다.
+
+| 파일 | 담는 것 | Claude Code | Codex |
+| --- | --- | --- | --- |
+| `AGENTS.md` | 프로젝트 사실·제약 (이 파일) | `CLAUDE.md`가 import | 세션 시작 시 자동 |
+| `.claude/rules/coding-principles.md` | 작업 원칙 | `CLAUDE.md`가 import | **이 파일의 링크를 따라 읽으세요** |
+| `TEAM-CONVENTIONS.md` | 이슈·브랜치·커밋·PR 규칙 | 필요 시 | 필요 시 |
+| `.claude/commands/*.md` | 커맨드 워크플로우 | 슬래시 커맨드 | `.agents/skills/`가 가리킴 |
+
+Codex는 `AGENTS.md`와 `.agents/skills/`만 자동으로 읽습니다. `.claude/` 아래 파일은
+자동으로 열리지 않으니, 위 표의 경로를 직접 읽으세요.
+
+## 하드 제약
+
+깨면 안 되는 것들입니다. 어긴 채 진행하지 마세요.
+
+- **패키지 매니저는 pnpm.** `npm`·`yarn` 금지 — `package-lock.json`이 생기면 CI가 깨집니다
+- **`main`에 직접 푸시 금지.** `main` 푸시는 곧 Vercel Production 배포입니다
+- **앱 환경변수는 Vercel에 등록.** 빌드가 Vercel에서 돌기 때문에 GitHub Secrets에 넣어도 앱에 들어가지 않습니다
+- **커밋 메시지에 `Co-Authored-By` 금지**
+- **커밋·푸시는 사용자가 요청할 때만.** 알아서 하지 않습니다
 
 ## 기술 스택
 
