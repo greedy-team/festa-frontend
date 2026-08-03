@@ -1,7 +1,21 @@
 # Changelog
 
-**현재 버전:** 0.1.7  
-**마지막 업데이트:** 2026-08-02T19:34:32Z  
+**현재 버전:** 0.1.8  
+**마지막 업데이트:** 2026-08-03T06:23:36Z  
+
+---
+
+## [0.1.8] - 2026-08-03
+
+**PR:** #31  
+
+**기타**
+- Merge pull request from greedy-team/chore_29_agents_md_claude_md_작성
+- Merge pull request from greedy-team/docs_27_projectops_마이그레이션_로그_제거
+- chore : 작업 원칙을 .claude/rules로 분리하고 지침 파일 지도 추가
+- docs : TEAM-CONVENTIONS.md 커밋
+- chore : AGENTS.md·CLAUDE.md 작성
+- docs : projectops 마이그레이션 로그 제거
 
 ---
 
