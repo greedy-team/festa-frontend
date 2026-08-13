@@ -47,7 +47,7 @@ Codex는 `AGENTS.md`와 `.agents/skills/`만 자동으로 읽습니다. `.claude
 - **패키지 매니저는 pnpm.** `npm`·`yarn` 금지 — `package-lock.json`이 생기면 CI가 깨집니다
 - **`main`에 직접 푸시 금지.** `main` 푸시는 곧 Vercel Production 배포입니다
 - **앱 환경변수는 Vercel에 등록.** 빌드가 Vercel에서 돌기 때문에 GitHub Secrets에 넣어도 앱에 들어가지 않습니다
-- **커밋 메시지에 `Co-Authored-By` 금지**
+- **커밋 메시지에 AI 태그 금지.** `Co-Authored-By: Claude`·`Generated with …`·GPT 서명 등 전부 — 규칙 원본은 [`TEAM-CONVENTIONS.md`](./TEAM-CONVENTIONS.md) §4
 - **커밋·푸시는 사용자가 요청할 때만.** 알아서 하지 않습니다
 
 ## 기술 스택
