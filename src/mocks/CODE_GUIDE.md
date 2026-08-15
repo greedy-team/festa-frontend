@@ -18,8 +18,10 @@ src/mocks/
     db.ts          # 원본 데이터 (가짜 DB)
     pagination.ts  # 공통 페이지네이션 계산
     errors.ts       # 공통 에러 응답 생성
+    date.ts          # today/dday/festivalStatus 단일 기준
+    appearances.ts    # findAppearances — artists.ts·search.ts 공유
   handlers/
-    festivals.ts    # /festivals 관련 6개 요청을 가로채는 곳
+    festivals.ts    # /festivals 관련 5개 요청을 가로채는 곳
     artists.ts       # /artists 관련 2개
     hosts.ts          # /hosts 관련 1개
     search.ts         # /search 관련 2개
@@ -80,8 +82,8 @@ SQL의 JOIN과 개념이 동일하다 — 그냥 JS 코드로 직접 짠 것뿐.
 ### 2.3 `fixtures/errors.ts` — 에러 응답 만드는 공통 헬퍼
 
 ```ts
-export function apiError(code, message, status, instance, fieldErrors = []) {
-  return HttpResponse.json({ errorCode: code, message, status, instance, fieldErrors }, { status });
+export function apiError(code, message, status, instance) {
+  return HttpResponse.json({ errorCode: code, message, status, instance }, { status });
 }
 
 export const Errors = {
@@ -90,7 +92,7 @@ export const Errors = {
 };
 ```
 
-각 handler는 검증 실패 시 `Errors.xxx(instance)`를 리턴하기만 하면 된다. 에러 응답 형식(필드명 `errorCode` 등)이 나중에 바뀌면 **이 파일 하나만 고치면 11개 엔드포인트 전체에 반영**된다 — 이게 공통 헬퍼로 뺀 이유.
+각 handler는 검증 실패 시 `Errors.xxx(instance)`를 리턴하기만 하면 된다. 에러 응답 형식(필드명 `errorCode` 등)이 나중에 바뀌면 **이 파일 하나만 고치면 10개 엔드포인트 전체에 반영**된다 — 이게 공통 헬퍼로 뺀 이유.
 
 ### 2.4 `server.ts` / `browser.ts` — handler들을 실제로 "가로채기 등록"
 
@@ -154,11 +156,12 @@ if (!ready) return null; // 워커 켜지기 전까진 아무것도 안 그림
 ## 4. 도메인별 특이사항
 
 ### festivals.ts
-- `festivalStatus()`, `dday` 계산이 실제 `new Date()`를 쓴다. 날짜를 고정해야 하는 테스트(D-day 스냅샷 등)를 만들 때는 이 부분을 인자 주입식으로 바꿔야 한다.
+- `festivalStatus()`, `dday` 계산은 `fixtures/date.ts`를 쓴다(문자열 비교라 UTC/로컬 불일치는 없음). 날짜를 고정해야 하는 테스트(D-day 스냅샷 등)를 만들 때는 `todayStr()`을 인자 주입식으로 바꿔야 한다.
 - `/festivals/recent`의 "최근 등록순"은 fixture에 `createdAt`이 없어서 배열 순서(뒤쪽이 최근)로 대체했다.
+- `/festivals/{id}/notices`(3.6)는 없다 — 2026-08-09 회의 결정으로 범위 제외됐다(DOC-0007).
 
 ### artists.ts
-- `upcomingShows`/`appearances`는 DB에 별도로 저장돼 있지 않고, `festivalsDb`의 라인업을 순회하면서 **그때그때 계산**해서 만든다 (`findAppearances` 함수). `performanceDate = festival.startDate + (lineup.day - 1)` 계산도 명세서 1.5 규칙 그대로 구현.
+- `upcomingShows`/`appearances`는 DB에 별도로 저장돼 있지 않고, `festivalsDb`의 라인업을 순회하면서 **그때그때 계산**해서 만든다 (`fixtures/appearances.ts`의 `findAppearances` 함수 — `search.ts`도 같은 함수로 `appearanceCount`를 계산해서 두 엔드포인트 값이 항상 일치한다). `performanceDate = festival.startDate + (lineup.day - 1)` 계산도 명세서 1.5 규칙 그대로 구현.
 
 ### hosts.ts
 - `frequentArtists`(자주 온 아티스트)도 저장된 값이 아니라, 해당 host의 축제 라인업을 순회하면서 등장 횟수를 집계(`Map`)해서 만든다.

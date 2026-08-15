@@ -8,7 +8,7 @@ src/mocks/
     db.ts          # 단일 진실 소스 — host/artist/festival 원본 데이터. 여기만 고치면 전체 응답이 같이 갱신됨
     pagination.ts  # 공통 페이지네이션 헬퍼
   handlers/
-    festivals.ts   # 3.1~3.6 (6개)
+    festivals.ts   # 3.1~3.5 (5개) — {id}/notices는 2026-08-09 회의 결정으로 범위 제외(DOC-0007)
     artists.ts     # 4.1~4.2 (2개)
     hosts.ts       # 5.1 (1개)
     search.ts      # 7.1~7.2 (2개)
@@ -46,7 +46,7 @@ Vercel에 등록해 `vercel env pull .env.local`로 당겨오는 방식을 쓰�
 
 ## 에러 응답
 
-`fixtures/errors.ts`에 공통 헬퍼(`apiError`, `Errors.*`)를 만들어서 11개 엔드포인트에
+`fixtures/errors.ts`에 공통 헬퍼(`apiError`, `Errors.*`)를 만들어서 10개 엔드포인트에
 전부 연결했다. **에러 코드 이름/철자는 에러 코드 마스터 문서(v1)를 기준으로 한다** —
 그 외 필드 구조·파라미터 범위 등은 개별 페이지 export(api_export.zip)를 기준으로 한다.
 두 기준 문서가 서로 다른 역할을 담당하는 구조.
@@ -67,10 +67,14 @@ Vercel에 등록해 `vercel env pull .env.local`로 당겨오는 방식을 쓰�
   필드표/응답 예시엔 남아있어서 스펙 원문 기준으로 넣음 — `hosts.ts` 주석 참고). 제거로
   확정되면 `hosts.ts`의 `type: host.type,` 한 줄만 지우면 됨.
 - **`/auth/me`는 만들지 않았다** — 이번 버전은 로그인 기능 자체가 없는 것으로 확정.
-- **날짜 계산(`festivalStatus`, `performanceDate`, `dday`)은 실제 `new Date()` 기준**으로
-  동작한다. 테스트에서 "오늘"을 고정해야 하는 경우(예: D-day 스냅샷 테스트) `festivals.ts`,
-  `artists.ts`, `hosts.ts`의 `today()` 함수를 주입 가능한 형태로 바꿀 것 — 지금은 하드코딩된
-  `new Date()`라 Playwright에서 시스템 시간을 mock하지 않으면 매일 결과가 바뀐다.
+- **날짜 계산(`festivalStatus`, `dday`)은 `fixtures/date.ts`의 `todayStr()`/`daysUntil()`/
+  `festivalStatus()`로 통일했다.** 문자열(YYYY-MM-DD) 비교라 UTC/로컬 파싱 불일치 버그는
+  없지만, 여전히 실제 `new Date()` 기준이라 시간이 지나면 fixture의 상태(ONGOING/UPCOMING/
+  ENDED)가 다시 바뀐다. 테스트에서 "오늘"을 고정해야 하는 경우(D-day 스냅샷 등) `todayStr()`을
+  주입 가능한 형태로 바꿀 것 — Playwright에서 시스템 시간을 mock하지 않으면 매일 결과가 바뀐다.
+- **`findAppearances`/`performanceDate`는 `fixtures/appearances.ts`에 있다.** `artists.ts`와
+  `search.ts`가 같이 쓴다 — `search.ts`의 `appearanceCount`가 하드코딩 0이던 문제를 이 공유로
+  해소했다.
 - **`/festivals/recent`의 "최근 등록순"은 fixture에 `createdAt`이 없어서** 배열 순서(뒤에
   있는 게 최근)로 대체했다. 실제 등록순 검증이 필요해지면 `db.ts`에 `createdAt` 필드를 추가.
 - **검색(`search.ts`)의 매칭/랭킹 로직은 매우 단순한 `includes()` 기반**이다. 실제 검색엔진
