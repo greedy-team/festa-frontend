@@ -4,7 +4,7 @@ import { Errors } from '@/mocks/fixtures/errors';
 import { findAppearances } from '@/mocks/fixtures/appearances';
 import { todayStr } from '@/mocks/fixtures/date';
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr/api';
+const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
 const VALID_TYPE = ['ALL', 'ARTIST', 'HOST', 'FESTIVAL'];
 
 function toFestivalResult(f: (typeof festivalsDb)[number]) {

@@ -25,6 +25,9 @@ export function apiError(code: string, message: string, status: number, instance
 export const Errors = {
   invalidPage: (instance: string) => apiError('INVALID_PAGE', 'page는 0 이상이어야 합니다.', 400, instance),
   invalidPageSize: (instance: string) => apiError('INVALID_PAGE_SIZE', 'size는 1~50 사이여야 합니다.', 400, instance),
+  // DOC-0008: INVALID_REQUEST_BODY(요청 본문 파싱 실패)에서 분리된 코드. :id 같은 경로
+  // 변수가 기대한 타입(정수)이 아닐 때 쓴다 — 존재하지 않는 id(404)와는 다른 상황.
+  invalidPathVariable: (instance: string) => apiError('INVALID_PATH_VARIABLE', '경로 변수 형식이 올바르지 않습니다.', 400, instance),
 
   festivalNotFound: (instance: string) => apiError('FESTIVAL_NOT_FOUND', '존재하지 않는 축제입니다.', 404, instance),
   festivalInvalidSortType: (instance: string) => apiError('FESTIVAL_INVALID_SORT_TYPE', '지원하지 않는 정렬 값입니다.', 400, instance),

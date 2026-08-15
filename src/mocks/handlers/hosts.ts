@@ -4,13 +4,15 @@ import { Errors } from '@/mocks/fixtures/errors';
 import { todayStr, daysUntil } from '@/mocks/fixtures/date';
 import { findAppearances } from '@/mocks/fixtures/appearances';
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr/api';
+const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
 
 export const hostsHandlers = [
   // 5.1 GET /hosts/{id}
   http.get(`${API}/hosts/:id`, ({ params, request }) => {
+    const instance = new URL(request.url).pathname;
+    if (!Number.isInteger(Number(params.id))) return Errors.invalidPathVariable(instance);
     const host = hostsDb.find((h) => h.id === Number(params.id));
-    if (!host) return Errors.hostNotFound(new URL(request.url).pathname);
+    if (!host) return Errors.hostNotFound(instance);
 
     const hostFestivals = festivalsDb.filter((f) => f.hostId === host.id);
     const t = todayStr();

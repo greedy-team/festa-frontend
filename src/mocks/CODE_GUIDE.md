@@ -165,6 +165,7 @@ if (!ready) return null; // 워커 켜지기 전까진 아무것도 안 그림
 
 ### artists.ts
 - `upcomingShows`/`appearances`는 DB에 별도로 저장돼 있지 않고, `festivalsDb`의 라인업을 순회하면서 **그때그때 계산**해서 만든다 (`fixtures/appearances.ts`의 `findAppearances` 함수 — `search.ts`도 같은 함수로 `appearanceCount`를 계산해서 두 엔드포인트 값이 항상 일치한다). `performanceDate = festival.startDate + (lineup.day - 1)` 계산도 명세서 1.5 규칙 그대로 구현.
+- `upcomingShows`/`appearances` 분리 기준이 DOC-0007 문서와 다르다 — 문서는 `past`를 `festival.endDate` 기준으로 판정하는데, 그러면 진행 중인 다일 축제에서 이미 지나간 공연이 양쪽 다 안 잡히는 구멍이 생긴다. 여기선 둘 다 `performanceDate` 기준으로 배타적으로 나눴다. 백엔드 개발자 검토 후 실제 동작이 다르면 바뀔 수 있음 — 근거는 `artists.ts`의 해당 필터 주석 참고.
 
 ### hosts.ts
 - `frequentArtists`(자주 온 아티스트)도 저장된 값이 아니라, 해당 host의 축제 라인업을 순회하면서 등장 횟수를 집계(`Map`)해서 만든다.

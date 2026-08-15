@@ -8,7 +8,7 @@ import { findAppearances } from '@/mocks/fixtures/appearances';
 const VALID_GENRE = ['HIPHOP', 'BALLAD_RNB', 'BAND', 'DANCE'];
 const VALID_SORT = ['APPEARANCES', 'RECENT', 'NAME'];
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr/api';
+const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
 
 export const artistsHandlers = [
   // 4.1 GET /artists
@@ -61,12 +61,21 @@ export const artistsHandlers = [
 
   // 4.2 GET /artists/{id}
   http.get(`${API}/artists/:id`, ({ params, request }) => {
+    const instance = new URL(request.url).pathname;
+    if (!Number.isInteger(Number(params.id))) return Errors.invalidPathVariable(instance);
     const artist = artistsDb.find((a) => a.id === Number(params.id));
-    if (!artist) return Errors.artistNotFound(new URL(request.url).pathname);
+    if (!artist) return Errors.artistNotFound(instance);
 
     const all = findAppearances(artist.id);
     const t = todayStr();
 
+    // 의도적으로 DOC-0007 문서 그대로가 아니다. 문서는 upcoming=performanceDate 기준,
+    // past=festival.endDate 기준으로 서로 다른 필드를 쓰는데, 그렇게 하면 "축제는 진행 중인데
+    // 이 아티스트 공연일만 지난" 경우가 upcoming도 past도 아니게 돼 출연 기록이 통째로
+    // 사라진다(예: 3일짜리 축제 첫날 공연한 아티스트, 오늘이 둘째 날). 여기서는 upcoming/past
+    // 둘 다 performanceDate 기준으로 배타적으로 나눠서 이 구멍을 없앴다.
+    // 백엔드가 문서 그대로 구현했다면 실제 API도 같은 구멍을 가질 수 있다 — 백엔드 개발자
+    // 검토 후 실제 동작이 다르다고 확인되면 이 필터를 그에 맞게 다시 바꿀 것.
     const upcoming = all
       .filter((a) => a.performanceDate >= t)
       .sort((a, b) => a.performanceDate.localeCompare(b.performanceDate));
