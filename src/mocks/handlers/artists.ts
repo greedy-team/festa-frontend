@@ -1,33 +1,14 @@
 import { http, HttpResponse } from 'msw';
-import { artistsDb, festivalsDb, hostsDb } from '../fixtures/db';
-import { paginate, parsePageParams } from '../fixtures/pagination';
-import { Errors } from '../fixtures/errors';
+import { artistsDb, hostsDb } from '@/mocks/fixtures/db';
+import { paginate, parsePageParams } from '@/mocks/fixtures/pagination';
+import { Errors } from '@/mocks/fixtures/errors';
+import { todayStr, daysUntil } from '@/mocks/fixtures/date';
+import { findAppearances } from '@/mocks/fixtures/appearances';
 
 const VALID_GENRE = ['HIPHOP', 'BALLAD_RNB', 'BAND', 'DANCE'];
 const VALID_SORT = ['APPEARANCES', 'RECENT', 'NAME'];
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr/api';
-
-const today = () => new Date();
-
-/** performanceDate = festival.startDate + (lineup.day - 1) — 명세 1.5 날짜 계산 기준 그대로 */
-function performanceDate(startDate: string, day: number) {
-  const d = new Date(startDate);
-  d.setDate(d.getDate() + (day - 1));
-  return d.toISOString().slice(0, 10);
-}
-
-function findAppearances(artistId: number) {
-  const rows: { festival: (typeof festivalsDb)[number]; day: number; performanceDate: string }[] = [];
-  for (const f of festivalsDb) {
-    for (const dayEntry of f.lineup) {
-      if (dayEntry.artists.some((a) => a.artistId === artistId && a.revealed)) {
-        rows.push({ festival: f, day: dayEntry.day, performanceDate: performanceDate(f.startDate, dayEntry.day) });
-      }
-    }
-  }
-  return rows;
-}
 
 export const artistsHandlers = [
   // 4.1 GET /artists
@@ -39,13 +20,13 @@ export const artistsHandlers = [
     const q = url.searchParams.get('q');
     const sort = url.searchParams.get('sort') ?? 'APPEARANCES';
 
-    if (page < 0) return Errors.invalidPage(instance);
-    if (size < 1 || size > 50) return Errors.invalidPageSize(instance);
+    if (!Number.isInteger(page) || page < 0) return Errors.invalidPage(instance);
+    if (!Number.isInteger(size) || size < 1 || size > 50) return Errors.invalidPageSize(instance);
     if (genre && !VALID_GENRE.includes(genre)) return Errors.artistInvalidGenreType(instance);
     if (!VALID_SORT.includes(sort)) return Errors.artistInvalidSortType(instance);
 
     let result = artistsDb.map((artist) => {
-      const appearances = findAppearances(artist.id).filter((a) => new Date(a.festival.endDate) < today());
+      const appearances = findAppearances(artist.id).filter((a) => a.festival.endDate < todayStr());
       const mostRecent = appearances.sort((a, b) => b.festival.endDate.localeCompare(a.festival.endDate))[0];
       const host = mostRecent ? hostsDb.find((h) => h.id === mostRecent.festival.hostId) : undefined;
       return {
@@ -84,18 +65,17 @@ export const artistsHandlers = [
     if (!artist) return Errors.artistNotFound(new URL(request.url).pathname);
 
     const all = findAppearances(artist.id);
-    const now = today();
+    const t = todayStr();
 
     const upcoming = all
-      .filter((a) => new Date(a.performanceDate) >= now)
+      .filter((a) => a.performanceDate >= t)
       .sort((a, b) => a.performanceDate.localeCompare(b.performanceDate));
     const past = all
-      .filter((a) => new Date(a.festival.endDate) < now)
+      .filter((a) => a.festival.endDate < t)
       .sort((a, b) => b.festival.startDate.localeCompare(a.festival.startDate));
 
     const toUpcomingItem = (row: (typeof all)[number]) => {
       const host = hostsDb.find((h) => h.id === row.festival.hostId)!;
-      const dday = Math.ceil((new Date(row.performanceDate).getTime() - now.getTime()) / 86_400_000);
       return {
         festivalId: row.festival.id,
         name: row.festival.name,
@@ -104,7 +84,7 @@ export const artistsHandlers = [
         posterUrl: row.festival.posterUrl,
         startDate: row.festival.startDate,
         endDate: row.festival.endDate,
-        dday,
+        dday: daysUntil(row.performanceDate),
         performanceDate: row.performanceDate,
         day: row.day,
       };
