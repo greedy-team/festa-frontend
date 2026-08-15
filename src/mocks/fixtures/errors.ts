@@ -1,26 +1,18 @@
 import { HttpResponse } from 'msw';
 
 /**
- * 확정: 응답 필드명은 `errorCode`. (예시: `{ "errorCode": "FESTIVAL_NOT_FOUND", "message": ..., "status": ..., "instance": ... }`)
+ * 확정: 응답 필드는 네 개(`errorCode`/`message`/`status`/`instance`)뿐이다.
+ * DEC-0041이 필드를 이 네 개로 고정했고, DEC-0042가 `fieldErrors` 배열을 기각했다.
  */
 const ERROR_CODE_FIELD: 'code' | 'errorCode' = 'errorCode';
 
-type FieldError = { field: string; reason: string };
-
-export function apiError(
-  code: string,
-  message: string,
-  status: number,
-  instance: string,
-  fieldErrors: FieldError[] = []
-) {
+export function apiError(code: string, message: string, status: number, instance: string) {
   return HttpResponse.json(
     {
       [ERROR_CODE_FIELD]: code,
       message,
       status,
       instance,
-      fieldErrors,
     },
     { status }
   );
