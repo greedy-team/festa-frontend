@@ -1,9 +1,9 @@
 import { http, HttpResponse } from 'msw';
-import { hostsDb, festivalsDb, artistsDb } from '../fixtures/db';
-import { Errors } from '../fixtures/errors';
+import { hostsDb, festivalsDb, artistsDb } from '@/mocks/fixtures/db';
+import { Errors } from '@/mocks/fixtures/errors';
+import { todayStr, daysUntil } from '@/mocks/fixtures/date';
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr/api';
-const today = () => new Date();
 
 export const hostsHandlers = [
   // 5.1 GET /hosts/{id}
@@ -12,10 +12,10 @@ export const hostsHandlers = [
     if (!host) return Errors.hostNotFound(new URL(request.url).pathname);
 
     const hostFestivals = festivalsDb.filter((f) => f.hostId === host.id);
-    const now = today();
+    const t = todayStr();
 
     const upcomingFestivals = hostFestivals
-      .filter((f) => new Date(f.endDate) >= now)
+      .filter((f) => f.endDate >= t)
       .sort((a, b) => a.startDate.localeCompare(b.startDate))
       .map((f) => ({
         festivalId: f.id,
@@ -23,7 +23,7 @@ export const hostsHandlers = [
         posterUrl: f.posterUrl,
         startDate: f.startDate,
         endDate: f.endDate,
-        dday: Math.ceil((new Date(f.startDate).getTime() - now.getTime()) / 86_400_000),
+        dday: daysUntil(f.startDate),
       }));
 
     const historyAll = hostFestivals
@@ -56,10 +56,9 @@ export const hostsHandlers = [
 
     return HttpResponse.json({
       id: host.id,
-      type: host.type, // 부록 변경사항엔 제거 예정이라고 되어 있으나, 필드표/응답 예시엔 남아있어 현재는 포함. 팀 컨펌 나오면 이 줄만 지우면 됨.
+      type: host.type, // 부록 변경사항엔 제거 예정이라고 되어 있으나, 실제 필드표/응답 예시엔 남아있어서 스펙 원문 기준으로 포함. 팀 컨펌 나오면 이 줄만 지우면 됨.
       name: host.name,
       shortName: host.shortName,
-      subName: null, // 명세: name/subName 통합 예정 — 통합 전까지는 null로 유지
       region: host.region,
       logoUrl: host.logoUrl,
       bannerUrl: host.bannerUrl,
