@@ -17,11 +17,14 @@ export function MockProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function init() {
-      const { worker } = await import('./browser');
+      const { worker } = await import('@/mocks/browser');
       await worker.start({ onUnhandledRequest: 'bypass' });
       setReady(true);
     }
-    init();
+    init().catch((e) => {
+      console.error('[MSW] worker.start() 실패 — 모킹 없이 계속 진행합니다', e);
+      setReady(true);
+    });
   }, []);
 
   if (!ready) return null;
