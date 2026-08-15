@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw';
 import { hostsDb, festivalsDb, artistsDb } from '@/mocks/fixtures/db';
 import { Errors } from '@/mocks/fixtures/errors';
 import { todayStr, daysUntil } from '@/mocks/fixtures/date';
+import { findAppearances } from '@/mocks/fixtures/appearances';
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr/api';
 
@@ -37,14 +38,20 @@ export const hostsHandlers = [
         endDate: f.endDate,
       }));
 
-    // 자주 온 아티스트: 이 host의 축제 라인업에 등장한 횟수를 집계
+    // 자주 온 아티스트: 이 host의 축제 중 이미 종료된 라인업 등장 횟수만 집계
+    // (/artists, /search와 동일하게 past-only 기준으로 맞춰서 appearanceCount가 endpoint마다 다르게 나오지 않게 함)
+    const hostFestivalIds = new Set(hostFestivals.map((f) => f.id));
+    const artistIds = new Set(
+      hostFestivals
+        .flatMap((f) => f.lineup.flatMap((day) => day.artists.map((a) => a.artistId)))
+        .filter((id): id is number => id != null)
+    );
     const appearanceCount = new Map<number, number>();
-    for (const f of hostFestivals) {
-      for (const day of f.lineup) {
-        for (const a of day.artists) {
-          if (a.artistId != null) appearanceCount.set(a.artistId, (appearanceCount.get(a.artistId) ?? 0) + 1);
-        }
-      }
+    for (const artistId of artistIds) {
+      const count = findAppearances(artistId).filter(
+        (row) => hostFestivalIds.has(row.festival.id) && row.festival.endDate < t
+      ).length;
+      if (count > 0) appearanceCount.set(artistId, count);
     }
     const frequentArtists = [...appearanceCount.entries()]
       .sort((a, b) => b[1] - a[1])

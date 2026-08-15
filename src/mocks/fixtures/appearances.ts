@@ -1,4 +1,4 @@
-import { festivalsDb } from './db';
+import { festivalsDb } from '@/mocks/fixtures/db';
 
 /** performanceDate = festival.startDate + (lineup.day - 1) — 명세 1.5 날짜 계산 기준 그대로 */
 export function performanceDate(startDate: string, day: number) {

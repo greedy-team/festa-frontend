@@ -7,6 +7,9 @@ src/mocks/
   fixtures/
     db.ts          # 단일 진실 소스 — host/artist/festival 원본 데이터. 여기만 고치면 전체 응답이 같이 갱신됨
     pagination.ts  # 공통 페이지네이션 헬퍼
+    errors.ts       # 공통 에러 응답 생성
+    date.ts          # today/dday/festivalStatus 단일 기준
+    appearances.ts    # findAppearances — artists.ts·search.ts 공유
   handlers/
     festivals.ts   # 3.1~3.5 (5개) — {id}/notices는 2026-08-09 회의 결정으로 범위 제외(DOC-0007)
     artists.ts     # 4.1~4.2 (2개)

@@ -113,7 +113,7 @@ Next.js는 `instrumentation.ts` 파일에 `register()` 함수가 있으면 **서
 ```ts
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
-    const { server } = await import('./mocks/server');
+    const { server } = await import('@/mocks/server');
     server.listen({ onUnhandledRequest: 'bypass' });
   }
 }
@@ -128,11 +128,14 @@ export async function register() {
 ```tsx
 useEffect(() => {
   async function init() {
-    const { worker } = await import('./browser');
+    const { worker } = await import('@/mocks/browser');
     await worker.start({ onUnhandledRequest: 'bypass' });
     setReady(true);
   }
-  init();
+  init().catch((e) => {
+    console.error('[MSW] worker.start() 실패 — 모킹 없이 계속 진행합니다', e);
+    setReady(true); // worker.start()가 실패해도 화면은 그려야 하므로 ready 처리
+  });
 }, []);
 
 if (!ready) return null; // 워커 켜지기 전까진 아무것도 안 그림

@@ -71,7 +71,7 @@ export const artistsHandlers = [
       .filter((a) => a.performanceDate >= t)
       .sort((a, b) => a.performanceDate.localeCompare(b.performanceDate));
     const past = all
-      .filter((a) => a.festival.endDate < t)
+      .filter((a) => a.performanceDate < t)
       .sort((a, b) => b.festival.startDate.localeCompare(a.festival.startDate));
 
     const toUpcomingItem = (row: (typeof all)[number]) => {
