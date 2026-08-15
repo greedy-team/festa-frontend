@@ -1,6 +1,8 @@
 import { http, HttpResponse } from 'msw';
-import { festivalsDb, artistsDb, hostsDb } from '../fixtures/db';
-import { Errors } from '../fixtures/errors';
+import { festivalsDb, artistsDb, hostsDb } from '@/mocks/fixtures/db';
+import { Errors } from '@/mocks/fixtures/errors';
+import { findAppearances } from '@/mocks/fixtures/appearances';
+import { todayStr } from '@/mocks/fixtures/date';
 
 const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr/api';
 const VALID_TYPE = ['ALL', 'ARTIST', 'HOST', 'FESTIVAL'];
@@ -17,10 +19,27 @@ function toFestivalResult(f: (typeof festivalsDb)[number]) {
   };
 }
 function toArtistResult(a: (typeof artistsDb)[number]) {
-  return { artistId: a.id, name: a.name, avatarUrl: a.portraitUrl, appearanceCount: 0, latestAppearanceDate: null };
+  const appearances = findAppearances(a.id).filter((row) => row.festival.endDate < todayStr());
+  const latest = appearances.slice().sort((x, y) => y.festival.endDate.localeCompare(x.festival.endDate))[0];
+  return {
+    artistId: a.id,
+    name: a.name,
+    avatarUrl: a.portraitUrl,
+    appearanceCount: appearances.length,
+    latestAppearanceDate: latest ? latest.festival.endDate : null,
+  };
 }
 function toHostResult(h: (typeof hostsDb)[number]) {
-  return { id: h.id, name: h.name, logoUrl: h.logoUrl, hostType: h.type, festivalCount: 0, latestFestivalYearMonth: null };
+  const hostFestivals = festivalsDb.filter((f) => f.hostId === h.id);
+  const latest = hostFestivals.slice().sort((x, y) => y.startDate.localeCompare(x.startDate))[0];
+  return {
+    id: h.id,
+    name: h.name,
+    logoUrl: h.logoUrl,
+    hostType: h.type,
+    festivalCount: hostFestivals.length,
+    latestFestivalYearMonth: latest ? latest.startDate.slice(0, 7) : null,
+  };
 }
 
 function matches(name: string, otherNames: string[] | undefined, q: string) {
@@ -70,7 +89,7 @@ export const searchHandlers = [
     const limit = Number(url.searchParams.get('limit') ?? '5');
 
     if (!q || q.trim().length < 1) return Errors.searchInvalidQuery(instance);
-    if (limit < 1 || limit > 10) return Errors.searchInvalidLimit(instance);
+    if (!Number.isInteger(limit) || limit < 1 || limit > 10) return Errors.searchInvalidLimit(instance);
 
     const host = hostsDb.find((h) => matches(h.name, [h.shortName], q));
     const artist = !host ? artistsDb.find((a) => matches(a.name, a.otherNames, q)) : undefined;
