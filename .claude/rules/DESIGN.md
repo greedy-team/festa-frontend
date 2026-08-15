@@ -637,7 +637,7 @@ FESTA는 **전국 대학 축제·페스티벌 라인업 아카이브** 서비스
 
 **`ad-slot`** (680×420, x680, y1580) — `{colors.surface-field}` 채움 + **1px `{colors.border-strong}`** + r20. 정보 카드보다 한 단계 진한 테두리로 "콘텐츠가 아니다"를 표시한다.
 - 좌상단 `{component.ad-badge}` `32×20` r4 `{colors.muted-soft}` + `AD` 10/600 흰색, 20px 인셋.
-- 중앙에 플레이스홀더 `광고 배너 영역  ·  680 × 420` 15/500 `{colors.muted-soft}`, y1780.
+- 중앙에 플레이스홀더 `광고 배너 영역  ·  680 × 420` `{typography.button-sm}` 15/600 `{colors.muted-soft}`, y1780.
 
 ## Colors
 
@@ -843,7 +843,7 @@ FESTA는 **전국 대학 축제·페스티벌 라인업 아카이브** 서비스
 
 **`lost-panel`** (560×420) — 흰 패널 + border + r20, 패딩 32. 제목 20/700 + 우측 `전체 보기 →` 13/500 `{colors.muted}`. 번호 리스트 10행, 행 간격 32, 번호 거터 48.
 
-**`ad-slot`** (680×420) — `{colors.surface-field}` + 1px `{colors.border-strong}` + r20. `{component.ad-badge}` 좌상단 20 인셋, 중앙 플레이스홀더 15/500 `{colors.muted-soft}`.
+**`ad-slot`** (680×420) — `{colors.surface-field}` + 1px `{colors.border-strong}` + r20. `{component.ad-badge}` 좌상단 20 인셋, 중앙 플레이스홀더 `{typography.button-sm}` 15/600 `{colors.muted-soft}`.
 
 **`ad-badge`** — `32×20` r4 `{colors.muted-soft}` + `AD` `{typography.micro}` 10/600 흰색.
 
@@ -853,7 +853,7 @@ FESTA는 **전국 대학 축제·페스티벌 라인업 아카이브** 서비스
 
 **`button-secondary`** — 200×52, 흰 배경 + border, **텍스트 인디고** 16/600, r12.
 
-**`button-reset`** — 120×52, secondary 형태 + `{colors.muted}` 500 텍스트.
+**`button-reset`** — 120×52, secondary 형태 + `{colors.muted}` `{typography.button}` 16/600 텍스트.
 
 **`button-sheet-primary` / `-secondary`** — 높이 44, 15/600. primary 인디고 채움 / secondary 흰 배경 + border + ink.
 
@@ -861,7 +861,7 @@ FESTA는 **전국 대학 축제·페스티벌 라인업 아카이브** 서비스
 
 **`filter-chip`** — h36 pill, 패딩 0 20. 비활성 흰 배경 + border + `{colors.muted}` 14/500 / 활성 인디고 채움 + 흰 텍스트.
 
-**`inline-filter`** — 104×36, r10 (이 컴포넌트만 10), 13/500 `{colors.ink}` + `˅`.
+**`inline-filter`** — 104×36, r10 (이 컴포넌트만 10), `{typography.meta}` 13/400 `{colors.ink}` + `˅`.
 
 **`search-pill`** — 상세/검색 화면 320×36 `{colors.surface-field}` pill. **nav 안에서는 `{component.nav-search}` 280×40** 을 쓴다.
 
@@ -871,7 +871,7 @@ FESTA는 **전국 대학 축제·페스티벌 라인업 아카이브** 서비스
 
 **`badge-dday`** — h28 pill, `{colors.primary-soft}` + `{colors.primary}` 13/700. **홈 히어로에서는 쓰지 않는다** (타이포로 대체). 목록·상세·검색 화면 전용.
 
-**`badge-dday-on-media`** — rgba(255,255,255,0.20) + 1px 흰 테두리 + 흰 14/700. `{component.upcoming-host-card}` 등 상세 화면 포스터용.
+**`badge-dday-on-media`** — rgba(255,255,255,0.20) + 1px 흰 테두리 + 흰 `{typography.caption}` 14/400. `{component.upcoming-host-card}` 등 상세 화면 포스터용.
 
 **`badge-status`** — h28, `{colors.success-soft}` + `{colors.success-ink}` 12/500. 포스터 위에서는 6×6 `{colors.success}` 도트 + 흰 12/500 로 축약.
 
@@ -968,6 +968,11 @@ FESTA는 **전국 대학 축제·페스티벌 라인업 아카이브** 서비스
 ## Iteration Guide
 
 1. 컴포넌트 하나씩 다룬다. YAML 키를 직접 참조한다 (`{component.hero-panel}`, `{component.recent-card}`).
+   **산문의 수치와 상단 YAML이 어긋나면 YAML이 정본이다.** 산문은 읽기 쉬우라고 풀어 쓴
+   것이고, 구현이 참조하는 단일 출처는 `components:` 블록의 토큰 키다. 산문에 수치를 적을
+   때는 토큰 키를 함께 적어 어긋남이 눈에 띄게 한다 (예: `{typography.caption}` 14/400).
+   실제로 2026-08-15에 네 곳(`ad-slot`·`button-reset`·`inline-filter`·`badge-dday-on-media`)이
+   굵기에서 갈려 있었고, 전부 YAML 기준으로 산문을 고쳤다.
 2. 새 컴포넌트의 기본 radius는 `{rounded.card}` (20). 그리드 미디어면 18, 풀블리드 미디어면 0, 필터/상태/컨트롤이면 pill.
 3. 히어로에 무언가를 추가할 때는 먼저 물어본다 — "이게 흰색 + 불투명도로 표현되는가?" 아니면 히어로 밖에 놓는다.
 4. 변형(`-active`, `-on-media`)은 `components:` 블록에 별도 항목으로 둔다.
