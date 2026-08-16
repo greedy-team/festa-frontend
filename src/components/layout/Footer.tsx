@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "./Container";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
 type FooterItem = { label: string; href: string | null };
 
@@ -30,18 +31,18 @@ const COLUMNS: { heading: string; items: FooterItem[] }[] = [
 ];
 
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
     // 높이를 고정하지 않는다. 열이 접히면 그만큼 늘어난다.
     // 시안의 208은 1440에서 한 줄로 늘어섰을 때의 결과값이다.
     <footer className="shrink-0 border-t border-border bg-surface">
       <Container className="flex flex-wrap gap-x-12 gap-y-8 py-10">
         <div className="flex min-w-[240px] flex-col">
-          <span className="text-logo-footer text-ink">FESTA</span>
-          <span className="mt-4 text-meta text-muted">
-            전국 대학 축제·페스티벌 라인업 아카이브
-          </span>
+          <span className="text-logo-footer text-ink">{SITE_NAME}</span>
+          <span className="mt-4 text-meta text-muted">{SITE_DESCRIPTION}</span>
           <span className="mt-2 text-label-regular text-muted-soft">
-            © 2026 FESTA
+            © {currentYear} {SITE_NAME}
           </span>
         </div>
 

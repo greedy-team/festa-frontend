@@ -3,10 +3,11 @@ import { MockProvider } from "@/mocks/MockProvider";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "FESTA",
-  description: "전국 대학 축제·페스티벌 라인업 아카이브",
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
 };
 
 export default function RootLayout({

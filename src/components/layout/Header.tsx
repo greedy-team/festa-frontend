@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Bell, Bookmark } from "lucide-react";
 import { Container } from "./Container";
 import { SearchPill } from "@/components/ui/SearchPill";
+import { SITE_NAME } from "@/lib/site";
 
 const MENU = [
   { label: "홈", href: "/" },
@@ -22,7 +23,7 @@ export function Header() {
           시안의 로고→첫 메뉴 거리는 그 프레임에서의 한 사례일 뿐이다. */}
       <Container className="flex h-full items-center gap-4 sm:gap-8 lg:gap-16">
         <Link href="/" className="shrink-0 text-logo text-ink">
-          FESTA
+          {SITE_NAME}
         </Link>
 
         <nav className="flex min-w-0 items-center gap-3 sm:gap-6 lg:gap-10">
@@ -60,7 +61,7 @@ export function Header() {
               display 클래스는 래퍼에 건다 — SearchPill 기본 클래스의 inline-flex와
               충돌해서 className으로 넘긴 hidden이 밀린다. */}
           <span className="hidden lg:block">
-            <SearchPill size="nav" />
+            <SearchPill variant="nav" />
           </span>
           {/* 알림·북마크·프로필은 로그인을 전제한다. MVP에 로그인이 없어
               링크가 아니라 표시 전용이다 (스펙 2.3). */}

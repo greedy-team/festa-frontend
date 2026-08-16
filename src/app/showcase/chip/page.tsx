@@ -32,11 +32,11 @@ export default function ShowcaseChipPage() {
       <h2 className="mt-16 text-row-title text-ink">SearchPill</h2>
       <div className="mt-6 flex w-full flex-col gap-6">
         <div>
-          <SearchPill size="md" placeholder="축제·아티스트 검색" />
-          <p className="mt-2 text-label text-muted">md · 320×36 · 13/400</p>
+          <SearchPill placeholder="축제·아티스트 검색" />
+          <p className="mt-2 text-label text-muted">default · 320×36 · 13/400</p>
         </div>
         <div>
-          <SearchPill size="nav" placeholder="검색" />
+          <SearchPill variant="nav" placeholder="검색" />
           <p className="mt-2 text-label text-muted">nav · 280×40 · 14/400</p>
         </div>
       </div>

@@ -6,7 +6,7 @@ export default function ShowcaseButtonPage() {
     <Container className="py-16">
       <h1 className="text-section-title text-ink">Button</h1>
       <p className="mt-3 text-caption text-muted">
-        색 3 × 크기 3. 폭은 컴포넌트가 아니라 사용처가 정한다.
+        DESIGN.md에 정의된 버튼 5종. 폭은 컴포넌트가 아니라 사용처가 정한다.
       </p>
 
       <h2 className="mt-16 text-row-title text-ink">시안 실측 조합</h2>
@@ -24,28 +24,16 @@ export default function ShowcaseButtonPage() {
 
       <h2 className="mt-16 text-row-title text-ink">시트 버튼 (높이 44)</h2>
       <div className="mt-6 flex flex-wrap items-center gap-6">
-        <Button variant="primary" size="sheet" className="w-full max-w-[584px]">
+        <Button variant="primary" size="sm" className="w-full max-w-[584px]">
           상세 정보 보기 →
         </Button>
-        <Button variant="secondary" size="sheet" className="w-full max-w-[536px]">
+        <Button
+          variant="secondary-ink"
+          size="sm"
+          className="w-full max-w-[536px]"
+        >
           공유하기 (시트 secondary는 글자색이 ink다)
         </Button>
-      </div>
-
-      <h2 className="mt-16 text-row-title text-ink">전 조합</h2>
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {(["primary", "secondary", "reset"] as const).map((variant) =>
-          (["md", "lg", "sheet"] as const).map((size) => (
-            <div key={`${variant}-${size}`}>
-              <Button variant={variant} size={size} className="w-full">
-                {variant} / {size}
-              </Button>
-              <p className="mt-2 text-label text-muted">
-                {variant} · {size}
-              </p>
-            </div>
-          )),
-        )}
       </div>
     </Container>
   );

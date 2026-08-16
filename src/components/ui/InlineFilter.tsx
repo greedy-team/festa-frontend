@@ -1,3 +1,5 @@
+import { ChevronDown } from "lucide-react";
+
 type Props = {
   label: string;
   className?: string;
@@ -13,7 +15,7 @@ export function InlineFilter({ label, className = "" }: Props) {
       className={`inline-flex h-[36px] min-w-[104px] items-center justify-between gap-2 rounded-sm border border-border bg-surface px-3 text-ink text-meta ${className}`}
     >
       <span className="truncate">{label}</span>
-      <span aria-hidden>˅</span>
+      <ChevronDown size={16} className="shrink-0" aria-hidden />
     </div>
   );
 }
