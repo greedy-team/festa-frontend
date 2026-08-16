@@ -10,6 +10,8 @@ const SECTIONS = [
   { label: "Button", href: "/showcase/button" },
   { label: "Badge", href: "/showcase/badge" },
   { label: "Chip", href: "/showcase/chip" },
+  { label: "Hero", href: "/showcase/hero" },
+  { label: "Card", href: "/showcase/card" },
 ] as const;
 
 export default function ShowcaseLayout({
