@@ -21,7 +21,7 @@ export default async function Home() {
       <Hero festivals={upcoming} />
 
       <Container className="mt-16">
-        {/* /festivals 목록 화면이 아직 없다. 히어로의 "자세히 보기"(#41)와 달리 클릭
+        {/* /festivals 목록 화면이 아직 없다. 히어로의 "자세히 보기"(#42)와 달리 클릭
             인터랙션 결정이 필요한 건 아니고 페이지 자체가 안 만들어진 것뿐이라, 생기면
             바로 이 href만 바꾸면 된다. */}
         <SectionHeaderRow title="최근 등록된 축제" href="/" />
