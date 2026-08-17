@@ -25,6 +25,9 @@ vercel env pull .env.local
 같은 규칙을 두 곳에 적지 않기 — 다섯 가지이며, 각각 이 프로젝트에서 실제로 터진 사례가
 근거로 붙어 있습니다.
 
+같은 파일 뒤쪽의 **코드 규약**은 이 스택에서의 표기 규칙입니다 — 치수는 리터럴로·색과
+타이포는 토큰으로 / 조건부 렌더는 삼중연산자로 / CSS Module을 기본으로 쓰지 않기.
+
 ## 지침 파일 지도
 
 **내용은 전부 `.claude/` 아래에 둡니다. 다른 도구는 그것을 읽습니다.**
@@ -33,7 +36,7 @@ vercel env pull .env.local
 | 파일 | 담는 것 | Claude Code | Codex |
 | --- | --- | --- | --- |
 | `AGENTS.md` | 프로젝트 사실·제약 (이 파일) | `CLAUDE.md`가 import | 세션 시작 시 자동 |
-| `.claude/rules/coding-principles.md` | 작업 원칙 | `CLAUDE.md`가 import | **이 파일의 링크를 따라 읽으세요** |
+| `.claude/rules/coding-principles.md` | 작업 원칙 · 코드 규약 | `CLAUDE.md`가 import | **이 파일의 링크를 따라 읽으세요** |
 | `TEAM-CONVENTIONS.md` | 이슈·브랜치·커밋·PR 규칙 | 필요 시 | 필요 시 |
 | `.claude/commands/*.md` | 커맨드 워크플로우 | 슬래시 커맨드 | `.agents/skills/`가 가리킴 |
 

@@ -1,26 +1,193 @@
 @import "tailwindcss";
+@import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@theme {
+  /* 기본 팔레트를 지우고 DESIGN.md 값만 남긴다.
+     DESIGN.md Don'ts("새 radius 값을 임의로 만들지 않는다", "hex 인라인 금지")를
+     문서 규칙이 아니라 기계 제약으로 만든다. */
+  --color-*: initial;
+  --radius-*: initial;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* --- 재등록이 필요한 기본값 --- */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-inherit: inherit;
+  --color-white: #ffffff;
+  --color-black: #000000;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  /* --- Brand --- */
+  --color-primary: #4f46e5;
+  --color-primary-soft: #eef2ff;
+  --color-secondary: #7c6cff;
+  --color-accent: #ff79c8;
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* --- Surface --- */
+  --color-canvas: #fafbff;
+  --color-surface: #ffffff;
+  --color-surface-field: #f3f4f6;
+  --color-media-placeholder: #111827;
+
+  /* --- Line --- */
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+  --color-divider: #ececec;
+
+  /* --- Text --- */
+  --color-ink: #111827;
+  --color-body-text: #4b5563;   /* DESIGN.md colors.body — text-body 충돌 회피 */
+  --color-body-strong: #374151;
+  --color-muted: #6b7280;
+  --color-muted-soft: #9ca3af;
+  --color-on-primary: #ffffff;
+  --color-on-media: #ffffff;
+
+  /* --- Semantic --- */
+  --color-success: #22c55e;
+  --color-success-soft: #dcfce7;
+  --color-success-ink: #166534;
+
+  /* --- Scrim --- */
+  --color-scrim-hero: rgba(0, 0, 0, 0.55);
+  --color-scrim-25: rgba(17, 24, 39, 0.25);
+  --color-scrim-30: rgba(17, 24, 39, 0.30);
+  --color-scrim-35: rgba(17, 24, 39, 0.35);
+
+  /* --- Poster Tints (이미지 대역 플레이스홀더. 브랜드 색이 아니다) --- */
+  --color-hero-1: #1e3a5f;
+  --color-hero-2: #3b1f2e;
+  --color-hero-3: #1f3a2e;
+  --color-hero-4: #2a2340;
+  --color-grid-1: #2f4f6e;
+  --color-grid-2: #3a1f6b;
+  --color-grid-3: #3e5f52;
+  --color-grid-4: #6b2b3a;
+  --color-grid-5: #374151;
+
+  /* --- Font --- */
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, "Apple SD Gothic Neo", system-ui, sans-serif;
+
+  /* --- Typography ---
+     line-height 전 스케일 1.21 고정, letter-spacing 전부 0 (DESIGN.md Principles) */
+  --text-hero-dday: 56px;
+  --text-hero-dday--line-height: 1.21;
+  --text-hero-dday--font-weight: 700;
+
+  --text-hero: 48px;
+  --text-hero--line-height: 1.21;
+  --text-hero--font-weight: 700;
+
+  --text-section-title: 36px;
+  --text-section-title--line-height: 1.21;
+  --text-section-title--font-weight: 700;
+
+  --text-hero-name: 30px;
+  --text-hero-name--line-height: 1.21;
+  --text-hero-name--font-weight: 700;
+
+  --text-card-title: 28px;
+  --text-card-title--line-height: 1.21;
+  --text-card-title--font-weight: 700;
+
+  --text-section-title-home: 26px;
+  --text-section-title-home--line-height: 1.21;
+  --text-section-title-home--font-weight: 700;
+
+  --text-sheet-title: 26px;
+  --text-sheet-title--line-height: 1.21;
+  --text-sheet-title--font-weight: 700;
+
+  --text-logo: 26px;
+  --text-logo--line-height: 1.21;
+  --text-logo--font-weight: 700;
+
+  --text-logo-footer: 22px;
+  --text-logo-footer--line-height: 1.21;
+  --text-logo-footer--font-weight: 700;
+
+  --text-subtitle: 20px;
+  --text-subtitle--line-height: 1.21;
+  --text-subtitle--font-weight: 600;
+
+  --text-row-title: 20px;
+  --text-row-title--line-height: 1.21;
+  --text-row-title--font-weight: 700;
+
+  --text-block-title: 18px;
+  --text-block-title--line-height: 1.21;
+  --text-block-title--font-weight: 700;
+
+  --text-entity-name: 17px;
+  --text-entity-name--line-height: 1.21;
+  --text-entity-name--font-weight: 700;
+
+  --text-body: 16px;
+  --text-body--line-height: 1.21;
+  --text-body--font-weight: 500;
+
+  --text-nav-active: 16px;
+  --text-nav-active--line-height: 1.21;
+  --text-nav-active--font-weight: 600;
+
+  --text-button: 16px;
+  --text-button--line-height: 1.21;
+  --text-button--font-weight: 600;
+
+  --text-button-sm: 15px;
+  --text-button-sm--line-height: 1.21;
+  --text-button-sm--font-weight: 600;
+
+  --text-caption: 14px;
+  --text-caption--line-height: 1.21;
+  --text-caption--font-weight: 400;
+
+  --text-caption-strong: 14px;
+  --text-caption-strong--line-height: 1.21;
+  --text-caption-strong--font-weight: 500;
+
+  --text-meta: 13px;
+  --text-meta--line-height: 1.21;
+  --text-meta--font-weight: 400;
+
+  --text-meta-medium: 13px;
+  --text-meta-medium--line-height: 1.21;
+  --text-meta-medium--font-weight: 500;
+
+  --text-meta-strong: 13px;
+  --text-meta-strong--line-height: 1.21;
+  --text-meta-strong--font-weight: 700;
+
+  --text-nav-icon-label: 13px;
+  --text-nav-icon-label--line-height: 1.21;
+  --text-nav-icon-label--font-weight: 600;
+
+  --text-label: 12px;
+  --text-label--line-height: 1.21;
+  --text-label--font-weight: 500;
+
+  --text-label-regular: 12px;
+  --text-label-regular--line-height: 1.21;
+  --text-label-regular--font-weight: 400;
+
+  --text-micro: 10px;
+  --text-micro--line-height: 1.21;
+  --text-micro--font-weight: 600;
+
+  /* --- Radius. radius가 역할을 말한다 (DESIGN.md Shapes) --- */
+  --radius-none: 0px;
+  --radius-pause: 2px;
+  --radius-xs: 4px;
+  --radius-social: 6px;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-cta-icon: 14px;
+  --radius-row: 16px;
+  --radius-media: 18px;
+  --radius-card: 20px;
+  --radius-sheet: 24px;
+  --radius-pill: 999px;
+
+  /* --- Elevation. outline과 shadow는 배타적으로 쓴다 --- */
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
 }

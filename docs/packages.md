@@ -7,7 +7,8 @@
 
 1. 화면을 만들 때 필요한 패키지만 설치한다.
 2. 브라우저·React·CSS 표준 기능으로 해결되면 패키지를 추가하지 않는다.
-3. UI 컴포넌트는 직접 조립하지 않고 shadcn/ui에서 필요한 것만 가져온다.
+3. UI 컴포넌트는 먼저 직접 만든다. Radix가 실제로 필요한 것(다이얼로그·드롭다운·
+   셀렉트 등 접근성과 포커스 관리가 얽히는 것)이 나오면 그때 shadcn/ui에서 가져온다.
 4. 설치 후 `package.json`과 `pnpm-lock.yaml`을 함께 커밋한다.
 
 ## 도입 기준
@@ -39,6 +40,11 @@ pnpm add -D @tanstack/react-query-devtools
 ```
 
 ## shadcn/ui
+
+> 2026-08-15 현재 아직 도입하지 않았다. `shadcn init`이 `globals.css`에 자기 토큰
+> (`--background`·`--primary`·oklch 팔레트)을 심어 `.claude/rules/DESIGN.md` 토큰
+> 레이어와 이중화되기 때문이다. 바텀시트·드롭다운이 나올 때 도입한다.
+> 근거: 이슈 #34
 
 shadcn/ui는 패키지를 사용하는 대신 컴포넌트 코드를 `components/ui/`에 복사한다.
 초기 설정은 한 번만 하고, 이후 필요한 컴포넌트만 추가한다.

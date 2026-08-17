@@ -14,6 +14,16 @@ pnpm dev
 bun dev
 ```
 
+목 데이터로 화면을 보려면 `.env.local`에 아래 두 줄이 필요합니다. 모킹 플래그는
+로컬 전용이라 Vercel에 등록하지 않으므로 각자 만듭니다.
+
+```bash
+NEXT_PUBLIC_API_MOCKING=enabled
+NEXT_PUBLIC_API_BASE_URL=https://api.festa.kr
+```
+
+없어도 화면은 뜹니다 — 데이터가 빈 상태로 그려집니다.
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
