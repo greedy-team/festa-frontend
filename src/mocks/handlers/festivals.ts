@@ -156,7 +156,7 @@ export const festivalsHandlers = [
           return {
             id: artist.id,
             name: artist.name,
-            imageUrl: artist.portraitUrl,
+            imageUrl: artist.imageUrl,
             genre: artist.genre,
             order: a.order,
             revealed: true,
@@ -203,7 +203,7 @@ export const festivalsHandlers = [
       lineup: flatLineup.map((a) => {
         if (!a.revealed) return { id: null, name: null, imageUrl: null, revealed: false };
         const artist = artistsDb.find((ar) => ar.id === a.artistId)!;
-        return { id: artist.id, name: artist.name, imageUrl: artist.portraitUrl, revealed: true };
+        return { id: artist.id, name: artist.name, imageUrl: artist.imageUrl, revealed: true };
       }),
       lineupTotal: f.lineup.reduce((sum, d) => sum + d.artists.length, 0),
     });

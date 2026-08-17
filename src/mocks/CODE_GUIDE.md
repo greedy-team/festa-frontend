@@ -74,7 +74,7 @@ http.get(`${API}/festivals/:id`, ({ params, request }) => {
 
 ```ts
 const artist = artistsDb.find((ar) => ar.id === a.artistId)!;
-return { id: artist.id, name: artist.name, imageUrl: artist.portraitUrl, ... };
+return { id: artist.id, name: artist.name, imageUrl: artist.imageUrl, ... };
 ```
 
 SQL의 JOIN과 개념이 동일하다 — 그냥 JS 코드로 직접 짠 것뿐.
