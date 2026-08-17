@@ -2,6 +2,7 @@ import { Container } from "@/components/layout/Container";
 import { Chip } from "@/components/ui/Chip";
 import { InlineFilter } from "@/components/ui/InlineFilter";
 import { SearchPill } from "@/components/ui/SearchPill";
+import { SpecimenSection } from "@/app/showcase/_components/Specimen";
 
 export default function ShowcaseChipPage() {
   return (
@@ -12,40 +13,40 @@ export default function ShowcaseChipPage() {
         inline-filter는 r10이라 모양이 다르다.
       </p>
 
-      <h2 className="mt-16 text-row-title text-ink">Chip — filter (h36)</h2>
-      <div className="mt-6 flex flex-wrap items-center gap-3">
+      <SpecimenSection title="Chip — filter (h36)">
         <Chip variant="filter" active>
           전체
         </Chip>
         <Chip variant="filter">진행 중</Chip>
         <Chip variant="filter">예정</Chip>
         <Chip variant="filter">종료</Chip>
-      </div>
+      </SpecimenSection>
 
-      <h2 className="mt-16 text-row-title text-ink">Chip — sheet (h30)</h2>
-      <div className="mt-6 flex flex-wrap items-center gap-3">
+      <SpecimenSection title="Chip — sheet (h30)">
         <Chip variant="sheet">외부인 입장 가능</Chip>
         <Chip variant="sheet">티켓 필요</Chip>
         <Chip variant="sheet">학생증 확인</Chip>
-      </div>
+      </SpecimenSection>
 
-      <h2 className="mt-16 text-row-title text-ink">SearchPill</h2>
-      <div className="mt-6 flex w-full flex-col gap-6">
-        <div>
-          <SearchPill placeholder="축제·아티스트 검색" />
-          <p className="mt-2 text-label text-muted">default · 320×36 · 13/400</p>
+      <SpecimenSection title="SearchPill">
+        <div className="flex w-full flex-col gap-6">
+          <div>
+            <SearchPill placeholder="축제·아티스트 검색" />
+            <p className="mt-2 text-label text-muted">
+              default · 320×36 · 13/400
+            </p>
+          </div>
+          <div>
+            <SearchPill variant="nav" placeholder="검색" />
+            <p className="mt-2 text-label text-muted">nav · 280×40 · 14/400</p>
+          </div>
         </div>
-        <div>
-          <SearchPill variant="nav" placeholder="검색" />
-          <p className="mt-2 text-label text-muted">nav · 280×40 · 14/400</p>
-        </div>
-      </div>
+      </SpecimenSection>
 
-      <h2 className="mt-16 text-row-title text-ink">InlineFilter</h2>
-      <div className="mt-6 flex flex-wrap items-center gap-3">
+      <SpecimenSection title="InlineFilter">
         <InlineFilter label="최신순" />
         <InlineFilter label="지역" />
-      </div>
+      </SpecimenSection>
     </Container>
   );
 }

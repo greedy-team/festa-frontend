@@ -28,10 +28,10 @@ export function Header() {
 
         <nav className="flex min-w-0 items-center gap-3 sm:gap-6 lg:gap-10">
           {MENU.map((item) => {
+            // 경계를 명시한다. `startsWith(item.href)`만으로는 나중에
+            // `/festivals-archive`가 생겼을 때 "축제"가 같이 켜진다.
             const isActive =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
+              pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return isActive ? (
               <Link

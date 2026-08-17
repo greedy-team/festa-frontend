@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-type Variant = "filter" | "sheet";
-
 const STYLE = {
   // filter-chip 비활성 — h36 pill, 패딩 0 20 (DESIGN.md 명시)
   filter: "h-[36px] px-5 bg-surface border border-border text-muted text-caption-strong",
@@ -11,12 +9,16 @@ const STYLE = {
   sheet: "h-[30px] px-4 bg-surface border border-border text-body-strong text-label-regular",
 } as const;
 
+// sheet에는 활성 상태가 없다 — DESIGN.md의 sheet-chip은 한 가지뿐이다.
+// 타입으로 막지 않으면 <Chip variant="sheet" active>가 에러도 경고도 없이
+// 비활성과 똑같이 그려진다.
 type Props = {
-  variant?: Variant;
-  active?: boolean;
   className?: string;
   children: ReactNode;
-};
+} & (
+  | { variant?: "filter"; active?: boolean }
+  | { variant: "sheet"; active?: never }
+);
 
 export function Chip({
   variant = "filter",
@@ -24,7 +26,7 @@ export function Chip({
   className = "",
   children,
 }: Props) {
-  const key = active && variant === "filter" ? "filter-active" : variant;
+  const key = active ? "filter-active" : variant;
 
   return (
     <span

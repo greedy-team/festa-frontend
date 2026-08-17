@@ -17,7 +17,9 @@ type Props = {
 export function PosterImage({ src, className = "" }: Props) {
   const [failed, setFailed] = useState(false);
 
-  return src !== null && !failed ? (
+  // falsy 검사다. 백엔드가 "포스터 없음"을 null이 아니라 ""로 내려도
+  // <img src="">가 현재 문서를 다시 요청하는 일이 없다.
+  return src && !failed ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
