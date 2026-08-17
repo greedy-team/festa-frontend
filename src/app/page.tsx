@@ -2,7 +2,7 @@ import { getRecentFestivals, getUpcomingFestivals } from "@/features/home/api";
 import { Hero } from "@/features/home/components/Hero";
 import { RecentCard } from "@/features/home/components/RecentCard";
 import { LostPanel } from "@/features/home/components/LostPanel";
-import { AdSlot } from "@/features/home/components/AdSlot";
+import { AdSlot } from "@/components/ui/AdSlot";
 import { Container } from "@/components/layout/Container";
 import { SectionHeaderRow } from "@/components/ui/SectionHeaderRow";
 
