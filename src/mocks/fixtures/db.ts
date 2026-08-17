@@ -26,7 +26,7 @@ export type ArtistRecord = {
   name: string;
   otherNames: string[];
   genre: 'HIPHOP' | 'BALLAD_RNB' | 'BAND' | 'DANCE' | null;
-  portraitUrl: string | null; // DEC-0063: 초상권 문제로 항상 null — 프론트 기본 이미지로 대체
+  imageUrl: string | null; // DEC-0063: 초상권 문제로 항상 null — 프론트 기본 이미지로 대체. DEC-0081/명세 수정 #11: 필드명은 imageUrl로 통일
   instagramUrl: string | null;
 };
 
@@ -186,13 +186,13 @@ export const hostsDb: HostRecord[] = [
 
 // ── artists ─────────────────────────────────────────────
 export const artistsDb: ArtistRecord[] = [
-  { id: 3, name: '청하', otherNames: ['CHUNG HA'], genre: 'DANCE', portraitUrl: null, instagramUrl: 'https://instagram.com/chungha_official' },
-  { id: 4, name: '크러쉬', otherNames: ['Crush'], genre: 'BALLAD_RNB', portraitUrl: null, instagramUrl: 'https://instagram.com/hicrush' },
-  { id: 5, name: '잔나비', otherNames: ['JANNABI'], genre: 'BAND', portraitUrl: null, instagramUrl: 'https://instagram.com/jannabi_official' },
-  { id: 7, name: '아이유', otherNames: ['IU', '이지은'], genre: 'BALLAD_RNB', portraitUrl: null, instagramUrl: null },
-  { id: 9, name: '10CM', otherNames: ['십센치'], genre: 'BAND', portraitUrl: null, instagramUrl: 'https://instagram.com/10cm_official' },
-  { id: 12, name: '싸이', otherNames: ['PSY'], genre: 'HIPHOP', portraitUrl: null, instagramUrl: 'https://instagram.com/42psy42' },
-  { id: 21, name: 'ZICO', otherNames: ['지코'], genre: 'HIPHOP', portraitUrl: null, instagramUrl: 'https://instagram.com/woozico0914' },
+  { id: 3, name: '청하', otherNames: ['CHUNG HA'], genre: 'DANCE', imageUrl: null, instagramUrl: 'https://instagram.com/chungha_official' },
+  { id: 4, name: '크러쉬', otherNames: ['Crush'], genre: 'BALLAD_RNB', imageUrl: null, instagramUrl: 'https://instagram.com/hicrush' },
+  { id: 5, name: '잔나비', otherNames: ['JANNABI'], genre: 'BAND', imageUrl: null, instagramUrl: 'https://instagram.com/jannabi_official' },
+  { id: 7, name: '아이유', otherNames: ['IU', '이지은'], genre: 'BALLAD_RNB', imageUrl: null, instagramUrl: null },
+  { id: 9, name: '10CM', otherNames: ['십센치'], genre: 'BAND', imageUrl: null, instagramUrl: 'https://instagram.com/10cm_official' },
+  { id: 12, name: '싸이', otherNames: ['PSY'], genre: 'HIPHOP', imageUrl: null, instagramUrl: 'https://instagram.com/42psy42' },
+  { id: 21, name: 'ZICO', otherNames: ['지코'], genre: 'HIPHOP', imageUrl: null, instagramUrl: 'https://instagram.com/woozico0914' },
 ];
 
 // ── festivals ───────────────────────────────────────────

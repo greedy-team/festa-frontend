@@ -60,7 +60,7 @@ export const hostsHandlers = [
       .slice(0, 3)
       .map(([artistId, count], i) => {
         const artist = artistsDb.find((a) => a.id === artistId)!;
-        return { rank: i + 1, artistId: artist.id, name: artist.name, photoUrl: artist.portraitUrl, appearanceCount: count };
+        return { rank: i + 1, artistId: artist.id, name: artist.name, imageUrl: artist.imageUrl, appearanceCount: count };
       });
 
     return HttpResponse.json({

@@ -51,7 +51,7 @@ export const artistsHandlers = [
       items: paged.items.map(({ artist, appearanceCount, recentFestival }) => ({
         artistId: artist.id,
         name: artist.name,
-        portraitUrl: artist.portraitUrl,
+        imageUrl: artist.imageUrl,
         genre: artist.genre,
         appearanceCount,
         recentFestival,
@@ -114,7 +114,7 @@ export const artistsHandlers = [
       name: artist.name,
       otherNames: artist.otherNames,
       genre: artist.genre,
-      portraitUrl: artist.portraitUrl,
+      imageUrl: artist.imageUrl,
       instagramUrl: artist.instagramUrl,
       upcomingShows: { items: upcoming.slice(0, 5).map(toUpcomingItem), total: upcoming.length },
       appearances: { items: past.slice(0, 5).map(toAppearanceItem), total: past.length },

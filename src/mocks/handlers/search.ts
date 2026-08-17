@@ -24,7 +24,7 @@ function toArtistResult(a: (typeof artistsDb)[number]) {
   return {
     artistId: a.id,
     name: a.name,
-    avatarUrl: a.portraitUrl,
+    imageUrl: a.imageUrl,
     appearanceCount: appearances.length,
     latestAppearanceDate: latest ? latest.festival.endDate : null,
   };
