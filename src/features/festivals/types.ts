@@ -81,7 +81,8 @@ export type FestivalDetail = {
   host: FestivalHostSummary;
   startDate: string;
   endDate: string;
-  dday: string;
+  /** 서버가 계산한 값(숫자) — 다시 계산하지 않고 포맷만 한다 */
+  dday: number;
   posterUrl: string | null;
   lineup: LineupDay[];
   admission: Admission;

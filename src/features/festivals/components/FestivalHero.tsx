@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Calendar, MapPin, Ticket } from "lucide-react";
 import type { FestivalDetail } from "@/features/festivals/types";
 import { heroTint } from "@/lib/posterTint";
-import { dateRange, dDay, festivalStatus } from "@/lib/festivalDate";
+import { dateRange, formatDday, festivalStatus } from "@/lib/festivalDate";
 import { TICKET_TYPE_LABELS } from "@/lib/admission";
 import { PosterImage } from "@/components/ui/PosterImage";
 import { Badge } from "@/components/ui/Badge";
@@ -12,8 +12,17 @@ type Props = {
 };
 
 export function FestivalHero({ festival }: Props) {
-  const { id, name, host, startDate, endDate, posterUrl, location, admission } =
-    festival;
+  const {
+    id,
+    name,
+    host,
+    startDate,
+    endDate,
+    dday,
+    posterUrl,
+    location,
+    admission,
+  } = festival;
   const status = festivalStatus(startDate, endDate);
 
   return (
@@ -29,7 +38,7 @@ export function FestivalHero({ festival }: Props) {
 
       <div className="relative z-10 flex flex-1 flex-col justify-between gap-6 p-8">
         <div className="flex items-center gap-2">
-          <Badge>{dDay(startDate)}</Badge>
+          <Badge>{formatDday(dday)}</Badge>
           {/* 진행중(success)만 정의된 상태 색이 있다 — 예정·종료는 D-day 텍스트로 충분해 배지를 더 만들지 않는다 */}
           {status === "ONGOING" ? <Badge variant="success">진행중</Badge> : null}
         </div>

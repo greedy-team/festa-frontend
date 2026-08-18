@@ -13,6 +13,12 @@ function todayInSeoul(): string {
   return new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
 }
 
+/** 남은 일수(정수) -> 'D-3' | 'D-DAY' | 'D+5'. 서버가 이미 숫자로 dday를 내려주는
+ * 엔드포인트는 이 값을 다시 계산하지 않고 그대로 포맷만 해서 쓴다. */
+export function formatDday(days: number): string {
+  return days > 0 ? `D-${days}` : days === 0 ? "D-DAY" : `D+${-days}`;
+}
+
 /**
  * 'YYYY-MM-DD' 시작일까지 남은 일수.
  * 두 값 모두 날짜 문자열이라 시각이 섞이지 않는다.
@@ -24,7 +30,7 @@ export function dDay(startDate: string, today = todayInSeoul()): string {
   };
   const days = Math.round((toUtc(startDate) - toUtc(today)) / 86_400_000);
 
-  return days > 0 ? `D-${days}` : days === 0 ? "D-DAY" : `D+${-days}`;
+  return formatDday(days);
 }
 
 /** '2026-05-23' → '2026.05.23' */
