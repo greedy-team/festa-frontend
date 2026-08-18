@@ -22,9 +22,11 @@ export function FestivalHistorySection({ items, total }: Props) {
       </div>
 
       {items.length ? (
-        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-2">
+        // 카드는 그리드 칸을 꽉 채우지 않는다 — 고유 폭(236px)이 있는 카드라
+        // grid-cols로 늘리면 세로 비율이 깨진다 (coding-principles 카드/패널 폭 규칙).
+        <div className="mt-4 flex flex-wrap gap-4">
           {items.map((item) => (
-            <div key={item.festivalId} className="flex flex-col">
+            <div key={item.festivalId} className="flex w-[236px] max-w-full flex-col">
               <div
                 className={`relative aspect-[236/320] w-full overflow-hidden rounded-media ${gridTint(item.festivalId)}`}
               >
