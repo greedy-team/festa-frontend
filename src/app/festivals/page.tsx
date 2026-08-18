@@ -2,11 +2,16 @@ import Link from "next/link";
 import { getFestivals } from "@/features/festivals/api";
 import type { FestivalSort } from "@/features/festivals/types";
 import { FestivalCard } from "@/features/festivals/components/FestivalCard";
-import { SortDropdown } from "@/features/festivals/components/SortDropdown";
 import { Container } from "@/components/layout/Container";
 import { SearchPill } from "@/components/ui/SearchPill";
+import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
+
+const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
+  { value: "LATEST", label: "최신순" },
+  { value: "UPCOMING", label: "다가오는 순" },
+];
 
 const PAGE_SIZE = 10;
 
@@ -75,7 +80,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
 
       <div className="mt-10 flex items-center justify-end gap-3">
         <SearchPill placeholder="학교 또는 축제 이름 검색" />
-        <SortDropdown sort={sort} />
+        <SortDropdown value={sort} options={SORT_OPTIONS} basePath="/festivals" />
       </div>
 
       {data.items.length ? (
