@@ -43,3 +43,25 @@ export function festivalSeason(startDate: string): string {
   const [year, month] = startDate.split("-").map(Number);
   return `${year}년 ${month <= 6 ? "봄" : "가을"}`;
 }
+
+export type FestivalStatus = "UPCOMING" | "ONGOING" | "ENDED";
+
+/** GET /festivals/{id} 응답엔 상태 필드가 없어 날짜로 직접 판정한다 */
+export function festivalStatus(
+  startDate: string,
+  endDate: string,
+  today = todayInSeoul(),
+): FestivalStatus {
+  if (today < startDate) return "UPCOMING";
+  if (today > endDate) return "ENDED";
+  return "ONGOING";
+}
+
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+
+/** '2026-05-30' → '05.30(금)' */
+export function dateWithWeekday(date: string): string {
+  const [y, m, d] = date.split("-").map(Number);
+  const day = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return `${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")}(${WEEKDAYS[day]})`;
+}

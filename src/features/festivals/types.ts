@@ -22,3 +22,68 @@ export type PaginatedFestivals = {
 };
 
 export type FestivalSort = "LATEST" | "UPCOMING";
+
+/** GET /festivals/{id} 응답 중 host 필드 — 목록 카드의 HostSummary와 달리 히어로의
+ * 인스타그램·공식 사이트 링크에 필요한 필드가 추가로 있다 */
+export type FestivalHostSummary = {
+  id: number;
+  type: string;
+  name: string;
+  logoUrl: string | null;
+  instagramUrl: string | null;
+  homepageUrl: string | null;
+};
+
+export type LineupArtist = {
+  /** 미공개(revealed: false)면 null */
+  id: number | null;
+  name: string | null;
+  imageUrl: string | null;
+  genre: string | null;
+  order: number;
+  revealed: boolean;
+};
+
+export type LineupDay = {
+  day: number;
+  date: string;
+  artists: LineupArtist[];
+};
+
+export type ExternalVisitor = "ALLOWED" | "CONDITIONAL" | "DENIED";
+export type Verification =
+  | "NONE"
+  | "STUDENT_ID"
+  | "PRE_BOOKING"
+  | "INVITATION"
+  | "OTHER";
+export type TicketType = "FREE" | "PAID";
+
+export type Admission = {
+  externalVisitor: ExternalVisitor;
+  verification: Verification;
+  ticketType: TicketType;
+  ticketOpenAt: string | null;
+  note: string | null;
+};
+
+export type Location = {
+  venueName: string;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+};
+
+/** GET /festivals/{id} */
+export type FestivalDetail = {
+  id: number;
+  name: string;
+  host: FestivalHostSummary;
+  startDate: string;
+  endDate: string;
+  dday: string;
+  posterUrl: string | null;
+  lineup: LineupDay[];
+  admission: Admission;
+  location: Location;
+};
