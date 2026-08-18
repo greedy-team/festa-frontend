@@ -20,14 +20,18 @@ export default async function ArtistDetailPage({ params }: Props) {
   return (
     <Container className="mt-10 mb-16 flex flex-col gap-10">
       <ArtistHero artist={artist} />
-      <UpcomingShowsSection
-        items={artist.upcomingShows.items}
-        total={artist.upcomingShows.total}
-      />
-      <AppearancesSection
-        items={artist.appearances.items}
-        total={artist.appearances.total}
-      />
+
+      {/* 시안(09-2)은 예정 공연(넓게) / 출연 이력(좁게) 2단 좌우 배치다 */}
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr]">
+        <UpcomingShowsSection
+          items={artist.upcomingShows.items}
+          total={artist.upcomingShows.total}
+        />
+        <AppearancesSection
+          items={artist.appearances.items}
+          total={artist.appearances.total}
+        />
+      </div>
     </Container>
   );
 }

@@ -19,18 +19,16 @@ export function AppearancesSection({ items, total }: Props) {
       </div>
 
       {items.length ? (
-        <div className="mt-4 flex flex-col gap-3">
+        // 시안(09-2)은 테두리 없는 목록이다 — 연도별로 나열하는 게 아니라
+        // 축제명 → 학교 → 기간 3줄을 그냥 쌓는다.
+        <div className="mt-4 flex flex-col gap-4">
           {items.map((appearance) => (
-            <div
-              key={appearance.festivalId}
-              className="flex flex-col gap-1 rounded-row border border-border bg-surface px-6 py-4"
-            >
-              <span className="text-caption-strong text-primary">
-                {appearance.startDate.slice(0, 4)}
-              </span>
+            <div key={appearance.festivalId}>
               <h3 className="text-entity-name text-ink">{appearance.name}</h3>
-              <p className="text-label-regular text-muted">
-                {appearance.hostName} ·{" "}
+              <p className="mt-0.5 text-label-regular text-muted">
+                {appearance.hostName}
+              </p>
+              <p className="text-label-regular text-muted-soft">
                 {dateRange(appearance.startDate, appearance.endDate)}
               </p>
             </div>
