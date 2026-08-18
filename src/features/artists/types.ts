@@ -28,3 +28,42 @@ export type PaginatedArtists = {
 };
 
 export type ArtistSort = "APPEARANCES" | "NAME";
+
+export type UpcomingShow = {
+  festivalId: number;
+  name: string;
+  hostName: string;
+  venueName: string;
+  posterUrl: string | null;
+  startDate: string;
+  endDate: string;
+  /** 서버가 계산한 값(숫자) — 축제 시작일이 아니라 이 아티스트의 공연일 기준이다 */
+  dday: number;
+  performanceDate: string;
+  day: number;
+};
+
+export type Appearance = {
+  festivalId: number;
+  name: string;
+  hostName: string;
+  startDate: string;
+  endDate: string;
+};
+
+/** GET /artists/{id}. imageUrl은 항상 null이라 읽지 않는다 (DEC-0063, #47) */
+export type ArtistDetail = {
+  id: number;
+  name: string;
+  otherNames: string[];
+  genre: ArtistGenre | null;
+  instagramUrl: string | null;
+  upcomingShows: {
+    items: UpcomingShow[];
+    total: number;
+  };
+  appearances: {
+    items: Appearance[];
+    total: number;
+  };
+};

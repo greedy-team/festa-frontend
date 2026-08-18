@@ -3,6 +3,7 @@ import type {
   PaginatedArtists,
   ArtistGenre,
   ArtistSort,
+  ArtistDetail,
 } from "@/features/artists/types";
 
 type Params = {
@@ -28,4 +29,8 @@ export async function getArtists({
   if (genre) params.set("genre", genre);
 
   return fetchJson<PaginatedArtists>(`/artists?${params}`);
+}
+
+export async function getArtist(id: number): Promise<ApiResult<ArtistDetail>> {
+  return fetchJson<ArtistDetail>(`/artists/${id}`);
 }
