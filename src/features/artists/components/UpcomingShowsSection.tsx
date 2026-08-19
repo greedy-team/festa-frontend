@@ -6,8 +6,11 @@ type Props = {
   total: number;
 };
 
-/** 응답이 5건 + 전체 건수만 준다. 전체 목록은 축제 목록 화면(artistId 필터)의 몫이라
- * 페이지네이션은 만들지 않는다. 그 화면이 develop에 아직 없어 "더 보기"는 링크 없이 건수만 둔다 (#47) */
+/**
+ * 응답이 5건 + 전체 건수만 준다. 전체 목록은 축제 목록 화면(artistId 필터)의 몫이라
+ * 페이지네이션은 만들지 않는다. 이슈 #47: "그 화면이 없는 동안 「더 보기」는 링크가
+ * 아닌 요소로 둔다" — 요소 자체는 시안(09-2)대로 하단에 두되 href·onClick 없이 둔다.
+ */
 export function UpcomingShowsSection({ items, total }: Props) {
   return (
     <section>
@@ -21,6 +24,9 @@ export function UpcomingShowsSection({ items, total }: Props) {
           {items.map((show) => (
             <UpcomingShowRow key={`${show.festivalId}-${show.day}`} show={show} />
           ))}
+          <div className="mt-1 flex h-[44px] items-center justify-center rounded-md border border-border text-caption-strong text-muted">
+            전체 예정 공연 보기 →
+          </div>
         </div>
       ) : (
         <p className="mt-4 text-body text-muted">예정된 공연이 없습니다.</p>

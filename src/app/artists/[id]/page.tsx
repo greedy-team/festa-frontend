@@ -24,20 +24,20 @@ export default async function ArtistDetailPage({ params }: Props) {
 
       {/* 시안(09-2)은 예정 공연(넓게) / 출연 이력(좁게) 2단 좌우 배치다 */}
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr]">
-        <div className="flex flex-col gap-10">
-          <UpcomingShowsSection
-            items={artist.upcomingShows.items}
-            total={artist.upcomingShows.total}
-          />
-          {/* DEC-0087: 로그인 없는 개인화 영역은 페이지당 광고 하나로 대체.
-              시안(09-2)은 예정 공연 컬럼 아래에 붙는다 */}
-          <AdSlot variant="banner" />
-        </div>
+        <UpcomingShowsSection
+          items={artist.upcomingShows.items}
+          total={artist.upcomingShows.total}
+        />
         <AppearancesSection
           items={artist.appearances.items}
           total={artist.appearances.total}
         />
       </div>
+
+      {/* DEC-0087: 로그인 없는 개인화 영역은 페이지당 광고 하나로 대체.
+          시안(09-2)은 두 컬럼 전체 폭 아래에 걸쳐 있다 — 예정 공연 컬럼에만
+          좁게 넣었던 걸 바로잡았다 */}
+      <AdSlot variant="banner" />
     </Container>
   );
 }

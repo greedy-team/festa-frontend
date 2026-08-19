@@ -6,10 +6,12 @@ type Props = {
   total: number;
 };
 
-/** 응답이 5건 + 전체 건수만 준다 (예정 공연과 같은 이유로 페이지네이션 없음, #47).
+/**
+ * 응답이 5건 + 전체 건수만 준다 (예정 공연과 같은 이유로 페이지네이션 없음, #47).
  * 시안엔 이 화면 전용의 이름·학교·날짜 3줄 행이 쓰였다 — DESIGN.md의 연도별로 여러 항목을
  * 묶는 past-lineup-row(연도 인디고 + 아티스트 나열)는 이 응답의 1건-1행 구조와 안 맞아
- * 재사용하지 않았다. 목적지가 정해지지 않아 링크는 걸지 않는다. */
+ * 재사용하지 않았다. 이슈 #47: "더 보기"는 요소는 두되 href·onClick 없이 둔다.
+ */
 export function AppearancesSection({ items, total }: Props) {
   return (
     <section>
@@ -33,6 +35,9 @@ export function AppearancesSection({ items, total }: Props) {
               </p>
             </div>
           ))}
+          <div className="mt-1 flex h-[44px] items-center justify-center rounded-md border border-border text-caption-strong text-muted">
+            더 많은 출연 이력 →
+          </div>
         </div>
       ) : (
         <p className="mt-4 text-body text-muted">출연 이력이 없습니다.</p>
