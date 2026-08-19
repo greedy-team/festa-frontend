@@ -1,4 +1,5 @@
 import type { HostSummary } from "@/features/home/types";
+import type { ArtistGenre } from "@/features/artists/types";
 
 /** GET /festivals 목록 항목. RecentFestival과 shape이 같다 (venueName 없음) */
 export type Festival = {
@@ -39,7 +40,7 @@ export type LineupArtist = {
   id: number | null;
   name: string | null;
   imageUrl: string | null;
-  genre: string | null;
+  genre: ArtistGenre | null;
   order: number;
   revealed: boolean;
 };

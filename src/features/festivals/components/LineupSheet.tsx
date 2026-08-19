@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import type { LineupDay } from "@/features/festivals/types";
 import { gridTint } from "@/lib/posterTint";
 import { dateWithWeekday } from "@/lib/festivalDate";
+import { GENRE_LABELS } from "@/lib/artistGenre";
 
 type Props = {
   lineup: LineupDay[];
@@ -94,12 +95,18 @@ export function LineupSheet({ lineup, initialDay, onClose }: Props) {
                       }`}
                     />
                     <span
-                      className={`text-caption-strong ${
+                      className={`flex-1 text-caption-strong ${
                         artist.revealed ? "text-ink" : "text-muted-soft"
                       }`}
                     >
                       {artist.revealed ? artist.name : "공개 예정"}
                     </span>
+                    {/* 미공개 아티스트는 장르도 아직 안 보여준다 — 이름과 마찬가지로 자리만 유지 */}
+                    {artist.revealed && artist.genre ? (
+                      <span className="shrink-0 text-label-regular text-muted-soft">
+                        {GENRE_LABELS[artist.genre]}
+                      </span>
+                    ) : null}
                   </li>
                 ))}
               </ul>
