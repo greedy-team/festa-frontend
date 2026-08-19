@@ -14,24 +14,44 @@ type Props = {
   searchParams: Promise<{ page?: string; sort?: string }>;
 };
 
+/** 1 미만·소수·비숫자를 전부 1로 접는다. `?page=2.5`가 그대로 API로 나가 400이 되는 걸 막는다 */
+function parsePage(raw: string | undefined): number {
+  return Math.max(1, Math.floor(Number(raw ?? "1")) || 1);
+}
+
 export default async function FestivalsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const page = Math.max(1, Number(params.page ?? "1") || 1);
+  const page = parsePage(params.page);
   const sort: FestivalSort = params.sort === "UPCOMING" ? "UPCOMING" : "LATEST";
 
-  const res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort });
-  // 실패해도 throw하지 않는다 — 빈 목록으로 떨어뜨리고 아래에서 "없습니다"로 처리한다.
-  const data = res.ok
-    ? res.data
-    : {
-        items: [],
-        page: page - 1,
-        size: PAGE_SIZE,
-        totalElements: 0,
-        totalPages: 1,
-        hasNext: false,
-        hasPrevious: false,
-      };
+  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort });
+
+  if (!res.ok) {
+    console.error("GET /festivals 실패", res.status, res.message);
+    return (
+      <Container className="mt-10 mb-16">
+        <p className="mt-10 text-body text-muted">축제 목록을 불러오지 못했습니다.</p>
+      </Container>
+    );
+  }
+
+  // 상한 클램프 — ?page=99(총 2페이지)로 들어오면 목록은 비고 캡션·이전 화살표만
+  // 잘못된 페이지를 가리키게 된다. 실제로 존재하는 마지막 페이지로 다시 받는다.
+  let currentPage = page;
+  if (currentPage > res.data.totalPages) {
+    currentPage = res.data.totalPages;
+    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort });
+    if (!res.ok) {
+      console.error("GET /festivals 실패", res.status, res.message);
+      return (
+        <Container className="mt-10 mb-16">
+          <p className="mt-10 text-body text-muted">축제 목록을 불러오지 못했습니다.</p>
+        </Container>
+      );
+    }
+  }
+
+  const data = res.data;
 
   return (
     <Container className="mt-10 mb-16">
@@ -59,7 +79,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
       </div>
 
       {data.items.length ? (
-        <div className="mt-10 grid grid-cols-5 gap-[25px]">
+        <div className="mt-10 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
           {data.items.map((festival) => (
             <FestivalCard key={festival.festivalId} festival={festival} />
           ))}
@@ -71,10 +91,20 @@ export default async function FestivalsPage({ searchParams }: Props) {
       {data.totalPages > 1 ? (
         <Pagination
           className="mt-16"
-          page={page}
+          page={currentPage}
           totalPages={data.totalPages}
           totalElements={data.totalElements}
-          makeHref={(p) => `/festivals?page=${p}&sort=${sort}`}
+          makeHref={(p) => {
+            // page/sort 말고 다른 쿼리(q, artistId 등)가 나중에 붙어도 페이지
+            // 이동 시 사라지지 않도록 현재 쿼리를 먼저 복사한다.
+            const entries = Object.entries(params).filter(
+              (entry): entry is [string, string] => entry[1] != null,
+            );
+            const qs = new URLSearchParams(entries);
+            qs.set("page", String(p));
+            qs.set("sort", sort);
+            return `/festivals?${qs}`;
+          }}
         />
       ) : null}
 

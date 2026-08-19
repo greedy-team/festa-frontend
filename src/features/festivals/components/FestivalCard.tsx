@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Festival } from "@/features/festivals/types";
 import { gridTint } from "@/lib/posterTint";
 import { dateRange } from "@/lib/festivalDate";
@@ -12,8 +11,9 @@ export function FestivalCard({ festival }: Props) {
   const { festivalId, name, startDate, endDate, posterUrl, host } = festival;
 
   return (
-    // 상세 화면(DESIGN.md 08 Festival Detail)이 아직 없어 임시로 홈에 연결한다 (#42).
-    <Link href="/" className="flex flex-col">
+    // 상세 화면(DESIGN.md 08 Festival Detail)이 아직 없다. 목적지가 없으면 링크를
+    // 그리지 않는다 — Footer·SectionHeaderRow와 같은 관례, RecentCard와 동일하게 article로 둔다.
+    <article className="flex flex-col">
       {/* 포스터 비율 236:320 — festival-card 컴포넌트 스펙 (recent-card는 236:300) */}
       <div
         className={`relative aspect-[236/320] w-full overflow-hidden rounded-media ${gridTint(festivalId)}`}
@@ -31,6 +31,6 @@ export function FestivalCard({ festival }: Props) {
       <span className="mt-2 text-label-regular text-muted-soft">
         {dateRange(startDate, endDate)}
       </span>
-    </Link>
+    </article>
   );
 }

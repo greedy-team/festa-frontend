@@ -12,24 +12,43 @@ export default async function Home() {
     getRecentFestivals(),
   ]);
 
-  // 실패해도 throw하지 않는다 — Hero는 빈 배열을 이미 "표시할 축제가 없습니다"로 처리한다.
+  // 실패와 "0건"을 구분한다 — 둘 다 같은 빈 화면으로 뭉개면 API가 죽어도
+  // "정상, 그냥 없음"으로 보인다 (lib/api.ts 독블록). 문구는 고정으로 두고
+  // (DEC-0041: message는 개발자용), 서버 로그에만 원인을 남긴다.
+  if (!upcomingRes.ok) {
+    console.error("GET /festivals/upcoming 실패", upcomingRes.status, upcomingRes.message);
+  }
+  if (!recentRes.ok) {
+    console.error("GET /festivals/recent 실패", recentRes.status, recentRes.message);
+  }
+
   const upcoming = upcomingRes.ok ? upcomingRes.data : [];
   const recent = recentRes.ok ? recentRes.data : [];
 
   return (
     <>
-      <Hero festivals={upcoming} />
+      {upcomingRes.ok ? (
+        <Hero festivals={upcoming} />
+      ) : (
+        <section className="flex h-[560px] items-center justify-center bg-canvas lg:h-[952px]">
+          <p className="text-body text-muted">축제 정보를 불러오지 못했습니다.</p>
+        </section>
+      )}
 
       <Container className="mt-16">
-        {/* /festivals 목록 화면이 아직 없다. 히어로의 "자세히 보기"(#42)와 달리 클릭
-            인터랙션 결정이 필요한 건 아니고 페이지 자체가 안 만들어진 것뿐이라, 생기면
-            바로 이 href만 바꾸면 된다. */}
-        <SectionHeaderRow title="최근 등록된 축제" href="/" />
-        <div className="mt-[52px] grid grid-cols-5 gap-[25px]">
-          {recent.map((festival) => (
-            <RecentCard key={festival.festivalId} festival={festival} />
-          ))}
-        </div>
+        {/* /festivals 목록 화면이 생겼다 (같은 PR의 축제 목록 조립 커밋) */}
+        <SectionHeaderRow title="최근 등록된 축제" href="/festivals" />
+        {recentRes.ok ? (
+          <div className="mt-5 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
+            {recent.map((festival) => (
+              <RecentCard key={festival.festivalId} festival={festival} />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-5 text-body text-muted">
+            최근 등록된 축제를 불러오지 못했습니다.
+          </p>
+        )}
       </Container>
 
       {/* 시안의 560:680 비율을 유지하면서 컨테이너 폭을 꽉 채운다 — 고정폭(560px+680px)으로
