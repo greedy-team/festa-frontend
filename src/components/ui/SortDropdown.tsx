@@ -1,13 +1,12 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 type Option<T extends string> = { value: T; label: string };
 
 type Props<T extends string> = {
   value: T;
   options: Option<T>[];
-  basePath: string;
   className?: string;
 };
 
@@ -19,16 +18,16 @@ type Props<T extends string> = {
 export function SortDropdown<T extends string>({
   value,
   options,
-  basePath,
   className = "",
 }: Props<T>) {
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const preserved = Array.from(searchParams.entries()).filter(
     ([key]) => key !== "sort" && key !== "page",
   );
 
   return (
-    <form method="GET" action={basePath} className={`inline-block ${className}`}>
+    <form method="GET" action={pathname} className={`inline-block ${className}`}>
       {preserved.map(([key, val]) => (
         <input key={key} type="hidden" name={key} value={val} />
       ))}

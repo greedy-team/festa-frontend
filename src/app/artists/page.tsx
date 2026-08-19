@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getArtists } from "@/features/artists/api";
 import type { ArtistGenre, ArtistSort } from "@/features/artists/types";
 import { ArtistCard } from "@/features/artists/components/ArtistCard";
@@ -14,10 +15,10 @@ const PAGE_SIZE = 10;
 
 const GENRE_OPTIONS: { value: ArtistGenre | null; label: string }[] = [
   { value: null, label: "전체" },
-  { value: "HIPHOP", label: GENRE_LABELS.HIPHOP },
-  { value: "BALLAD_RNB", label: GENRE_LABELS.BALLAD_RNB },
-  { value: "BAND", label: GENRE_LABELS.BAND },
-  { value: "DANCE", label: GENRE_LABELS.DANCE },
+  ...(Object.entries(GENRE_LABELS) as [ArtistGenre, string][]).map(([value, label]) => ({
+    value,
+    label,
+  })),
 ];
 
 const SORT_OPTIONS: { value: ArtistSort; label: string }[] = [
@@ -25,9 +26,12 @@ const SORT_OPTIONS: { value: ArtistSort; label: string }[] = [
   { value: "NAME", label: "이름순" },
 ];
 
-const VALID_GENRES = GENRE_OPTIONS.map((o) => o.value).filter(
-  (v): v is ArtistGenre => v !== null,
-);
+const VALID_GENRES = Object.keys(GENRE_LABELS) as ArtistGenre[];
+
+/** 1 미만·소수·비숫자를 전부 1로 접는다. `?page=2.5`가 그대로 API로 나가 400이 되는 걸 막는다 */
+function parsePage(raw: string | undefined): number {
+  return Math.max(1, Math.floor(Number(raw ?? "1")) || 1);
+}
 
 type Props = {
   searchParams: Promise<{ page?: string; sort?: string; genre?: string }>;
@@ -35,23 +39,9 @@ type Props = {
 
 export default async function ArtistsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const page = Math.max(1, Number(params.page ?? "1") || 1);
+  const page = parsePage(params.page);
   const sort: ArtistSort = params.sort === "NAME" ? "NAME" : "APPEARANCES";
   const genre = VALID_GENRES.find((g) => g === params.genre);
-
-  const res = await getArtists({ page: page - 1, size: PAGE_SIZE, genre, sort });
-  // 실패해도 throw하지 않는다 — 빈 목록으로 떨어뜨리고 아래에서 "없습니다"로 처리한다.
-  const data = res.ok
-    ? res.data
-    : {
-        items: [],
-        page: page - 1,
-        size: PAGE_SIZE,
-        totalElements: 0,
-        totalPages: 1,
-        hasNext: false,
-        hasPrevious: false,
-      };
 
   // page는 항상 리셋, sort/genre는 유지 (기본값이면 쿼리에 남기지 않는다)
   const makeHref = (overrides: { page?: number; genre?: ArtistGenre | null }) => {
@@ -63,6 +53,23 @@ export default async function ArtistsPage({ searchParams }: Props) {
     const qs = params.toString();
     return qs ? `/artists?${qs}` : "/artists";
   };
+
+  const res = await getArtists({ page: page - 1, size: PAGE_SIZE, genre, sort });
+  if (!res.ok) {
+    console.error("GET /artists 실패", res.status, res.message);
+    return (
+      <Container className="mt-10 mb-16">
+        <p className="mt-10 text-body text-muted">아티스트 목록을 불러오지 못했습니다.</p>
+      </Container>
+    );
+  }
+  const data = res.data;
+
+  // ?page=99(총 2페이지)로 들어오면 목록은 비고 캡션·이전 화살표만 잘못된 페이지를
+  // 가리키게 된다. 실제로 존재하는 마지막 페이지로 보낸다.
+  if (data.totalPages > 0 && page > data.totalPages) {
+    redirect(makeHref({ page: data.totalPages }));
+  }
 
   return (
     <Container className="mt-10 mb-16">
@@ -100,12 +107,12 @@ export default async function ArtistsPage({ searchParams }: Props) {
 
         <div className="flex items-center gap-3">
           <SearchPill placeholder="아티스트 이름 검색" />
-          <SortDropdown value={sort} options={SORT_OPTIONS} basePath="/artists" />
+          <SortDropdown value={sort} options={SORT_OPTIONS} />
         </div>
       </div>
 
       {data.items.length ? (
-        <div className="mt-10 grid grid-cols-5 gap-[25px]">
+        <div className="mt-10 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
           {data.items.map((artist) => (
             <ArtistCard key={artist.artistId} artist={artist} />
           ))}

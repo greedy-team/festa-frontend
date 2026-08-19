@@ -80,7 +80,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
 
       <div className="mt-10 flex items-center justify-end gap-3">
         <SearchPill placeholder="학교 또는 축제 이름 검색" />
-        <SortDropdown value={sort} options={SORT_OPTIONS} basePath="/festivals" />
+        <SortDropdown value={sort} options={SORT_OPTIONS} />
       </div>
 
       {data.items.length ? (

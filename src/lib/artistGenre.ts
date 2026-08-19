@@ -9,5 +9,5 @@ export const GENRE_LABELS: Record<ArtistGenre, string> = {
 };
 
 export function genreLabel(genre: ArtistGenre | null): string {
-  return genre ? GENRE_LABELS[genre] : "장르 미상";
+  return (genre && GENRE_LABELS[genre]) || "장르 미상";
 }

@@ -7,19 +7,19 @@ import type {
 
 type Params = {
   /** 0-based */
-  page?: number;
-  size?: number;
+  page: number;
+  size: number;
   genre?: ArtistGenre;
-  sort?: ArtistSort;
+  sort: ArtistSort;
 };
 
 /** 아티스트 목록. page/size/genre/sort는 GET /artists 그대로 전달 */
 export async function getArtists({
-  page = 0,
-  size = 10,
+  page,
+  size,
   genre,
-  sort = "APPEARANCES",
-}: Params = {}): Promise<ApiResult<PaginatedArtists>> {
+  sort,
+}: Params): Promise<ApiResult<PaginatedArtists>> {
   const params = new URLSearchParams({
     page: String(page),
     size: String(size),
