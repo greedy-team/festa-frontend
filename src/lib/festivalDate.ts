@@ -27,8 +27,19 @@ export function dDay(startDate: string, today = todayInSeoul()): string {
   return days > 0 ? `D-${days}` : days === 0 ? "D-DAY" : `D+${-days}`;
 }
 
+/** '2026-05-23' → '2026.05.23' */
+export function fullDate(date: string): string {
+  return date.replaceAll("-", ".");
+}
+
 /** '2026-08-19' + '2026-08-21' → '08.19 ~ 08.21' */
 export function dateRange(startDate: string, endDate: string): string {
   const short = (s: string) => s.slice(5).replace("-", ".");
   return `${short(startDate)} ~ ${short(endDate)}`;
+}
+
+/** '2026-05-21' → '2026년 봄' (1~6월), '2026-09-24' → '2026년 가을' (7~12월) */
+export function festivalSeason(startDate: string): string {
+  const [year, month] = startDate.split("-").map(Number);
+  return `${year}년 ${month <= 6 ? "봄" : "가을"}`;
 }

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bell, Bookmark } from "lucide-react";
 import { Container } from "./Container";
-import { SearchPill } from "@/components/ui/SearchPill";
+import { NavSearchForm } from "./NavSearchForm";
 import { SITE_NAME } from "@/lib/site";
 
 const MENU = [
@@ -56,12 +56,12 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-6">
-          {/* 검색과 알림·북마크는 좁은 화면에서 접는다. 셋 다 지금은 동작하지
-              않는 표시 요소라 좁은 화면에서 자리를 차지할 이유가 없다.
-              display 클래스는 래퍼에 건다 — SearchPill 기본 클래스의 inline-flex와
-              충돌해서 className으로 넘긴 hidden이 밀린다. */}
+          {/* 검색은 실제로 /search로 이동한다 (#53). 알림·북마크는 로그인을
+              전제해 계속 표시 전용이다 (스펙 2.3). 좁은 화면에서는 셋 다 접어
+              자리를 아낀다. display 클래스는 래퍼에 건다 — NavSearchForm의
+              inline-flex와 충돌해서 className으로 넘긴 hidden이 밀린다. */}
           <span className="hidden lg:block">
-            <SearchPill variant="nav" />
+            <NavSearchForm />
           </span>
           {/* 알림·북마크·프로필은 로그인을 전제한다. MVP에 로그인이 없어
               링크가 아니라 표시 전용이다 (스펙 2.3). */}

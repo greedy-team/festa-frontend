@@ -58,7 +58,12 @@ export const searchHandlers = [
     if (!q || q.trim().length < 1) return Errors.searchInvalidQuery(instance);
     if (!VALID_TYPE.includes(type)) return Errors.searchInvalidType(instance);
 
-    const matchedFestivals = festivalsDb.filter((f) => matches(f.name, [], q));
+    // 축제명뿐 아니라 주최 학교명으로도 매칭한다 — FestivalResultRow의 "학교명 일치" 표시가
+    // 로컬에서 렌더되려면 이 분기가 실제로 참이 되는 경우가 있어야 한다.
+    const matchedFestivals = festivalsDb.filter((f) => {
+      const host = hostsDb.find((h) => h.id === f.hostId);
+      return matches(f.name, host ? [host.name] : [], q);
+    });
     const matchedArtists = artistsDb.filter((a) => matches(a.name, a.otherNames, q));
     const matchedHosts = hostsDb.filter((h) => matches(h.name, [h.shortName], q));
 
