@@ -5,6 +5,7 @@ import { UpcomingFestivalsSection } from "@/features/hosts/components/UpcomingFe
 import { FestivalHistorySection } from "@/features/hosts/components/FestivalHistorySection";
 import { FrequentArtistsSection } from "@/features/hosts/components/FrequentArtistsSection";
 import { Container } from "@/components/layout/Container";
+import { AdSlot } from "@/components/ui/AdSlot";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -27,6 +28,9 @@ export default async function HostDetailPage({ params }: Props) {
         total={host.festivalHistory.total}
       />
       <FrequentArtistsSection artists={host.frequentArtists} />
+      {/* DEC-0087: 로그인 없는 개인화 영역은 페이지당 광고 하나로 대체. 짝지을 섹션이
+          없는 화면은 하단 배너형으로 둔다 */}
+      <AdSlot variant="banner" />
     </Container>
   );
 }
