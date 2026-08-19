@@ -17,13 +17,13 @@ const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
 ];
 
 type Props = {
-  params: Promise<{ hostId: string }>;
+  params: Promise<{ id: string }>;
   searchParams: Promise<{ page?: string; sort?: string; year?: string }>;
 };
 
 export default async function FestivalHistoryPage({ params, searchParams }: Props) {
-  const { hostId: hostIdParam } = await params;
-  const hostId = Number(hostIdParam);
+  const { id } = await params;
+  const hostId = Number(id);
   const sp = await searchParams;
   const page = Math.max(1, Number(sp.page ?? "1") || 1);
   const sort: FestivalSort = sp.sort === "UPCOMING" ? "UPCOMING" : "LATEST";
