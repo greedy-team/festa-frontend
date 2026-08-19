@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getHost } from "@/features/hosts/api";
 import { getFestivals } from "@/features/festivals/api";
 import type { FestivalSort } from "@/features/festivals/types";
@@ -16,6 +17,11 @@ const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
   { value: "UPCOMING", label: "오래된순" },
 ];
 
+/** 1 미만·소수·비숫자를 전부 1로 접는다. `?page=2.5`가 그대로 API로 나가 400이 되는 걸 막는다 */
+function parsePage(raw: string | undefined): number {
+  return Math.max(1, Math.floor(Number(raw ?? "1")) || 1);
+}
+
 type Props = {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ page?: string; sort?: string; year?: string }>;
@@ -25,7 +31,7 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
   const { id } = await params;
   const hostId = Number(id);
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp.page ?? "1") || 1);
+  const page = parsePage(sp.page);
   const sort: FestivalSort = sp.sort === "UPCOMING" ? "UPCOMING" : "LATEST";
 
   const hostRes = await getHost(hostId);
@@ -39,27 +45,6 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
   }
   const host = hostRes.data;
   const year = host.availableYears.find((y) => String(y) === sp.year);
-
-  const festivalsRes = await getFestivals({
-    page: page - 1,
-    size: PAGE_SIZE,
-    sort,
-    hostId,
-    year,
-  });
-  const data = festivalsRes.ok
-    ? festivalsRes.data
-    : {
-        items: [],
-        page: page - 1,
-        size: PAGE_SIZE,
-        totalElements: 0,
-        totalPages: 1,
-        hasNext: false,
-        hasPrevious: false,
-      };
-
-  const minYear = Math.min(...host.availableYears);
   const basePath = `/hosts/${hostId}/history`;
 
   // page는 항상 리셋, sort/year는 유지 (기본값이면 쿼리에 남기지 않는다)
@@ -72,6 +57,31 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
     const qs = params.toString();
     return qs ? `${basePath}?${qs}` : basePath;
   };
+
+  const festivalsRes = await getFestivals({
+    page: page - 1,
+    size: PAGE_SIZE,
+    sort,
+    hostId,
+    year,
+  });
+  if (!festivalsRes.ok) {
+    console.error("GET /festivals 실패", festivalsRes.status, festivalsRes.message);
+    return (
+      <Container className="mt-10 mb-16">
+        <p className="text-body text-muted">축제 이력을 불러오지 못했습니다.</p>
+      </Container>
+    );
+  }
+  const data = festivalsRes.data;
+
+  // ?page=99(총 2페이지)로 들어오면 목록은 비고 캡션·이전 화살표만 잘못된 페이지를
+  // 가리키게 된다. 실제로 존재하는 마지막 페이지로 보낸다.
+  if (data.totalPages > 0 && page > data.totalPages) {
+    redirect(makeHref({ page: data.totalPages }));
+  }
+
+  const minYear = Math.min(...host.availableYears);
 
   return (
     <Container className="mt-10 mb-16">
@@ -113,11 +123,11 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
           </div>
         </div>
 
-        <SortDropdown value={sort} options={SORT_OPTIONS} basePath={basePath} />
+        <SortDropdown value={sort} options={SORT_OPTIONS} />
       </div>
 
       {data.items.length ? (
-        <div className="mt-10 grid grid-cols-5 gap-[25px]">
+        <div className="mt-10 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
           {data.items.map((festival) => (
             <FestivalHistoryCard key={festival.festivalId} festival={festival} />
           ))}
