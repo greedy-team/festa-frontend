@@ -27,6 +27,11 @@ export function dDay(startDate: string, today = todayInSeoul()): string {
   return days > 0 ? `D-${days}` : days === 0 ? "D-DAY" : `D+${-days}`;
 }
 
+/** '2026-05-23' → '2026.05.23' */
+export function fullDate(date: string): string {
+  return date.replaceAll("-", ".");
+}
+
 /** '2026-08-19' + '2026-08-21' → '08.19 ~ 08.21' */
 export function dateRange(startDate: string, endDate: string): string {
   const short = (s: string) => s.slice(5).replace("-", ".");

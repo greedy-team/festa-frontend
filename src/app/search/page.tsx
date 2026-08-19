@@ -34,6 +34,7 @@ function SearchBar({ q }: { q: string }) {
         name="q"
         defaultValue={q}
         placeholder="학교, 축제, 아티스트 검색"
+        aria-label="검색어"
         className="h-full flex-1 bg-transparent text-body text-ink placeholder:text-muted-soft focus:outline-none"
       />
       <button
@@ -68,18 +69,16 @@ export default async function SearchPage({ searchParams }: Props) {
   }
 
   const res = await search({ q, type });
-  // 실패해도 throw하지 않는다 — 결과 0건과 같은 빈 상태로 보여준다.
-  const data = res.ok
-    ? res.data
-    : {
-        query: q,
-        selectedType: type,
-        counts: { all: 0, festival: 0, artist: 0, host: 0 },
-        festivals: [],
-        artists: [],
-        hosts: [],
-        relatedKeywords: [] as string[],
-      };
+  if (!res.ok) {
+    console.error("GET /search 실패", res.status, res.message);
+    return (
+      <Container className="mt-10 mb-16">
+        <SearchBar q={q} />
+        <p className="mt-10 text-body text-muted">검색 결과를 불러오지 못했습니다.</p>
+      </Container>
+    );
+  }
+  const data = res.data;
 
   return (
     <Container className="mt-10 mb-16">
@@ -92,9 +91,14 @@ export default async function SearchPage({ searchParams }: Props) {
       <div className="mt-6 flex items-center gap-2">
         {TYPE_OPTIONS.map((option) => {
           const value: SearchType = option.value ?? "ALL";
+          const active = value === type;
           return (
-            <Link key={value} href={typeHref(q, option.value)}>
-              <Chip active={value === type}>{option.label}</Chip>
+            <Link
+              key={value}
+              href={typeHref(q, option.value)}
+              aria-current={active ? "true" : undefined}
+            >
+              <Chip active={active}>{option.label}</Chip>
             </Link>
           );
         })}

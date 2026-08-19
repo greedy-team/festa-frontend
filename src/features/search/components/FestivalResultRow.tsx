@@ -17,7 +17,8 @@ type Props = {
  */
 export function FestivalResultRow({ festival, query }: Props) {
   const { festivalId, name, host, startDate, endDate, posterUrl } = festival;
-  const matchedByHost = !name.includes(query) && host.name.includes(query);
+  const q = query.trim();
+  const matchedByHost = !name.includes(q) && host.name.includes(q);
 
   return (
     // 상세 화면(DESIGN.md 08 Festival Detail)이 아직 없어 임시로 홈에 연결한다.

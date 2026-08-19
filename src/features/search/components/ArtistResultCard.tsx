@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ArtistResult } from "@/features/search/types";
 import { gridTint } from "@/lib/posterTint";
+import { fullDate } from "@/lib/festivalDate";
 import { PosterImage } from "@/components/ui/PosterImage";
 
 type Props = {
@@ -29,7 +30,9 @@ export function ArtistResultCard({ artist }: Props) {
         <h3 className="truncate text-row-title text-ink">{name}</h3>
         <p className="mt-1 text-caption-strong text-muted">출연 {appearanceCount}회</p>
         <p className="mt-1 text-caption-strong text-muted-soft">
-          {latestAppearanceDate ? `최근 출연 · ${latestAppearanceDate}` : "출연 기록 없음"}
+          {latestAppearanceDate
+            ? `최근 출연 · ${fullDate(latestAppearanceDate)}`
+            : "출연 기록 없음"}
         </p>
       </div>
 
