@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Calendar, MapPin, Ticket } from "lucide-react";
+import { AtSign, Calendar, Globe, MapPin, Ticket } from "lucide-react";
 import type { FestivalDetail } from "@/features/festivals/types";
 import { heroTint } from "@/lib/posterTint";
 import { dateRange, formatDday, festivalStatus } from "@/lib/festivalDate";
@@ -35,6 +35,32 @@ export function FestivalHero({ festival }: Props) {
       />
       {/* 상세 화면 카드 스크림 3단 중 가장 진한 단계 — 텍스트가 항상 위에 있어야 한다 */}
       <div className="absolute inset-0 bg-scrim-35" />
+
+      {/* 시안(08-2) 우상단 아이콘 — 주최의 인스타그램·공식 사이트 링크. 없으면 그리지 않는다 */}
+      <div className="absolute right-6 top-6 z-10 flex items-center gap-2">
+        {host.instagramUrl ? (
+          <a
+            href={host.instagramUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="주최 인스타그램"
+            className="flex size-[40px] items-center justify-center rounded-pill bg-white/20 text-on-media"
+          >
+            <AtSign size={18} aria-hidden />
+          </a>
+        ) : null}
+        {host.homepageUrl ? (
+          <a
+            href={host.homepageUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="주최 공식 사이트"
+            className="flex size-[40px] items-center justify-center rounded-pill bg-white/20 text-on-media"
+          >
+            <Globe size={18} aria-hidden />
+          </a>
+        ) : null}
+      </div>
 
       <div className="relative z-10 flex flex-1 flex-col justify-between gap-6 p-8">
         <div className="flex items-center gap-2">

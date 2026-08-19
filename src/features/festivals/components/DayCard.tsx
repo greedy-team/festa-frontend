@@ -25,16 +25,20 @@ export function DayCard({ day, onMore }: Props) {
         </span>
       </div>
 
-      <div className="mt-4 flex flex-col gap-3">
+      {/* DESIGN.md day-card 스펙 — 아바타 3개가 가로로 나란히, 이름은 그 아래 */}
+      <div className="mt-4 flex gap-3">
         {visible.map((artist, i) => (
-          <div key={artist.id ?? `secret-${i}`} className="flex items-center gap-3">
+          <div
+            key={artist.id ?? `secret-${i}`}
+            className="flex min-w-0 flex-1 flex-col items-center gap-2"
+          >
             <div
-              className={`size-[40px] shrink-0 rounded-pill ${
+              className={`size-[56px] shrink-0 rounded-pill ${
                 artist.revealed ? gridTint(artist.id!) : "bg-divider"
               }`}
             />
             <span
-              className={`truncate text-caption-strong ${
+              className={`w-full truncate text-center text-caption-strong ${
                 artist.revealed ? "text-ink" : "text-muted-soft"
               }`}
             >
