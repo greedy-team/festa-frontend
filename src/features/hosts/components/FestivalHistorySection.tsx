@@ -18,6 +18,9 @@ export function FestivalHistorySection({ items, total }: Props) {
     <section>
       <div className="flex items-center justify-between">
         <h2 className="text-block-title text-ink">축제 이력</h2>
+        {/* #51(축제 이력 화면, /hosts/{id}/history)이 develop에 머지되면 이 텍스트를
+            <Link href={`/hosts/${hostId}/history`}>전체 {total}개 →</Link>로 바꾼다.
+            지금은 이 브랜치에 그 라우트가 없어 링크를 걸면 404가 난다. */}
         <span className="text-caption-strong text-muted-soft">전체 {total}개</span>
       </div>
 
