@@ -13,8 +13,7 @@ export function FestivalHistoryCard({ festival }: Props) {
   const { festivalId, name, startDate, endDate, posterUrl } = festival;
 
   return (
-    // 상세 화면(DESIGN.md 08 Festival Detail)이 아직 없어 임시로 홈에 연결한다 (#51).
-    <Link href="/" className="flex flex-col">
+    <Link href={`/festivals/${festivalId}`} className="flex flex-col">
       <div
         className={`relative aspect-[236/320] w-full overflow-hidden rounded-media ${gridTint(festivalId)}`}
       >
