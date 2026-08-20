@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import type { UpcomingFestival } from "@/features/home/types";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
-import { HeroArrow } from "@/features/home/components/HeroArrow";
-import { HeroDots } from "@/features/home/components/HeroDots";
+import { HeroArrow } from "@/components/ui/HeroArrow";
+import { HeroDots } from "@/components/ui/HeroDots";
 
 // Tailwind 기본 브레이크포인트와 같은 값이어야 grid-cols-*와 어긋나지 않는다.
 const SM = 640;

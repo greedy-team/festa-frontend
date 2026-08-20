@@ -1,6 +1,6 @@
 import { fetchJson, type ApiResult } from "@/lib/api";
-import type { Host } from "@/features/hosts/types";
+import type { HostDetail } from "@/features/hosts/types";
 
-export async function getHost(hostId: number): Promise<ApiResult<Host>> {
-  return fetchJson<Host>(`/hosts/${hostId}`);
+export async function getHost(id: number): Promise<ApiResult<HostDetail>> {
+  return fetchJson<HostDetail>(`/hosts/${id}`);
 }

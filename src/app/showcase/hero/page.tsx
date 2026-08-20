@@ -4,8 +4,8 @@
 
 import { Container } from "@/components/layout/Container";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
-import { HeroArrow } from "@/features/home/components/HeroArrow";
-import { HeroDots } from "@/features/home/components/HeroDots";
+import { HeroArrow } from "@/components/ui/HeroArrow";
+import { HeroDots } from "@/components/ui/HeroDots";
 import {
   Specimen,
   SpecimenSection,

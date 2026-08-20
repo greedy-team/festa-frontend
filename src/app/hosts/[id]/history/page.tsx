@@ -102,8 +102,10 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
             {host.shortName} · {minYear}년부터 아카이브된 축제 {data.totalElements}개
           </p>
         </div>
-        {/* 학교 상세 화면(DESIGN.md 10 School Detail)이 아직 없어 임시로 홈에 연결한다 */}
-        <Link href="/" className="mt-4 shrink-0 text-caption-strong text-muted">
+        <Link
+          href={`/hosts/${hostId}`}
+          className="mt-4 shrink-0 text-caption-strong text-muted"
+        >
           학교 상세로 →
         </Link>
       </div>
