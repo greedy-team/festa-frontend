@@ -10,7 +10,10 @@ type Props = {
   className?: string;
 };
 
-/** 항상 플레이스홀더다 — 광고 정책이 아직 없다 (DESIGN.md Known Gaps). */
+/**
+ * 항상 플레이스홀더다 — 광고 정책은 배치 원칙(페이지당 하나, DEC-0087)만 정해졌고
+ * 실제 소재·트리거는 아직 없다.
+ */
 export function AdSlot({ variant = "panel", className = "" }: Props) {
   const { height, size } = VARIANT[variant];
 

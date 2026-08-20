@@ -1,5 +1,9 @@
 import { fetchJson, type ApiResult } from "@/lib/api";
-import type { PaginatedFestivals, FestivalSort } from "@/features/festivals/types";
+import type {
+  PaginatedFestivals,
+  FestivalSort,
+  FestivalDetail,
+} from "@/features/festivals/types";
 
 type Params = {
   /** 0-based */
@@ -27,4 +31,8 @@ export async function getFestivals({
   if (year) params.set("year", String(year));
 
   return fetchJson<PaginatedFestivals>(`/festivals?${params}`);
+}
+
+export async function getFestival(id: number): Promise<ApiResult<FestivalDetail>> {
+  return fetchJson<FestivalDetail>(`/festivals/${id}`);
 }

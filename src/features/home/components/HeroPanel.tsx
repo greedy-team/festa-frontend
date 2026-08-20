@@ -41,9 +41,11 @@ export function HeroPanel({ festival }: Props) {
           {dateRange(startDate, endDate)}
           <span className="ml-4">{venueName}</span>
         </p>
-        {/* 상세 화면이 아직 없다 (DESIGN.md Known Gaps: 히어로 카드 클릭 인터랙션 미정).
-            링크 자체는 06-D에 있는 요소라 그리고, 목적지가 정해질 때까지 홈으로 보낸다. */}
-        <Link href="/" className="text-caption-strong text-on-media">
+        {/* 히어로 카드 클릭 인터랙션은 확정됐다 — 요약 없이 축제 상세로 직행한다 (DESIGN.md). */}
+        <Link
+          href={`/festivals/${festivalId}`}
+          className="text-caption-strong text-on-media"
+        >
           자세히 보기 →
         </Link>
       </div>

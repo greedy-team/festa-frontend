@@ -13,6 +13,12 @@ function todayInSeoul(): string {
   return new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
 }
 
+/** 남은 일수(정수) -> 'D-3' | 'D-DAY' | 'D+5'. 서버가 이미 숫자로 dday를 내려주는
+ * 엔드포인트는 이 값을 다시 계산하지 않고 그대로 포맷만 해서 쓴다. */
+export function formatDday(days: number): string {
+  return days > 0 ? `D-${days}` : days === 0 ? "D-DAY" : `D+${-days}`;
+}
+
 /**
  * 'YYYY-MM-DD' 시작일까지 남은 일수.
  * 두 값 모두 날짜 문자열이라 시각이 섞이지 않는다.
@@ -24,7 +30,7 @@ export function dDay(startDate: string, today = todayInSeoul()): string {
   };
   const days = Math.round((toUtc(startDate) - toUtc(today)) / 86_400_000);
 
-  return days > 0 ? `D-${days}` : days === 0 ? "D-DAY" : `D+${-days}`;
+  return formatDday(days);
 }
 
 /** '2026-05-23' → '2026.05.23' */
@@ -42,4 +48,26 @@ export function dateRange(startDate: string, endDate: string): string {
 export function festivalSeason(startDate: string): string {
   const [year, month] = startDate.split("-").map(Number);
   return `${year}년 ${month <= 6 ? "봄" : "가을"}`;
+}
+
+export type FestivalStatus = "UPCOMING" | "ONGOING" | "ENDED";
+
+/** GET /festivals/{id} 응답엔 상태 필드가 없어 날짜로 직접 판정한다 */
+export function festivalStatus(
+  startDate: string,
+  endDate: string,
+  today = todayInSeoul(),
+): FestivalStatus {
+  if (today < startDate) return "UPCOMING";
+  if (today > endDate) return "ENDED";
+  return "ONGOING";
+}
+
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+
+/** '2026-05-30' → '05.30(금)' */
+export function dateWithWeekday(date: string): string {
+  const [y, m, d] = date.split("-").map(Number);
+  const day = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return `${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")}(${WEEKDAYS[day]})`;
 }

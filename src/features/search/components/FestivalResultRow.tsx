@@ -21,9 +21,8 @@ export function FestivalResultRow({ festival, query }: Props) {
   const matchedByHost = !name.includes(q) && host.name.includes(q);
 
   return (
-    // 상세 화면(DESIGN.md 08 Festival Detail)이 아직 없어 임시로 홈에 연결한다.
     <Link
-      href="/"
+      href={`/festivals/${festivalId}`}
       className="flex items-center gap-4 rounded-row border border-border bg-surface px-6 py-4"
     >
       <div
