@@ -22,14 +22,14 @@ export function HostHero({ host }: Props) {
 
       <div className="relative z-10 flex items-center gap-4">
         <div
-          className={`relative size-[64px] shrink-0 overflow-hidden rounded-pill border border-white/30 ${gridTint(id)}`}
+          className={`relative size-[64px] shrink-0 overflow-hidden rounded-pill border border-on-media/30 ${gridTint(id)}`}
         >
           <PosterImage
             src={logoUrl}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="text-caption-strong text-on-media/85">
             {shortName} · {region}
           </p>

@@ -3,6 +3,7 @@ import type { UpcomingHostFestival } from "@/features/hosts/types";
 import { gridTint } from "@/lib/posterTint";
 import { dateRange, formatDday } from "@/lib/festivalDate";
 import { PosterImage } from "@/components/ui/PosterImage";
+import { Badge } from "@/components/ui/Badge";
 
 type Props = {
   festival: UpcomingHostFestival;
@@ -22,11 +23,12 @@ export function UpcomingFestivalCard({ festival }: Props) {
         src={posterUrl}
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-scrim-35 via-scrim-25 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-scrim-35 via-scrim-30 to-scrim-25" />
 
-      <span className="absolute right-4 top-4 rounded-pill border border-on-media bg-white/20 px-3 py-1 text-caption text-on-media">
-        {formatDday(dday)}
-      </span>
+      {/* 응답의 dday는 endDate >= today인 축제만 내려온다 — 0 이하는 지난 게 아니라 진행중이다 */}
+      <Badge variant="on-media" className="absolute right-4 top-4">
+        {dday > 0 ? formatDday(dday) : "진행중"}
+      </Badge>
 
       <div className="relative z-10 flex flex-col gap-1 p-6">
         <h3 className="text-card-title text-on-media">{name}</h3>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { FrequentArtist } from "@/features/hosts/types";
 import { gridTint } from "@/lib/posterTint";
 import { PosterImage } from "@/components/ui/PosterImage";
+import { Badge } from "@/components/ui/Badge";
 
 type Props = {
   artists: FrequentArtist[];
@@ -33,9 +34,7 @@ export function FrequentArtistsSection({ artists }: Props) {
               />
             </div>
             <h3 className="text-entity-name text-ink">{artist.name}</h3>
-            <span className="rounded-pill bg-primary-soft px-2 py-0.5 text-label text-primary">
-              {artist.appearanceCount}회 출연
-            </span>
+            <Badge>{artist.appearanceCount}회 출연</Badge>
           </Link>
         ))}
       </div>

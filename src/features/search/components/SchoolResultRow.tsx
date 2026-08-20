@@ -8,13 +8,12 @@ type Props = {
   host: HostResult;
 };
 
-/** #51에서 만든 축제 이력 화면으로 실제 연결된다 — School Detail이 없는 유일한 실제 진입점 */
 export function SchoolResultRow({ host }: Props) {
   const { id, name, logoUrl, festivalCount, latestFestivalYearMonth } = host;
 
   return (
     <Link
-      href={`/hosts/${id}/history`}
+      href={`/hosts/${id}`}
       className="flex items-center gap-4 rounded-row border border-border bg-surface px-6 py-4"
     >
       <div

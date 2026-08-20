@@ -1,27 +1,28 @@
+import Link from "next/link";
 import type { HostFestivalHistoryItem } from "@/features/hosts/types";
-import { gridTint } from "@/lib/posterTint";
-import { dateRange } from "@/lib/festivalDate";
-import { PosterImage } from "@/components/ui/PosterImage";
+import { FestivalHistoryCard } from "./FestivalHistoryCard";
 
 type Props = {
+  hostId: number;
   items: HostFestivalHistoryItem[];
   total: number;
 };
 
 /**
- * 응답이 미리보기 2건 + 전체 건수만 준다. 전체 목록은 축제 목록 화면(hostId 필터)의
- * 몫이라 여기선 페이지네이션도, 연도 필터도 만들지 않는다. 그 화면(#51)이 develop에
- * 아직 없어 "더 보기"는 링크가 아니라 건수 표시로만 둔다 (#46).
+ * 응답이 미리보기 2건 + 전체 건수만 준다. 전체 목록은 축제 이력 화면
+ * (/hosts/{id}/history, #51)의 몫이라 여기선 페이지네이션도, 연도 필터도 만들지 않는다.
  */
-export function FestivalHistorySection({ items, total }: Props) {
+export function FestivalHistorySection({ hostId, items, total }: Props) {
   return (
     <section>
       <div className="flex items-center justify-between">
         <h2 className="text-block-title text-ink">축제 이력</h2>
-        {/* #51(축제 이력 화면, /hosts/{id}/history)이 develop에 머지되면 이 텍스트를
-            <Link href={`/hosts/${hostId}/history`}>전체 {total}개 →</Link>로 바꾼다.
-            지금은 이 브랜치에 그 라우트가 없어 링크를 걸면 404가 난다. */}
-        <span className="text-caption-strong text-muted-soft">전체 {total}개</span>
+        <Link
+          href={`/hosts/${hostId}/history`}
+          className="text-caption-strong text-muted-soft"
+        >
+          전체 {total}개 →
+        </Link>
       </div>
 
       {items.length ? (
@@ -29,19 +30,8 @@ export function FestivalHistorySection({ items, total }: Props) {
         // grid-cols로 늘리면 세로 비율이 깨진다 (coding-principles 카드/패널 폭 규칙).
         <div className="mt-4 flex flex-wrap gap-4">
           {items.map((item) => (
-            <div key={item.festivalId} className="flex w-[236px] max-w-full flex-col">
-              <div
-                className={`relative aspect-[236/320] w-full overflow-hidden rounded-media ${gridTint(item.festivalId)}`}
-              >
-                <PosterImage
-                  src={item.posterUrl}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              </div>
-              <h3 className="mt-3 truncate text-entity-name text-ink">{item.name}</h3>
-              <span className="mt-1 text-label-regular text-muted-soft">
-                {dateRange(item.startDate, item.endDate)}
-              </span>
+            <div key={item.festivalId} className="w-[236px] max-w-full">
+              <FestivalHistoryCard festival={item} />
             </div>
           ))}
         </div>

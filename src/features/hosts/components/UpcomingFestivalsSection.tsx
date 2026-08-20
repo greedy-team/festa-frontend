@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { UpcomingHostFestival } from "@/features/hosts/types";
+import { HeroArrow } from "@/components/ui/HeroArrow";
+import { HeroDots } from "@/components/ui/HeroDots";
 import { UpcomingFestivalCard } from "./UpcomingFestivalCard";
 
 type Props = {
@@ -16,10 +17,10 @@ type Props = {
  */
 export function UpcomingFestivalsSection({ festivals }: Props) {
   const [index, setIndex] = useState(0);
+  // 같은 라우트 패턴(/hosts/[id]) 사이를 클라이언트 이동하면 컴포넌트가 재마운트되지
+  // 않아 index가 이전 host의 festivals.length 기준으로 남을 수 있다 — 항상 클램프한다.
+  const current = Math.min(index, festivals.length - 1);
   const hasMultiple = festivals.length > 1;
-
-  const prev = () => setIndex((i) => (i - 1 + festivals.length) % festivals.length);
-  const next = () => setIndex((i) => (i + 1) % festivals.length);
 
   return (
     <section>
@@ -27,48 +28,46 @@ export function UpcomingFestivalsSection({ festivals }: Props) {
         <h2 className="text-block-title text-ink">다가오는 축제</h2>
         {hasMultiple ? (
           <span className="text-caption text-muted-soft">
-            {index + 1}/{festivals.length}
+            {current + 1}/{festivals.length}
           </span>
         ) : null}
       </div>
 
       {festivals.length ? (
-        <div className="relative mt-4 w-fit">
-          <UpcomingFestivalCard festival={festivals[index]} />
+        <div className="mt-4 w-[356px] max-w-full">
+          <div className="relative">
+            <UpcomingFestivalCard festival={festivals[current]} />
+
+            {hasMultiple ? (
+              <>
+                <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                  <HeroArrow
+                    direction="prev"
+                    onClick={() => setIndex((i) => Math.max(0, i - 1))}
+                    disabled={current === 0}
+                  />
+                </div>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <HeroArrow
+                    direction="next"
+                    onClick={() =>
+                      setIndex((i) => Math.min(festivals.length - 1, i + 1))
+                    }
+                    disabled={current >= festivals.length - 1}
+                  />
+                </div>
+              </>
+            ) : null}
+          </div>
 
           {hasMultiple ? (
-            <>
-              <button
-                type="button"
-                onClick={prev}
-                aria-label="이전 축제"
-                className="absolute left-4 top-1/2 flex size-[40px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill bg-surface text-ink shadow-card"
-              >
-                <ChevronLeft size={20} aria-hidden />
-              </button>
-              <button
-                type="button"
-                onClick={next}
-                aria-label="다음 축제"
-                className="absolute right-4 top-1/2 flex size-[40px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill bg-surface text-ink shadow-card"
-              >
-                <ChevronRight size={20} aria-hidden />
-              </button>
-
-              <div className="mt-3 flex items-center justify-center gap-2">
-                {festivals.map((festival, i) => (
-                  <button
-                    key={festival.festivalId}
-                    type="button"
-                    onClick={() => setIndex(i)}
-                    aria-label={`${i + 1}번째 축제 보기`}
-                    className={`size-[8px] cursor-pointer rounded-pill ${
-                      i === index ? "bg-ink" : "bg-border-strong"
-                    }`}
-                  />
-                ))}
-              </div>
-            </>
+            <div className="mt-3 flex justify-center">
+              <HeroDots
+                count={festivals.length}
+                current={current}
+                onSelect={setIndex}
+              />
+            </div>
           ) : null}
         </div>
       ) : (
