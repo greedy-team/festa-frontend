@@ -16,7 +16,7 @@ const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
 const PAGE_SIZE = 10;
 
 type Props = {
-  searchParams: Promise<{ page?: string; sort?: string }>;
+  searchParams: Promise<{ page?: string; sort?: string; artistId?: string }>;
 };
 
 /** 1 미만·소수·비숫자를 전부 1로 접는다. `?page=2.5`가 그대로 API로 나가 400이 되는 걸 막는다 */
@@ -28,8 +28,9 @@ export default async function FestivalsPage({ searchParams }: Props) {
   const params = await searchParams;
   const page = parsePage(params.page);
   const sort: FestivalSort = params.sort === "UPCOMING" ? "UPCOMING" : "LATEST";
+  const artistId = params.artistId ? Number(params.artistId) : undefined;
 
-  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort });
+  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, artistId });
 
   if (!res.ok) {
     console.error("GET /festivals 실패", res.status, res.message);
@@ -45,7 +46,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
   let currentPage = page;
   if (currentPage > res.data.totalPages) {
     currentPage = res.data.totalPages;
-    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort });
+    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, artistId });
     if (!res.ok) {
       console.error("GET /festivals 실패", res.status, res.message);
       return (

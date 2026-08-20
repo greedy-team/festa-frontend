@@ -33,9 +33,13 @@ export function ArtistHero({ artist }: Props) {
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-3">
-        {/* 장르가 비어 있으면(전체의 상당수) 칩 자리를 그리지 않는다 — "미분류" 문구를 새로 만들지 않는다 */}
-        {genre ? <Badge className="w-fit">{GENRE_LABELS[genre]}</Badge> : null}
+      <div className="min-w-0 flex flex-col gap-3">
+        {/* 장르가 비어 있으면(전체의 상당수) 칩 자리를 그리지 않는다 — "미분류" 문구를 새로 만들지 않는다.
+            genre는 타입상 ArtistGenre로 좁혀지지만 값은 네트워크에서 오므로, 백엔드가 명세 밖
+            값을 내리면 GENRE_LABELS[genre]가 undefined가 될 수 있어 조회 자체를 가드한다. */}
+        {genre && GENRE_LABELS[genre] ? (
+          <Badge className="w-fit">{GENRE_LABELS[genre]}</Badge>
+        ) : null}
 
         <h1 className="text-hero text-ink">{name}</h1>
 

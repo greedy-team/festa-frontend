@@ -2,15 +2,16 @@ import Link from "next/link";
 import { Calendar, ChevronRight } from "lucide-react";
 import type { UpcomingShow } from "@/features/artists/types";
 import { gridTint } from "@/lib/posterTint";
-import { dateRange, formatDday } from "@/lib/festivalDate";
+import { fullDate, formatDday } from "@/lib/festivalDate";
 import { PosterImage } from "@/components/ui/PosterImage";
+import { Badge } from "@/components/ui/Badge";
 
 type Props = {
   show: UpcomingShow;
 };
 
 export function UpcomingShowRow({ show }: Props) {
-  const { festivalId, name, hostName, venueName, posterUrl, startDate, endDate, dday } =
+  const { festivalId, name, hostName, venueName, posterUrl, performanceDate, day, dday } =
     show;
 
   return (
@@ -30,16 +31,17 @@ export function UpcomingShowRow({ show }: Props) {
 
       <div className="min-w-0 flex-1">
         <h3 className="truncate text-entity-name text-ink">{name}</h3>
-        <p className="mt-1 flex items-center gap-1.5 truncate text-caption-strong text-muted">
+        <p className="mt-1 flex items-center gap-1.5 text-caption-strong text-muted">
           <Calendar size={14} className="shrink-0" aria-hidden />
-          {dateRange(startDate, endDate)} · {hostName} · {venueName}
+          {/* D-day가 공연일(performanceDate) 기준이라, 옆 날짜도 축제 전체 기간이 아니라
+              실제 공연일을 보여준다 — 안 그러면 숫자가 화면에 없는 날짜를 가리키게 된다 */}
+          <span className="truncate">
+            DAY {day} · {fullDate(performanceDate)} · {hostName} · {venueName}
+          </span>
         </p>
       </div>
 
-      {/* D-day는 축제 시작일이 아니라 이 아티스트의 공연일 기준이다 (#47 확정) */}
-      <span className="shrink-0 rounded-pill bg-primary-soft px-3 py-1 text-meta-strong text-primary">
-        {formatDday(dday)}
-      </span>
+      <Badge className="shrink-0">{formatDday(dday)}</Badge>
       <ChevronRight size={20} className="shrink-0 text-muted-soft" aria-hidden />
     </Link>
   );

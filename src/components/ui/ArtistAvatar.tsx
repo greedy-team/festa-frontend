@@ -19,7 +19,8 @@ const RADIUS: Record<Shape, string> = {
  * 아티스트 실사진 대신 쓰는 대체 이미지 (#47 확정 결정).
  * DEC-0063(초상권 문제로 실사진 미사용)에 대한 답으로, 이름을 해시해 고른 색 위에
  * 이니셜을 얹는다 — 포스터 틴트(id 해시)와 같은 원리를 이름에 적용한 것이다.
- * 라인업·주최 상세 등 아티스트 아바타가 쓰이는 곳 어디서나 재사용한다.
+ * 아티스트 상세 히어로(정사각 160)·아티스트 목록 카드(정사각 236)·검색 결과
+ * 카드(원형 88) 세 곳에서 쓰인다. size가 자리마다 다 달라 리터럴로 받는다.
  */
 export function ArtistAvatar({ name, size = 64, shape = "circle", className = "" }: Props) {
   const initial = name.trim().charAt(0) || "?";
