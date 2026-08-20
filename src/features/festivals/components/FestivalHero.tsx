@@ -3,7 +3,7 @@ import { AtSign, Calendar, Globe, MapPin, Ticket } from "lucide-react";
 import type { FestivalDetail } from "@/features/festivals/types";
 import { heroTint } from "@/lib/posterTint";
 import { dateRange, formatDday, festivalStatus } from "@/lib/festivalDate";
-import { TICKET_TYPE_LABELS } from "@/lib/admission";
+import { ticketTypeLabel } from "@/lib/admission";
 import { PosterImage } from "@/components/ui/PosterImage";
 import { Badge } from "@/components/ui/Badge";
 
@@ -83,7 +83,7 @@ export function FestivalHero({ festival }: Props) {
             </p>
             <p className="flex items-center gap-2">
               <Ticket size={14} className="shrink-0" aria-hidden />
-              {TICKET_TYPE_LABELS[admission.ticketType]}
+              {ticketTypeLabel(admission.ticketType)}
             </p>
           </div>
 

@@ -24,7 +24,7 @@ export function LocationSection({ location }: Props) {
 
           {/* 구글 맵 API 키·결제 설정이 아직 없어 폴백 박스로 둔다 (#48) */}
           <div className="mt-4 flex h-[240px] items-center justify-center rounded-md bg-surface-field text-caption text-muted-soft">
-            지도 영역 · Google Maps 연동 예정 (#48)
+            지도 준비 중입니다
           </div>
 
           {directionsHref ? (

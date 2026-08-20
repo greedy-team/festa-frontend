@@ -1,6 +1,8 @@
 import type { LineupDay } from "@/features/festivals/types";
 import { gridTint } from "@/lib/posterTint";
 import { dateWithWeekday } from "@/lib/festivalDate";
+import { Badge } from "@/components/ui/Badge";
+import { PosterImage } from "@/components/ui/PosterImage";
 
 type Props = {
   day: LineupDay;
@@ -17,15 +19,15 @@ export function DayCard({ day, onMore }: Props) {
   return (
     <div className="flex w-full flex-col rounded-card border border-border bg-surface p-5">
       <div className="flex items-center justify-between">
-        <span className="rounded-pill bg-primary-soft px-3 py-1 text-meta-strong text-primary">
+        <Badge variant="primary" className="min-w-[64px]">
           DAY {day.day}
-        </span>
-        <span className="text-caption text-muted-soft">
+        </Badge>
+        <span className="text-meta text-muted-soft">
           {dateWithWeekday(day.date)}
         </span>
       </div>
 
-      {/* DESIGN.md day-card 스펙 — 아바타 3개가 가로로 나란히, 이름은 그 아래 */}
+      {/* DESIGN.md day-card 스펙 — 64px 아바타 3개가 가로로 나란히, 이름은 그 아래 */}
       <div className="mt-4 flex gap-3">
         {visible.map((artist, i) => (
           <div
@@ -33,12 +35,19 @@ export function DayCard({ day, onMore }: Props) {
             className="flex min-w-0 flex-1 flex-col items-center gap-2"
           >
             <div
-              className={`size-[56px] shrink-0 rounded-pill ${
-                artist.revealed ? gridTint(artist.id!) : "bg-divider"
+              className={`relative size-[64px] shrink-0 overflow-hidden rounded-pill ${
+                artist.revealed ? gridTint(artist.id) : "bg-divider"
               }`}
-            />
+            >
+              {artist.revealed ? (
+                <PosterImage
+                  src={artist.imageUrl}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : null}
+            </div>
             <span
-              className={`w-full truncate text-center text-caption-strong ${
+              className={`w-full truncate text-center text-meta-medium ${
                 artist.revealed ? "text-ink" : "text-muted-soft"
               }`}
             >

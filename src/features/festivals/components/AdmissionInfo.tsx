@@ -1,8 +1,8 @@
 import type { Admission } from "@/features/festivals/types";
 import {
-  EXTERNAL_VISITOR_LABELS,
-  VERIFICATION_LABELS,
-  TICKET_TYPE_LABELS,
+  externalVisitorLabel,
+  verificationLabel,
+  ticketTypeLabel,
 } from "@/lib/admission";
 
 type Props = {
@@ -13,9 +13,9 @@ export function AdmissionInfo({ admission }: Props) {
   const { externalVisitor, verification, ticketType, ticketOpenAt, note } = admission;
 
   const rows = [
-    { label: "외부인 입장", value: EXTERNAL_VISITOR_LABELS[externalVisitor] },
-    { label: "신분 확인", value: VERIFICATION_LABELS[verification] },
-    { label: "티켓", value: TICKET_TYPE_LABELS[ticketType] },
+    { label: "외부인 입장", value: externalVisitorLabel(externalVisitor) },
+    { label: "신분 확인", value: verificationLabel(verification) },
+    { label: "티켓", value: ticketTypeLabel(ticketType) },
     {
       label: "예매 오픈",
       value: ticketOpenAt

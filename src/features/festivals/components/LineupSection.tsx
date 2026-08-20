@@ -16,20 +16,26 @@ export function LineupSection({ lineup }: Props) {
     <section>
       <div className="flex items-center justify-between">
         <h2 className="text-block-title text-ink">라인업</h2>
-        <button
-          type="button"
-          onClick={() => setOpenDay("ALL")}
-          className="cursor-pointer text-caption-strong text-muted"
-        >
-          전체 라인업 보기 →
-        </button>
+        {lineup.length ? (
+          <button
+            type="button"
+            onClick={() => setOpenDay("ALL")}
+            className="cursor-pointer text-caption-strong text-muted"
+          >
+            전체 라인업 보기 →
+          </button>
+        ) : null}
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {lineup.map((day) => (
-          <DayCard key={day.day} day={day} onMore={() => setOpenDay(day.day)} />
-        ))}
-      </div>
+      {lineup.length ? (
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fit,minmax(280px,1fr))]">
+          {lineup.map((day) => (
+            <DayCard key={day.day} day={day} onMore={() => setOpenDay(day.day)} />
+          ))}
+        </div>
+      ) : (
+        <p className="mt-4 text-body text-muted">라인업이 아직 공개되지 않았습니다.</p>
+      )}
 
       {openDay !== null ? (
         <LineupSheet

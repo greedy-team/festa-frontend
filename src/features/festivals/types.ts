@@ -35,15 +35,17 @@ export type FestivalHostSummary = {
   homepageUrl: string | null;
 };
 
-export type LineupArtist = {
-  /** 미공개(revealed: false)면 null */
-  id: number | null;
-  name: string | null;
-  imageUrl: string | null;
-  genre: ArtistGenre | null;
-  order: number;
-  revealed: boolean;
-};
+/** revealed로 id/name/imageUrl/genre 유무가 갈린다 — 판별 유니온이라 !(non-null assertion) 없이 좁혀진다 */
+export type LineupArtist = { order: number } & (
+  | {
+      revealed: true;
+      id: number;
+      name: string;
+      imageUrl: string | null;
+      genre: ArtistGenre | null;
+    }
+  | { revealed: false; id: null; name: null; imageUrl: null; genre: null }
+);
 
 export type LineupDay = {
   day: number;
