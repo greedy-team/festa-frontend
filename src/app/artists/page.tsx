@@ -4,6 +4,7 @@ import { getArtists } from "@/features/artists/api";
 import type { ArtistGenre, ArtistSort } from "@/features/artists/types";
 import { ArtistCard } from "@/features/artists/components/ArtistCard";
 import { GENRE_LABELS } from "@/lib/artistGenre";
+import { parsePage } from "@/lib/searchParams";
 import { Container } from "@/components/layout/Container";
 import { SearchPill } from "@/components/ui/SearchPill";
 import { SortDropdown } from "@/components/ui/SortDropdown";
@@ -27,11 +28,6 @@ const SORT_OPTIONS: { value: ArtistSort; label: string }[] = [
 ];
 
 const VALID_GENRES = Object.keys(GENRE_LABELS) as ArtistGenre[];
-
-/** 1 미만·소수·비숫자를 전부 1로 접는다. `?page=2.5`가 그대로 API로 나가 400이 되는 걸 막는다 */
-function parsePage(raw: string | undefined): number {
-  return Math.max(1, Math.floor(Number(raw ?? "1")) || 1);
-}
 
 type Props = {
   searchParams: Promise<{ page?: string; sort?: string; genre?: string }>;

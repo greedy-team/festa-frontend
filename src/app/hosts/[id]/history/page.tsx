@@ -4,6 +4,7 @@ import { getHost } from "@/features/hosts/api";
 import { getFestivals } from "@/features/festivals/api";
 import type { FestivalSort } from "@/features/festivals/types";
 import { FestivalHistoryCard } from "@/features/hosts/components/FestivalHistoryCard";
+import { parsePage } from "@/lib/searchParams";
 import { Container } from "@/components/layout/Container";
 import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Pagination } from "@/components/ui/Pagination";
@@ -16,11 +17,6 @@ const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
   { value: "LATEST", label: "최신순" },
   { value: "UPCOMING", label: "오래된순" },
 ];
-
-/** 1 미만·소수·비숫자를 전부 1로 접는다. `?page=2.5`가 그대로 API로 나가 400이 되는 걸 막는다 */
-function parsePage(raw: string | undefined): number {
-  return Math.max(1, Math.floor(Number(raw ?? "1")) || 1);
-}
 
 type Props = {
   params: Promise<{ id: string }>;
