@@ -55,6 +55,7 @@ pr_body.md
 
 # Superpowers 산출물 (스펙·계획 문서)
 docs/superpowers/
+docs/pr/
 
 # Subagent-Driven Development 워크스페이스 (원장·브리핑·리뷰 패키지)
 .superpowers/
