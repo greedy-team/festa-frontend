@@ -1,7 +1,6 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { MockProvider } from "@/mocks/MockProvider";
 import { ADMIN_ROUTE_PREFIX } from "@/constants/routes";
 
 type Props = {
@@ -30,21 +29,12 @@ export function SiteChrome({ header, footer, children }: Props) {
   const isAdmin = usePathname().startsWith(ADMIN_ROUTE_PREFIX);
 
   // 관리자는 자기 셸(사이드바)을 (console) 레이아웃에서 그린다.
-  // 목은 공개 화면 전용이라 관리자 쪽에서는 MockProvider도 태우지 않는다.
   return isAdmin ? (
     <>{children}</>
   ) : (
     <div className="flex flex-1 flex-col bg-canvas">
       {header}
-      <main className="flex-1">
-        {/* MockProvider는 워커가 준비될 때까지 자식을 렌더하지 않는다.
-            셸(Header·Footer)은 그 동안에도 보이게 children만 감싼다. */}
-        {process.env.NEXT_PUBLIC_API_MOCKING === "enabled" ? (
-          <MockProvider>{children}</MockProvider>
-        ) : (
-          children
-        )}
-      </main>
+      <main className="flex-1">{children}</main>
       {footer}
     </div>
   );

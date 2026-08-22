@@ -2,6 +2,7 @@ import { festivalsHandlers } from '@/mocks/handlers/festivals';
 import { artistsHandlers } from '@/mocks/handlers/artists';
 import { hostsHandlers } from '@/mocks/handlers/hosts';
 import { searchHandlers } from '@/mocks/handlers/search';
+import { adminAuthHandlers } from '@/mocks/handlers/adminAuth';
 
 // lost-items는 P1로 보류 — 준비되면 handlers/lostItems.ts를 만들어 여기 추가할 것.
 export const handlers = [
@@ -9,4 +10,5 @@ export const handlers = [
   ...artistsHandlers,
   ...hostsHandlers,
   ...searchHandlers,
+  ...adminAuthHandlers,
 ];
