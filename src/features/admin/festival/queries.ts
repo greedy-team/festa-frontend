@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  getFestivalCounts,
   getFestivals,
-  publishFestivals,
+  publishFestival,
   unpublishFestival,
 } from "@/features/admin/festival/api";
 import type { FestivalReviewParams } from "@/features/admin/festival/types";
@@ -16,14 +15,10 @@ export function useAdminFestivals(params: FestivalReviewParams) {
   });
 }
 
-export function useFestivalCounts() {
-  return useQuery({ queryKey: [KEY, "counts"], queryFn: getFestivalCounts });
-}
-
-export function usePublishFestivals() {
+export function usePublishFestival() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: publishFestivals,
+    mutationFn: publishFestival,
     onSuccess: () => client.invalidateQueries({ queryKey: [KEY] }),
   });
 }

@@ -1,24 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Pagination } from "@/components/ui/Pagination";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { SortDropdown } from "@/components/ui/SortDropdown";
-import { Button } from "@/components/ui/Button";
 import { FestivalReviewTable } from "@/features/admin/festival/components/FestivalReviewTable";
 import {
   useAdminFestivals,
-  useFestivalCounts,
-  usePublishFestivals,
+  usePublishFestival,
   useUnpublishFestival,
 } from "@/features/admin/festival/queries";
-import { publishBlocker } from "@/features/admin/festival/api";
-import type { BulkPublishResult } from "@/features/admin/festival/types";
 import { parsePage } from "@/lib/searchParams";
 import { ADMIN_ROUTES } from "@/constants/routes";
-import { DISCOVERY_LABELS, publishBlockerLabel, type Discovery } from "@/lib/adminEnums";
+import { DISCOVERY_LABELS, type Discovery } from "@/lib/adminEnums";
 import { ADMIN_GENERIC_ERROR_MESSAGE, AdminApiError, adminErrorMessage } from "@/lib/adminError";
 
 const PAGE_SIZE = 10;
@@ -43,13 +39,7 @@ export function FestivalReviewScreen() {
   const discovery = parseDiscovery(searchParams.get("discovery"));
   const q = searchParams.get("q") ?? undefined;
 
-  const [selected, setSelected] = useState<Set<number>>(new Set());
-  // 배너는 화면에 하나뿐이다 — "가장 최근 액션의 결과"를 하나의 상태로 표현한다.
-  // 두 슬롯(result/error) + 렌더 우선순위였을 때, 해제 성공 콜백이 error만 지우고
-  // result는 안 지워 오래된 발행 결과가 되살아나는 순서 문제가 있었다.
-  const [outcome, setOutcome] = useState<
-    { type: "publish"; result: BulkPublishResult } | { type: "error"; message: string } | null
-  >(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const list = useAdminFestivals({
     published,
@@ -58,22 +48,10 @@ export function FestivalReviewScreen() {
     page: page - 1,
     size: PAGE_SIZE,
   });
-  const counts = useFestivalCounts();
-  const publish = usePublishFestivals();
+  const publish = usePublishFestival();
   const unpublish = useUnpublishFestival();
 
-  // 필터·페이지가 바뀌면 선택은 초기화한다 — 화면에서 사라진 행의 id가 선택에
-  // 남아있으면 blockedSelections가 그 행을 못 보고, 다음 발행 요청에 조용히 섞여 들어간다.
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- 의도적: 화면 밖으로 벗어난 선택을 즉시 비운다
-    setSelected(new Set());
-  }, [page, published, discovery, q]);
-
   const items = list.data?.items ?? [];
-  const blockedSelections = items.filter(
-    (festival) =>
-      selected.has(festival.festivalId) && publishBlocker(festival) !== null,
-  );
 
   function makeHref(next: { page?: number; published?: boolean | undefined }) {
     const p = new URLSearchParams();
@@ -86,37 +64,24 @@ export function FestivalReviewScreen() {
     return qs ? `${ADMIN_ROUTES.festivals}?${qs}` : ADMIN_ROUTES.festivals;
   }
 
-  function toggle(id: number) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      // 새 Set을 만들어 바꾼다 — 기존 것을 제자리에서 고치지 않는다.
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+  function reportError(action: string, error: unknown) {
+    // DEC-0041: message는 개발자용이라 콘솔로만 보낸다.
+    console.error(`${action} 실패`, error);
+    setErrorMessage(
+      error instanceof AdminApiError
+        ? adminErrorMessage(error.errorCode)
+        : ADMIN_GENERIC_ERROR_MESSAGE,
+    );
   }
 
-  async function handlePublish() {
-    try {
-      const res = await publish.mutateAsync([...selected]);
-      setOutcome({ type: "publish", result: res });
-      setSelected(new Set());
-      // 목록 갱신은 usePublishFestivals의 invalidateQueries가 한다.
-      // router.refresh()를 부르지 않는다 — 서버 컴포넌트가 없어 할 일이 없다.
-    } catch (error) {
-      // API의 message는 개발자용이라 그대로 보여주지 않는다 — 원인은 콘솔에, 안내는 평문으로.
-      console.error("축제 발행 실패", error);
-      setOutcome({
-        type: "error",
-        message:
-          error instanceof AdminApiError
-            ? adminErrorMessage(error.errorCode)
-            : ADMIN_GENERIC_ERROR_MESSAGE,
-      });
-    }
+  function handlePublish(id: number) {
+    setErrorMessage(null);
+    publish.mutate(id, { onError: (error) => reportError("축제 발행", error) });
+  }
+
+  function handleUnpublish(id: number) {
+    setErrorMessage(null);
+    unpublish.mutate(id, { onError: (error) => reportError("축제 발행 해제", error) });
   }
 
   return (
@@ -125,25 +90,13 @@ export function FestivalReviewScreen() {
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap gap-2">
-          <FilterChip
-            href={makeHref({ published: false, page: 1 })}
-            active={published === false}
-            count={counts.data?.unpublished}
-          >
+          <FilterChip href={makeHref({ published: false, page: 1 })} active={published === false}>
             미발행
           </FilterChip>
-          <FilterChip
-            href={makeHref({ published: true, page: 1 })}
-            active={published === true}
-            count={counts.data?.published}
-          >
+          <FilterChip href={makeHref({ published: true, page: 1 })} active={published === true}>
             발행됨
           </FilterChip>
-          <FilterChip
-            href={makeHref({ published: undefined, page: 1 })}
-            active={published === undefined}
-            count={counts.data?.total}
-          >
+          <FilterChip href={makeHref({ published: undefined, page: 1 })} active={published === undefined}>
             전체
           </FilterChip>
         </div>
@@ -164,26 +117,12 @@ export function FestivalReviewScreen() {
         </div>
       </div>
 
-      {outcome ? (
+      {errorMessage ? (
         <div
-          role={outcome.type === "error" ? "alert" : "status"}
-          className="rounded-card border border-border bg-surface p-4 text-caption text-body-text"
+          role="alert"
+          className="rounded-card border border-border bg-surface p-4 text-caption text-danger-ink"
         >
-          {outcome.type === "error" ? (
-            <p className="text-danger-ink">{outcome.message}</p>
-          ) : (
-            <>
-              <p>
-                요청 {outcome.result.requested}건 중 {outcome.result.published}건 발행됨
-                {outcome.result.failed.length > 0 ? `, ${outcome.result.failed.length}건 실패` : ""}
-              </p>
-              {outcome.result.failed.map((failure) => (
-                <p key={failure.festivalId} className="text-danger-ink">
-                  {failure.name} — {publishBlockerLabel(failure.reason)}
-                </p>
-              ))}
-            </>
-          )}
+          {errorMessage}
         </div>
       ) : null}
 
@@ -198,45 +137,8 @@ export function FestivalReviewScreen() {
       ) : items.length === 0 ? (
         <p className="text-body text-muted">현재 필터에 맞는 축제가 없습니다.</p>
       ) : (
-        <FestivalReviewTable
-          items={items}
-          selected={selected}
-          onToggle={toggle}
-          onUnpublish={(id) =>
-            unpublish.mutate(id, {
-              // 해제 성공은 표 갱신 외에 배너로 알릴 내용이 없다 — 이전 배너만 치운다.
-              onSuccess: () => setOutcome(null),
-              onError: (error) => {
-                console.error("축제 발행 해제 실패", error);
-                setOutcome({
-                  type: "error",
-                  message:
-                    error instanceof AdminApiError
-                      ? adminErrorMessage(error.errorCode)
-                      : ADMIN_GENERIC_ERROR_MESSAGE,
-                });
-              },
-            })
-          }
-        />
+        <FestivalReviewTable items={items} onPublish={handlePublish} onUnpublish={handleUnpublish} />
       )}
-
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-caption text-muted">
-          {selected.size}건 선택됨
-          {blockedSelections.length > 0
-            ? " · 라인업 0팀이거나 주최가 연결되지 않은 축제는 발행할 수 없습니다"
-            : ""}
-        </p>
-        <Button
-          type="button"
-          disabled={selected.size === 0 || publish.isPending}
-          onClick={handlePublish}
-          className="disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {selected.size}건 발행하기
-        </Button>
-      </div>
 
       {list.data && list.data.totalPages > 1 ? (
         <Pagination
