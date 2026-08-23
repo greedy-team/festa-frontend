@@ -14,8 +14,8 @@ const DEV_ACCOUNT = { username: 'admin', password: 'admin' } as const;
 const TOKEN_TTL_SECONDS = 3600;
 
 export const adminAuthHandlers = [
-  // DEC-0084: 경로에 /api 접두사를 붙이지 않는다.
-  http.post(`${API}/admin/auth/login`, async ({ request }) => {
+  // 백엔드 PR #62가 /api 접두사를 다시 붙였다 (DEC-0084 폐기).
+  http.post(`${API}/api/admin/auth/login`, async ({ request }) => {
     const { username, password } = (await request.json()) as {
       username?: string;
       password?: string;
@@ -28,7 +28,7 @@ export const adminAuthHandlers = [
         'ADMIN_INVALID_CREDENTIALS',
         'invalid admin credentials',
         401,
-        '/admin/auth/login'
+        '/api/admin/auth/login'
       );
     }
 

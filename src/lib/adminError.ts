@@ -28,6 +28,10 @@ export const ADMIN_ERROR_CODE = {
   NETWORK: "ADMIN_NETWORK_ERROR",
   /** 실패했는데 본문에 errorCode가 없거나 파싱이 안 됐다 (프록시가 낸 HTML 등) */
   UNKNOWN: "ADMIN_UNKNOWN_ERROR",
+  /** GET /admin/festivals의 page가 0 미만 */
+  INVALID_PAGE: "INVALID_PAGE",
+  /** GET /admin/festivals의 size가 허용 범위 밖 (서버 상한 50) */
+  INVALID_PAGE_SIZE: "INVALID_PAGE_SIZE",
 } as const;
 
 const MESSAGES: Record<string, string> = {
@@ -42,6 +46,8 @@ const MESSAGES: Record<string, string> = {
   [ADMIN_ERROR_CODE.NETWORK]:
     "서버에 연결할 수 없습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.",
   [ADMIN_ERROR_CODE.UNKNOWN]: "처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+  [ADMIN_ERROR_CODE.INVALID_PAGE]: "요청한 페이지 번호가 올바르지 않습니다.",
+  [ADMIN_ERROR_CODE.INVALID_PAGE_SIZE]: "요청한 페이지 크기가 올바르지 않습니다.",
 };
 
 /**
