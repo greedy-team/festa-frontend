@@ -1,6 +1,6 @@
 # 프론트 API 모킹 방법 수립
 
-**상태:** Proposed
+**상태:** Implemented (아래 "5. 갱신" 참고 — 최초 작성 이후 구조가 일부 늘었다)
 **작성:** 모킹 코드 담당
 
 ---
@@ -34,7 +34,7 @@ FESTA 프론트는 2인 체제로 진행 중이고, 화면 개발은 API 명세�
 
 ### 2.3 도메인별 handler 분리, 공통 로직은 헬퍼로 추출
 
-`festivals.ts`/`artists.ts`/`hosts.ts`/`search.ts`로 나누고, 페이지네이션·에러 응답은 `pagination.ts`/`errors.ts`로 공통화했다.
+`festivals.ts`/`artists.ts`/`hosts.ts`/`search.ts`로 나누고, 페이지네이션·에러 응답은 `pagination.ts`/`errors.ts`로 공통화했다. (이후 `date.ts`/`appearances.ts` 두 헬퍼가 추가됐다 — "5. 갱신" 참고.)
 
 - 도메인별 분리는 **API 명세서 자체의 섹션 구조(3. festivals, 4. artists...)를 그대로 따른 것**이다. 명세서 어디를 보고 있는지와 코드 어느 파일을 보고 있는지가 항상 1:1로 대응되게 해서, 스펙이 바뀌었을 때 어느 파일을 고쳐야 하는지 헷갈리지 않게 했다.
 - 공통 헬퍼로 뺀 건 "한 곳만 고치면 전체에 반영되게" 하기 위해서다. 실제로 이번 작업 중 에러 응답 필드명이 `code`→`errorCode`로 확정됐을 때, `errors.ts` 한 줄만 고쳐서 10개 엔드포인트 전체에 즉시 반영됐다 — 만약 각 handler에 에러 응답을 하드코딩했다면 10번 따로 고쳐야 했을 것이다.
@@ -80,3 +80,29 @@ FESTA 프론트는 2인 체제로 진행 중이고, 화면 개발은 API 명세�
 - 날짜 계산(`festivalStatus`, `dday`)이 실제 `new Date()`에 의존해서, 시스템 시간을 고정하지 않으면 스냅샷성 테스트 결과가 매일 바뀐다 — Playwright 도입 시 추가 작업 필요.
 - 검색 매칭 로직이 단순 `includes()`라 실제 검색엔진 동작(랭킹, 형태소 분석)까지는 검증하지 못한다 — UI 분기 확인용으로 범위를 한정했다.
 - 문서 간 불일치로 팀 확인 대기 중인 항목(`FESTIVAL_INVALID_LIMIT` 범위 등)이 남아있어, 확정 전까지는 그 부분에 한해 실제 API와 다르게 동작할 수 있다.
+
+## 5. 갱신 (원문은 그대로 두고, 이후 확인된 사실만 덧붙인다)
+
+**2026-08-23 확인**
+
+- **공통 헬퍼가 2개 늘었다.** 2.3에 적힌 `pagination.ts`/`errors.ts` 외에 `fixtures/date.ts`
+  (오늘 날짜·D-day·축제 상태 계산의 단일 기준)와 `fixtures/appearances.ts`(아티스트 출연
+  이력 계산 — `artists.ts`와 `search.ts`가 공유해서 두 엔드포인트의 `appearanceCount`가
+  항상 일치하게 한다)가 추가됐다. `src/mocks/README.md`와 `CODE_GUIDE.md`는 이미 반영돼
+  있었는데 이 문서만 최초 작성 시점(2.3 작성 당시)에 멈춰 있었다.
+- **`host.type` 필드가 사실상 결론이 났다 — `hosts.ts`뿐 아니라 `festivals.ts`의 host 요약
+  3곳(목록 카드·상세·업커밍)에도 같은 필드가 있다.** 이 필드의 세부 사정(부록은 "제거
+  예정", 필드표는 "포함" — 팀 컨펌 필요)은 이 ADR이 아니라 `README.md`/`CODE_GUIDE.md`에
+  적혀 있었는데, 이후 주최 상세 화면(`festa-frontend` #46) 작업에서 "확정된 ERD에 없는
+  필드"로 결론이 나서 화면 쪽은 이미 이 필드를 참조하지 않는다(`features/hosts/types.ts`·
+  `HostHero.tsx`, `features/festivals/types.ts`의 `FestivalHostSummary` 주석 참고). 그런데
+  그 결론이 `README.md`/`CODE_GUIDE.md`에도 반영이 안 된 채로 "팀 컨펌 필요"로만 남아
+  있었다. **mock 응답·타입 선언에서는 아직 필드를 지우지 않았다** — 화면이 안 쓰니 동작에는
+  영향 없지만, 결론이 난 항목이 "미확정"으로 표시된 채 방치돼 있었다. `hosts.ts`,
+  `README.md`, `CODE_GUIDE.md`, `features/festivals/types.ts`의 해당 서술은 이번에 갱신했다.
+- **`FESTIVAL_INVALID_LIMIT` 범위는 여전히 미확정이다** — 위 소단원의 서술이 지금도 정확하다.
+- **`festivals.ts`의 `VALID_SORT`가 `['LATEST', 'UPCOMING', 'POPULAR']`로 명세서의 호출
+  예시를 넓게 받아주고 있는데, 실제 프론트가 쓰는 `FestivalSort` 타입은 `LATEST`/`UPCOMING`
+  둘뿐이다.** `POPULAR`는 어느 화면에서도 요청하지 않는다 — 에러를 안 내려고 넓게 열어둔
+  값이라 잘못된 건 아니지만, "명세서에 있던 값과 프론트가 실제로 쓰는 값이 다를 수 있다"는
+  예시로 남겨둔다.

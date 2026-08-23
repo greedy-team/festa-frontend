@@ -65,7 +65,7 @@ export const hostsHandlers = [
 
     return HttpResponse.json({
       id: host.id,
-      type: host.type, // 부록 변경사항엔 제거 예정이라고 되어 있으나, 실제 필드표/응답 예시엔 남아있어서 스펙 원문 기준으로 포함. 팀 컨펌 나오면 이 줄만 지우면 됨.
+      type: host.type, // 화면(#46)이 이 필드를 확정된 ERD에 없는 값으로 보고 안 쓰기로 했다 — 하지만 아직 응답에서 지우진 않았다. festivals.ts의 host 요약 3곳에도 같은 필드가 있다. 실제로 지우려면 features/hosts/types.ts·features/festivals/types.ts의 관련 주석도 같이 확인할 것.
       name: host.name,
       shortName: host.shortName,
       region: host.region,

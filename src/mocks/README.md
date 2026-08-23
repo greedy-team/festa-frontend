@@ -67,8 +67,10 @@ pnpm exec msw init public/ --save
   전부 여기서 파생시킨다. F-13 순환탐색(축제→아티스트→축제) E2E가 실제로 의미 있으려면
   라인업의 artistId가 진짜 존재하는 아티스트를 가리켜야 하는데, 이 구조가 그걸 보장한다.
 - **`hosts.type` 필드는 일단 포함**했다 (부록 변경사항엔 "제거 예정"이라 써 있지만 실제
-  필드표/응답 예시엔 남아있어서 스펙 원문 기준으로 넣음 — `hosts.ts` 주석 참고). 제거로
-  확정되면 `hosts.ts`의 `type: host.type,` 한 줄만 지우면 됨.
+  필드표/응답 예시엔 남아있어서 스펙 원문 기준으로 넣음 — `hosts.ts` 주석 참고). **이후
+  주최 상세 화면(#46) 작업에서 "확정된 ERD에 없는 필드"로 결론 나서 화면 쪽은 이미 이
+  필드를 안 쓴다** — mock 응답에서는 아직 지우지 않은 상태다. 지우려면 `hosts.ts`의
+  `type: host.type,` 한 줄만 지우면 됨.
 - **`/auth/me`는 만들지 않았다** — 이번 버전은 로그인 기능 자체가 없는 것으로 확정.
 - **날짜 계산(`festivalStatus`, `dday`)은 `fixtures/date.ts`의 `todayStr()`/`daysUntil()`/
   `festivalStatus()`로 통일했다.** 문자열(YYYY-MM-DD) 비교라 UTC/로컬 파싱 불일치 버그는
