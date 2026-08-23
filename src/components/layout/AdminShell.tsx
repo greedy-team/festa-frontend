@@ -76,7 +76,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         />
       </div>
 
-      <main className="min-w-0 flex-1 p-4 lg:p-8">{children}</main>
+      {/* 서랍이 열린 동안은 뒤에 깔린 본문을 스크린리더·탭 순서에서 뺀다 —
+          오버레이는 시각적으로만 가릴 뿐 포커스 이동은 막지 않는다 */}
+      <main aria-hidden={isDrawerOpen} className="min-w-0 flex-1 p-4 lg:p-8">
+        {children}
+      </main>
     </div>
   );
 }

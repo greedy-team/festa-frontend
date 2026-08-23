@@ -115,7 +115,11 @@ export function FestivalReviewTable({
                   {festival.published ? (
                     <button
                       type="button"
-                      onClick={() => onUnpublish(festival.festivalId)}
+                      onClick={() => {
+                        if (window.confirm(`${festival.name}의 발행을 해제할까요?`)) {
+                          onUnpublish(festival.festivalId);
+                        }
+                      }}
                       className="cursor-pointer text-caption-strong text-danger-ink"
                     >
                       해제

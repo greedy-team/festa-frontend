@@ -25,7 +25,6 @@ export type AdminFestival = {
 export type FestivalReviewParams = {
   published?: boolean;
   discovery?: Discovery;
-  year?: number;
   q?: string;
   /** 0-based — API가 받는 그대로 */
   page: number;

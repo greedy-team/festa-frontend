@@ -33,7 +33,6 @@ export async function getFestivals(
   const filtered = rows.filter((festival) => {
     if (params.published !== undefined && festival.published !== params.published) return false;
     if (params.discovery && festival.discovery !== params.discovery) return false;
-    if (params.year && Number(festival.startDate.slice(0, 4)) !== params.year) return false;
     if (params.q && !festival.name.includes(params.q)) return false;
     return true;
   });
