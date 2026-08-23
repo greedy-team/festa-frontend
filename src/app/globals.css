@@ -46,6 +46,27 @@
   --color-success-soft: #dcfce7;
   --color-success-ink: #166534;
 
+  /* --- Semantic 확장 (관리자) ---
+     DESIGN.md Known Gaps: "semantic 색이 success 한 계열뿐이다."
+     관리자 화면은 상태 가짓수가 많다 — 임포트 status 4종, flag 7종,
+     ImportPreviewAction 4종, ArtistMatchStatus 3종, 발행 blocker. */
+  --color-warning: #f59e0b;
+  --color-warning-soft: #fef3c7;
+  --color-warning-ink: #92400e;
+  --color-danger: #ef4444;
+  --color-danger-soft: #fee2e2;
+  --color-danger-ink: #991b1b;
+  --color-neutral-soft: #f3f4f6;
+  --color-neutral-ink: #4b5563;
+
+  /* --- Admin Shell ---
+     DESIGN.md 적용 범위는 사용자 화면(00~23)까지이며 Admin은 대상 밖이다.
+     그래서 셸 색만 여기서 새로 정한다. 나머지(인디고·타이포·radius)는 재사용한다. */
+  --color-admin-shell: #0f172a;
+  --color-admin-shell-hover: #1e293b;
+  --color-admin-shell-ink: #e2e8f0;
+  --color-admin-shell-muted: #64748b;
+
   /* --- Scrim --- */
   --color-scrim-hero: rgba(0, 0, 0, 0.55);
   --color-scrim-25: rgba(17, 24, 39, 0.25);

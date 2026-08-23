@@ -8,6 +8,9 @@ type Props<T extends string> = {
   value: T;
   options: Option<T>[];
   className?: string;
+  /** 쿼리 파라미터 이름. 정렬 외의 단일선택 필터에도 쓴다 */
+  name?: string;
+  ariaLabel?: string;
 };
 
 /**
@@ -19,11 +22,13 @@ export function SortDropdown<T extends string>({
   value,
   options,
   className = "",
+  name = "sort",
+  ariaLabel = "정렬",
 }: Props<T>) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const preserved = Array.from(searchParams.entries()).filter(
-    ([key]) => key !== "sort" && key !== "page",
+    ([key]) => key !== name && key !== "page",
   );
 
   return (
@@ -32,10 +37,10 @@ export function SortDropdown<T extends string>({
         <input key={key} type="hidden" name={key} value={val} />
       ))}
       <select
-        name="sort"
+        name={name}
         defaultValue={value}
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
-        aria-label="정렬"
+        aria-label={ariaLabel}
         className="h-[36px] min-w-[104px] cursor-pointer rounded-sm border border-border bg-surface px-3 text-ink text-meta"
       >
         {options.map((option) => (

@@ -96,8 +96,10 @@ Codex는 `AGENTS.md`와 `.agents/skills/`만 자동으로 읽습니다. `.claude
 ```
 docs/issues/    이슈 초안
 docs/reports/   구현 보고서
-docs/pr/        PR 본문 초안
 ```
+
+`docs/pr/`(PR 본문 초안)은 **커밋하지 않습니다** — gitignore 대상입니다. PR 본문은 GitHub에
+붙여넣으면 그것이 원본이고, 레포에 사본을 두면 둘이 갈립니다.
 
 ## CI/CD
 

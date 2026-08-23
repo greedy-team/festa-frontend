@@ -16,11 +16,11 @@ FESTA는 **feature-first** 구조를 사용한다. `app/`은 라우팅만 맡고
 ```text
 src/
 ├── app/                       # 라우팅과 레이아웃
-│   ├── (main)/               # 일반 사용자 화면
-│   ├── (admin)/admin/        # 관리자 화면
-│   ├── layout.tsx
-│   ├── providers.tsx
+│   ├── admin/                # 관리자 화면 — login/, (console)/ 라우트 그룹, providers.tsx
+│   ├── layout.tsx            # SiteChrome으로 공개 화면 셸(Header·Footer)을 감싼다
 │   └── globals.css
+│   # 일반 사용자 화면(축제·아티스트·분실물 등)은 각자 app/ 바로 아래에 있다
+│   # — (main) 그룹으로 묶지 않는다. 이유는 아래 참고.
 ├── features/                  # 도메인별 실제 화면과 로직
 │   ├── {domain}/
 │   │   ├── components/
@@ -31,7 +31,7 @@ src/
 │   └── admin/{domain}/       # 관리자 기능
 ├── components/
 │   ├── ui/                   # 도메인과 무관한 공용 UI
-│   └── layout/               # Header, Footer, AdminSidebar
+│   └── layout/               # Header, Footer, AdminSidebar, SiteChrome
 ├── hooks/                    # 여러 도메인이 공유하는 훅
 ├── lib/                      # fetcher, QueryClient, 순수 유틸
 ├── stores/                   # 앱 전체 클라이언트 상태
@@ -40,6 +40,14 @@ src/
 ```
 
 이 트리는 생성 목록이 아니다. 파일이 처음 필요할 때 해당 폴더를 만든다.
+
+관리자 화면은 `app/admin/`(라우트 접두어)과 그 안의 `(console)` 라우트 그룹(로그인 이후
+사이드바가 붙는 화면들)으로 구성되고, `app/admin/providers.tsx`가 관리자 전용
+QueryClientProvider를 둔다. 공개/관리자 셸을 가르는 것은 `(main)` 라우트 그룹이 아니라
+`components/layout/SiteChrome.tsx`다 — 현재 경로(`usePathname`)로 판단해 `/admin` 이하면
+자체 셸(사이드바)에 맡기고, 그 외에는 Header·Footer를 그린다. 공개 화면을 `(main)` 그룹으로
+옮기는 안은 검토됐으나, 이 작업 시점에 그 폴더들을 건드리는 PR이 여러 개 열려 있어
+보류했다 — 실수로 빠뜨린 게 아니라 의도된 유예다.
 
 ## 배치 기준
 
