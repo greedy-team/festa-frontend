@@ -28,10 +28,18 @@ export const ADMIN_ERROR_CODE = {
   NETWORK: "ADMIN_NETWORK_ERROR",
   /** 실패했는데 본문에 errorCode가 없거나 파싱이 안 됐다 (프록시가 낸 HTML 등) */
   UNKNOWN: "ADMIN_UNKNOWN_ERROR",
-  /** GET /admin/festivals의 page가 0 미만 */
+  /** GET /admin/festivals의 page가 0 미만. 아직 이 코드를 쓰는 화면이 없다 — 목록 화면에서 소비 예정 */
   INVALID_PAGE: "INVALID_PAGE",
-  /** GET /admin/festivals의 size가 허용 범위 밖 (서버 상한 50) */
+  /** GET /admin/festivals의 size가 허용 범위 밖 (서버 상한 50). 아직 이 코드를 쓰는 화면이 없다 — 목록 화면에서 소비 예정 */
   INVALID_PAGE_SIZE: "INVALID_PAGE_SIZE",
+  /** POST/DELETE /admin/festivals/{id}/publish의 400 — 라인업이 비어 발행 불가 */
+  FESTIVAL_PUBLISH_LINEUP_EMPTY: "FESTIVAL_PUBLISH_LINEUP_EMPTY",
+  /** POST/DELETE /admin/festivals/{id}/publish의 400 — 주최가 연결되지 않아 발행 불가 */
+  FESTIVAL_PUBLISH_HOST_NOT_LINKED: "FESTIVAL_PUBLISH_HOST_NOT_LINKED",
+  /** POST/DELETE /admin/festivals/{id}/publish의 400 — 좌표 정보가 없어 발행 불가 */
+  FESTIVAL_PUBLISH_COORDINATES_MISSING: "FESTIVAL_PUBLISH_COORDINATES_MISSING",
+  /** POST/DELETE /admin/festivals/{id}/publish의 404 — 목록 조회 이후 삭제된 경우 등 */
+  FESTIVAL_NOT_FOUND: "FESTIVAL_NOT_FOUND",
 } as const;
 
 const MESSAGES: Record<string, string> = {
@@ -48,6 +56,11 @@ const MESSAGES: Record<string, string> = {
   [ADMIN_ERROR_CODE.UNKNOWN]: "처리 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
   [ADMIN_ERROR_CODE.INVALID_PAGE]: "요청한 페이지 번호가 올바르지 않습니다.",
   [ADMIN_ERROR_CODE.INVALID_PAGE_SIZE]: "요청한 페이지 크기가 올바르지 않습니다.",
+  [ADMIN_ERROR_CODE.FESTIVAL_PUBLISH_LINEUP_EMPTY]: "라인업이 없어 발행할 수 없습니다.",
+  [ADMIN_ERROR_CODE.FESTIVAL_PUBLISH_HOST_NOT_LINKED]: "주최가 연결되지 않아 발행할 수 없습니다.",
+  [ADMIN_ERROR_CODE.FESTIVAL_PUBLISH_COORDINATES_MISSING]: "좌표 정보가 없어 발행할 수 없습니다.",
+  [ADMIN_ERROR_CODE.FESTIVAL_NOT_FOUND]:
+    "해당 축제를 찾을 수 없습니다. 새로고침 후 다시 시도해 주세요.",
 };
 
 /**

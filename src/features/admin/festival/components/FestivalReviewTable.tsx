@@ -10,12 +10,20 @@ type Props = {
   items: AdminFestival[];
   onPublish: (id: number) => void;
   onUnpublish: (id: number) => void;
+  isPublishing?: boolean;
+  isUnpublishing?: boolean;
 };
 
 // 기간 표기는 lib/festivalDate.ts의 dateRange()를 쓴다 — 공개 화면이 이미 쓰는 함수다.
 // 같은 포맷터를 여기서 다시 만들지 않는다.
 
-export function FestivalReviewTable({ items, onPublish, onUnpublish }: Props) {
+export function FestivalReviewTable({
+  items,
+  onPublish,
+  onUnpublish,
+  isPublishing = false,
+  isUnpublishing = false,
+}: Props) {
   return (
     // 넓은 표는 자기 컨테이너 안에서 스크롤한다 — 페이지가 가로로 밀리면 안 된다.
     <div className="overflow-x-auto rounded-card border border-border bg-surface">
@@ -35,7 +43,9 @@ export function FestivalReviewTable({ items, onPublish, onUnpublish }: Props) {
           {items.map((festival) => {
             const safeSourceUrl = festival.sourceUrl ? safeHttpUrl(festival.sourceUrl) : null;
             const isPublished = festival.publishedAt !== null;
-            const hasBlockers = festival.blockers.length > 0;
+            // 서버 스키마에 required 지정이 없어 필드가 비어 올 수 있다 — null 가드.
+            const blockers = festival.blockers ?? [];
+            const hasBlockers = blockers.length > 0;
             return (
               <tr key={festival.festivalId} className="border-b border-divider last:border-0">
                 <td className="p-4">
@@ -73,7 +83,7 @@ export function FestivalReviewTable({ items, onPublish, onUnpublish }: Props) {
                   {dateRange(festival.startDate, festival.endDate)}
                 </td>
                 <td className="p-4">
-                  {festival.blockers.includes(PUBLISH_BLOCKER.LINEUP_EMPTY) ? (
+                  {blockers.includes(PUBLISH_BLOCKER.LINEUP_EMPTY) ? (
                     <StatusBadge tone="danger">0팀</StatusBadge>
                   ) : (
                     <span className="text-caption text-body-text">{festival.lineupCount}팀</span>
@@ -97,12 +107,13 @@ export function FestivalReviewTable({ items, onPublish, onUnpublish }: Props) {
                   {isPublished ? (
                     <button
                       type="button"
+                      disabled={isUnpublishing}
                       onClick={() => {
                         if (window.confirm(`${festival.name}의 발행을 해제할까요?`)) {
                           onUnpublish(festival.festivalId);
                         }
                       }}
-                      className="cursor-pointer text-caption-strong text-danger-ink"
+                      className="cursor-pointer text-caption-strong text-danger-ink disabled:cursor-not-allowed disabled:text-muted-soft"
                     >
                       해제
                     </button>
@@ -110,7 +121,7 @@ export function FestivalReviewTable({ items, onPublish, onUnpublish }: Props) {
                     <div className="flex flex-col items-end gap-1">
                       <button
                         type="button"
-                        disabled={hasBlockers}
+                        disabled={hasBlockers || isPublishing}
                         onClick={() => onPublish(festival.festivalId)}
                         className="cursor-pointer text-caption-strong text-primary disabled:cursor-not-allowed disabled:text-muted-soft"
                       >
@@ -118,7 +129,7 @@ export function FestivalReviewTable({ items, onPublish, onUnpublish }: Props) {
                       </button>
                       {hasBlockers ? (
                         <span className="text-label-regular text-muted-soft">
-                          {festival.blockers.map((reason) => publishBlockerLabel(reason)).join(" · ")}
+                          {blockers.map((reason) => publishBlockerLabel(reason)).join(" · ")}
                         </span>
                       ) : null}
                     </div>

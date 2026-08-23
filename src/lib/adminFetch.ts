@@ -29,6 +29,9 @@ export async function adminFetch<T>(
 ): Promise<T> {
   const token = readToken();
   const headers = new Headers(init.headers);
+  // 로그인 요청(토큰이 없거나 만료된 상태로도 호출됨)에도 그대로 실려간다 — 의도적 단순화.
+  // 백엔드가 로그인 엔드포인트에서 이 헤더를 무시하고 헤더 없을 때와 동일한 401을 내리는
+  // 것을 전제로 한다. 그 동작이 바뀌면 여기서 로그인 경로를 분기해야 한다.
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
   const method = init.method ?? "GET";

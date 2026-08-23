@@ -137,7 +137,13 @@ export function FestivalReviewScreen() {
       ) : items.length === 0 ? (
         <p className="text-body text-muted">현재 필터에 맞는 축제가 없습니다.</p>
       ) : (
-        <FestivalReviewTable items={items} onPublish={handlePublish} onUnpublish={handleUnpublish} />
+        <FestivalReviewTable
+          items={items}
+          onPublish={handlePublish}
+          onUnpublish={handleUnpublish}
+          isPublishing={publish.isPending}
+          isUnpublishing={unpublish.isPending}
+        />
       )}
 
       {list.data && list.data.totalPages > 1 ? (
