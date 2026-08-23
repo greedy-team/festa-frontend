@@ -51,5 +51,10 @@ export async function login(
     throw new AdminApiError(errorCode, response.status);
   }
 
-  return (await response.json()) as LoginResponse;
+  try {
+    return (await response.json()) as LoginResponse;
+  } catch (error) {
+    console.error(`POST ${LOGIN_PATH} 응답 파싱 실패`, error);
+    throw new AdminApiError(ADMIN_ERROR_CODE.UNKNOWN, response.status);
+  }
 }

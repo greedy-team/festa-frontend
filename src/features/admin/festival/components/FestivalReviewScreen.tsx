@@ -35,19 +35,12 @@ function parseDiscovery(raw: string | null): Discovery | undefined {
   return VALID_DISCOVERY.find((d) => d === raw);
 }
 
-/** 픽스처·실데이터 어느 쪽이든 없는 연도는 서버가 빈 목록으로 답한다 */
-function parseYear(raw: string | null): number | undefined {
-  const n = Number(raw);
-  return Number.isInteger(n) && n >= 2000 && n <= 2100 ? n : undefined;
-}
-
 export function FestivalReviewScreen() {
   const searchParams = useSearchParams();
 
   const page = parsePage(searchParams.get("page"));
   const published = parsePublished(searchParams.get("published"));
   const discovery = parseDiscovery(searchParams.get("discovery"));
-  const year = parseYear(searchParams.get("year"));
   const q = searchParams.get("q") ?? undefined;
 
   const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -61,7 +54,6 @@ export function FestivalReviewScreen() {
   const list = useAdminFestivals({
     published,
     discovery,
-    year,
     q,
     page: page - 1,
     size: PAGE_SIZE,
@@ -75,7 +67,7 @@ export function FestivalReviewScreen() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- 의도적: 화면 밖으로 벗어난 선택을 즉시 비운다
     setSelected(new Set());
-  }, [page, published, discovery, year, q]);
+  }, [page, published, discovery, q]);
 
   const items = list.data?.items ?? [];
   const blockedSelections = items.filter(
@@ -88,7 +80,6 @@ export function FestivalReviewScreen() {
     const nextPublished = "published" in next ? next.published : published;
     if (nextPublished !== undefined) p.set("published", String(nextPublished));
     if (discovery) p.set("discovery", discovery);
-    if (year) p.set("year", String(year));
     if (q) p.set("q", q);
     if (next.page && next.page > 1) p.set("page", String(next.page));
     const qs = p.toString();
