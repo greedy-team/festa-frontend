@@ -111,8 +111,10 @@ export const worker = setupWorker(...handlers); // 브라우저 환경 (Client C
 Next.js는 `instrumentation.ts` 파일에 `register()` 함수가 있으면 **서버 시작 시 자동으로 한 번 호출**해준다(Next.js가 제공하는 훅, 우리가 만든 게 아님).
 
 ```ts
+import { MOCKING_ENABLED } from '@/lib/mocking';
+
 export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs' && process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+  if (process.env.NEXT_RUNTIME === 'nodejs' && MOCKING_ENABLED) {
     const { server } = await import('@/mocks/server');
     server.listen({ onUnhandledRequest: 'bypass' });
   }

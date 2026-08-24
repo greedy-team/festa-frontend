@@ -14,11 +14,11 @@ pnpm dev
 bun dev
 ```
 
-목 데이터로 화면을 보려면 `.env.local`에 아래 두 줄이 필요합니다. 모킹 플래그는
-로컬 전용이라 Vercel에 등록하지 않으므로 각자 만듭니다.
+목 데이터로 화면을 보려면 `.env.local`에 아래 두 줄이 필요합니다. Vercel에도 같은
+이름으로 등록하면 배포 환경에서도 동일하게 목 데이터로 동작합니다.
 
 ```bash
-NEXT_PUBLIC_API_MOCKING=enabled
+NEXT_PUBLIC_API_MOCKING=true
 NEXT_PUBLIC_API_BASE_URL=https://api.festa.kr
 ```
 
