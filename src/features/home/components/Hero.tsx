@@ -68,7 +68,9 @@ export function Hero({ festivals }: Props) {
       </div>
 
       {pageCount > 1 ? (
-        <div className="absolute inset-x-0 bottom-9 flex justify-center">
+        // inset-x-0라 도트 좌우의 빈 여백까지 뷰포트 전체 폭을 덮는다. pointer-events-none으로
+        // 그 빈 영역의 클릭을 흘려보내지 않으면 패널의 "자세히 보기" 링크가 이 아래 깔린다.
+        <div className="absolute inset-x-0 bottom-9 flex justify-center pointer-events-none">
           <HeroDots count={pageCount} current={current} onSelect={setPage} />
         </div>
       ) : null}
