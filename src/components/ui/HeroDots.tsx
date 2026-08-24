@@ -6,7 +6,7 @@ type Props = {
 
 export function HeroDots({ count, current, onSelect }: Props) {
   return (
-    <div className="inline-flex h-[44px] items-center gap-4 rounded-pill bg-surface px-6">
+    <div className="pointer-events-auto inline-flex h-[44px] items-center gap-4 rounded-pill bg-surface px-6">
       {Array.from({ length: count }, (_, i) => (
         <button
           key={i}
