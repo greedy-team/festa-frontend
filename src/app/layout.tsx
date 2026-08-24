@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { MockProvider } from "@/mocks/MockProvider";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import { MOCKING_ENABLED } from "@/lib/mocking";
 
 export const metadata: Metadata = {
   title: SITE_NAME,
@@ -27,7 +28,7 @@ export default function RootLayout({
             양쪽에서 돌아야 하므로 여기서 감싼다. 워커가 준비될 때까지 자식을 렌더하지
             않으므로, 초기 렌더에 실제 네트워크로 요청이 새지 않는다. */}
         <SiteChrome header={<Header />} footer={<Footer />}>
-          {process.env.NEXT_PUBLIC_API_MOCKING === "enabled" ? (
+          {MOCKING_ENABLED ? (
             <MockProvider>{children}</MockProvider>
           ) : (
             children

@@ -6,7 +6,7 @@ const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
 /**
  * 실제 계정은 백엔드의 AdminAccountSeeder가 환경변수로 심는다. 서버를 띄우지 않고
  * 화면을 돌리기 위한 값이므로, 서버가 로컬에 뜨면 이 핸들러 대신 그쪽이 응답한다
- * (NEXT_PUBLIC_API_MOCKING=disabled).
+ * (NEXT_PUBLIC_API_MOCKING=false).
  */
 const DEV_ACCOUNT = { username: 'admin', password: 'admin' } as const;
 

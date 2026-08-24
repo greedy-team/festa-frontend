@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 /**
  * app/layout.tsx에서 감싸서 쓴다:
  *
- *   {process.env.NEXT_PUBLIC_API_MOCKING === 'enabled'
+ *   {MOCKING_ENABLED
  *     ? <MockProvider>{children}</MockProvider>
  *     : children}
  *

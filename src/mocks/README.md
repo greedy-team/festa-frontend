@@ -33,17 +33,17 @@ pnpm exec msw init public/ --save
 ```
 
 로컬 `.env.local`에 `NEXT_PUBLIC_API_MOCKING`과 `NEXT_PUBLIC_API_BASE_URL`을 넣어두면
-나중에 실제 백엔드로 스위치할 때 이 두 값만 바꾸면 된다 (`NEXT_PUBLIC_API_MOCKING=disabled`,
+나중에 실제 백엔드로 스위치할 때 이 두 값만 바꾸면 된다 (`NEXT_PUBLIC_API_MOCKING=false`,
 `NEXT_PUBLIC_API_BASE_URL=<실제 API 주소>`). `NEXT_PUBLIC_` 접두사가 붙은 값은 Next.js가
-자동으로 인라인하므로 `next.config.ts`를 따로 건드릴 필요는 없다. 이 저장소는 앱 환경변수를
-Vercel에 등록해 `vercel env pull .env.local`로 당겨오는 방식을 쓰는데, 모킹 플래그는 로컬
-개발 전용이라 Vercel에는 등록하지 않는다 — Preview/Production 빌드는 모킹 없이 그대로 동작한다.
+자동으로 인라인하므로 `next.config.ts`를 따로 건드릴 필요는 없다. 같은 이름으로 Vercel
+환경변수에도 등록돼 있어서 `true`/`false`로 Preview·Production의 모킹 여부를 그대로 제어한다.
 
 ## 켜는 법
 
-1. **서버 사이드 (async Server Component)**: `instrumentation.ts`가 자동으로 처리한다.
-   `NEXT_PUBLIC_API_MOCKING=enabled`일 때만 켜지므로, 배포 빌드에서 실수로 모킹이 남아있을
-   걱정은 없다.
+1. **서버 사이드 (async Server Component)**: `NEXT_PUBLIC_API_MOCKING=true`일 때만
+   `src/lib/api.ts`의 `fetchJson()`이 실제 fetch 대신 MSW 핸들러를 직접 호출한다
+   (`instrumentation.ts`의 네트워크 인터셉션은 Vercel 서버리스에서 안 걸려서 #75로
+   대체됨). 배포 빌드에서 실수로 모킹이 남아있을 걱정은 없다.
 2. **클라이언트 사이드 (검색 자동완성처럼 브라우저에서 직접 fetch하는 컴포넌트)**:
    `app/layout.tsx`에서 `<MockProvider>`로 감싼다.
 
