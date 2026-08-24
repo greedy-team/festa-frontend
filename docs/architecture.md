@@ -82,14 +82,22 @@ sequenceDiagram
     participant P as page.tsx (서버 컴포넌트)
     participant F as features/*/api.ts
     participant L as lib/api.ts (fetchJson)
-    participant M as MSW 또는 실제 백엔드
+    participant H as mocks/handlers (RequestHandler)
+    participant M as 실제 백엔드
 
     U->>N: GET /festivals/12
     N->>P: 라우트 매칭 후 컴포넌트 실행
     P->>F: getFestival(12)
     F->>L: fetchJson("/festivals/12")
-    L->>M: fetch(API_BASE + path)
-    M-->>L: 200 + JSON, 또는 실패(4xx/5xx/연결 끊김)
+
+    alt MOCKING_ENABLED (로컬 + Vercel 전부)
+        L->>H: handler.run() 직접 호출 (네트워크 안 탐)
+        H-->>L: Response
+    else 모킹 꺼짐
+        L->>M: fetch(API_BASE + path)
+        M-->>L: 200 + JSON, 또는 실패(4xx/5xx/연결 끊김)
+    end
+
     L-->>F: ApiResult(FestivalDetail)
     F-->>P: ApiResult(FestivalDetail)
     P->>P: res.ok 분기 — 404면 notFound(), 그 외 실패면 안내 문구
@@ -125,18 +133,23 @@ export type ApiResult<T> =
 
 ### 목킹 계층
 
-로컬 개발 환경에서는 `NEXT_PUBLIC_API_MOCKING=enabled`일 때 MSW가 두 곳에서 요청을
-가로챕니다.
+`NEXT_PUBLIC_API_MOCKING=true`일 때 목데이터가 켜집니다. 서버 사이드와 클라이언트 사이드가
+서로 다른 방식으로 동작합니다.
 
-- **서버 사이드(SSR)**: `src/instrumentation.ts` — Next.js가 서버 시작 시 자동으로
-  호출하는 훅에서 MSW 서버를 등록합니다.
-- **클라이언트 사이드(CSR)**: `src/mocks/MockProvider.tsx` — `layout.tsx`가 이 플래그일
-  때만 감쌉니다.
+- **서버 사이드**: `lib/api.ts`의 `fetchJson`이 모킹이 켜져 있으면 네트워크 요청을 아예
+  보내지 않고, `mocks/handlers`의 `RequestHandler.run()`을 직접 호출해서 응답을 만듭니다
+  (위 시퀀스 다이어그램의 `alt` 분기). 원래는 `src/instrumentation.ts`가 `msw/node`의
+  `setupServer()`로 네트워크 레벨에서 fetch를 가로채는 방식이었는데, 이 인터셉션이 Vercel
+  서버리스 함수에서는 걸리지 않는 문제가 있어(#75) 인터셉션 자체를 우회하는 지금 방식으로
+  바꿨습니다. `instrumentation.ts`는 파일은 남아 있지만 이 경로에서는 더 이상 쓰이지
+  않습니다.
+- **클라이언트 사이드**: `src/mocks/MockProvider.tsx`가 여전히 원래 방식(Service Worker로
+  네트워크 레벨 인터셉션)을 씁니다 — `layout.tsx`가 이 플래그일 때만 감쌉니다.
 
-이 플래그는 로컬 `.env.local` 전용이고 Vercel(Preview/Production)에는 등록돼 있지 않아서,
-배포된 환경에서는 실제 `fetch`가 나갑니다. 다만 아직 백엔드에 공개 조회 API가 없어서 그
-요청은 항상 실패로 돌아오고, 위의 실패 처리 계약 덕분에 화면이 깨지지 않고 안내 문구로
-떨어집니다.
+**이 플래그는 이제 로컬 전용이 아닙니다.** Vercel Production/Preview 환경변수에도
+`NEXT_PUBLIC_API_MOCKING=true`로 등록돼 있어서, 배포된 환경도 로컬과 동일하게 목데이터로
+동작합니다. 아직 백엔드에 공개 조회 API가 없는 상태에서 실제 배포 화면을 시연 가능하게
+만든 변경입니다.
 
 ## 4. 서버와의 인터페이스 (API 계약)
 
