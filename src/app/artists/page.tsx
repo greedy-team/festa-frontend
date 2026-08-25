@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getArtists } from "@/features/artists/api";
 import type { ArtistGenre, ArtistSort } from "@/features/artists/types";
-import { ArtistCard } from "@/features/artists/components/ArtistCard";
+import { ArtistRow } from "@/features/artists/components/ArtistRow";
 import { GENRE_LABELS } from "@/lib/artistGenre";
 import { parsePage } from "@/lib/searchParams";
 import { Container } from "@/components/layout/Container";
@@ -108,9 +108,12 @@ export default async function ArtistsPage({ searchParams }: Props) {
       </div>
 
       {data.items.length ? (
-        <div className="mt-10 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
+        // 실사진이 없는 아티스트를 카드 그리드로 키워봤자 이니셜 원 하나뿐이라
+        // 정보 밀도가 낮다 — 행으로 나열해 한 화면에 더 많이 훑을 수 있게 한다.
+        // 그리드와 달리 컬럼 수 브레이크포인트가 필요 없어 반응형도 더 단순하다.
+        <div className="mt-10 flex flex-col gap-3">
           {data.items.map((artist) => (
-            <ArtistCard key={artist.artistId} artist={artist} />
+            <ArtistRow key={artist.artistId} artist={artist} />
           ))}
         </div>
       ) : (
