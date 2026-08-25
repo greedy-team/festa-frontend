@@ -87,7 +87,9 @@ export default async function ArtistsPage({ searchParams }: Props) {
       <div className="mt-2 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-hero text-ink">아티스트</h1>
-          <p className="mt-2 text-body text-muted">
+          {/* 모바일에서는 필터 패널까지 합치면 화면 대부분을 설명 텍스트가
+              차지해서 뺀다 — 데스크톱은 여유가 있어 그대로 둔다 */}
+          <p className="mt-2 hidden text-body text-muted sm:block">
             대학 축제 무대에 오른 아티스트를 출연 기록으로 찾아보세요
           </p>
         </div>
@@ -101,19 +103,23 @@ export default async function ArtistsPage({ searchParams }: Props) {
           검색·정렬이 한 줄에 다 들어가 이미 정돈돼 보이므로 패널을 벗겨
           기존처럼 플레인한 한 줄 필터 행으로 되돌린다. */}
       <div className="mt-10 rounded-card border border-border bg-surface p-6 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* 모바일에서는 칩 대신 셀렉트 하나로 묶는다 — 칩이 줄바꿈돼도 결국
-              여러 줄을 차지해 정렬 셀렉트보다 훨씬 어수선해 보인다 */}
-          <div className="sm:hidden">
+        {/* 모바일 전용 레이아웃 — 검색이 위, 장르·정렬 셀렉트를 한 줄에 나란히 */}
+        <div className="flex flex-col gap-3 sm:hidden">
+          <SearchPill placeholder="아티스트 이름 검색" />
+          <div className="flex items-center gap-3">
             <SortDropdown
               value={genre ?? ""}
               options={GENRE_SELECT_OPTIONS}
               name="genre"
               ariaLabel="장르"
             />
+            <SortDropdown value={sort} options={SORT_OPTIONS} />
           </div>
+        </div>
 
-          <div className="hidden items-start gap-3 sm:flex">
+        {/* sm 이상 — 기존 그대로 (장르 칩 왼쪽, 검색·정렬 오른쪽) */}
+        <div className="hidden sm:flex sm:items-center sm:justify-between sm:gap-4">
+          <div className="flex items-start gap-3">
             <span className="mt-2 shrink-0 text-meta text-muted">장르</span>
             <div className="flex flex-wrap items-center gap-2">
               {GENRE_OPTIONS.map((option) => (
