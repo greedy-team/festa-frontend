@@ -7,6 +7,7 @@ import { AdmissionInfo } from "@/features/festivals/components/AdmissionInfo";
 import { LocationSection } from "@/features/festivals/components/LocationSection";
 import { Container } from "@/components/layout/Container";
 import { FadeInSection } from "@/components/ui/FadeInSection";
+import { PageFadeIn } from "@/components/ui/PageFadeIn";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -39,20 +40,22 @@ export default async function FestivalDetailPage({ params }: Props) {
   const festival = res.data;
 
   return (
-    <Container className="mt-10 mb-16 flex flex-col gap-16">
-      {/* 히어로는 화면 진입 즉시 보이는 자리라 그대로 두고, 그 아래
-          섹션들만 스크롤해서 들어올 때 부드럽게 나타나게 한다 — 화면
-          전체가 한 번에 뚝 뜨는 대신 내려볼 때마다 드러나는 느낌 */}
-      <FestivalHero festival={festival} />
-      <FadeInSection>
-        <LineupSection lineup={festival.lineup} />
-      </FadeInSection>
-      <FadeInSection>
-        <AdmissionInfo admission={festival.admission} />
-      </FadeInSection>
-      <FadeInSection>
-        <LocationSection location={festival.location} />
-      </FadeInSection>
-    </Container>
+    // 카드 클릭으로 들어오는 화면이라 히어로부터 뚝 뜨지 않고 진입 시
+    // 전체가 한 번 부드럽게 나타나게 한다(목록 화면과 같은 PageFadeIn).
+    // 그 아래 섹션들은 스크롤로 들어올 때 추가로 한 번 더 페이드인된다.
+    <PageFadeIn>
+      <Container className="mt-10 mb-16 flex flex-col gap-16">
+        <FestivalHero festival={festival} />
+        <FadeInSection>
+          <LineupSection lineup={festival.lineup} />
+        </FadeInSection>
+        <FadeInSection>
+          <AdmissionInfo admission={festival.admission} />
+        </FadeInSection>
+        <FadeInSection>
+          <LocationSection location={festival.location} />
+        </FadeInSection>
+      </Container>
+    </PageFadeIn>
   );
 }
