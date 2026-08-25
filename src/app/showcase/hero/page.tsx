@@ -59,8 +59,8 @@ export default function ShowcaseHeroPage() {
         계산한다. 시안의 8개는 축제 32개를 전제한 그림이다.
       </p>
       <p className="mt-2 text-label text-muted-soft">
-        패널 클릭 동작은 아직 없다 — DESIGN.md Known Gaps에 세 안이 경합 중이라
-        팀이 정한 뒤 붙인다.
+        패널 전체가 링크다 — 클릭하면 요약 없이 축제 상세로 직행한다(DEC-0060).
+        이 표본에서는 실제 이동을 막기 위해 감싸는 div에 고정 크기만 줬다.
       </p>
     </Container>
   );
