@@ -96,11 +96,11 @@ export default async function ArtistsPage({ searchParams }: Props) {
         </span>
       </div>
 
-      {/* 필터·검색·정렬을 하나의 패널로 묶는다 — 경계 없이 요소만 떠 있으면 좁은
-          화면에서 세로로 쌓일 때 특히 정리 안 된 느낌이 강하다. LostPanel·
-          search-filter-panel과 같은 패널 언어(테두리+r20+패딩)를 재사용해 헤더·
-          결과 목록과 시각적으로 구분되는 하나의 섹션으로 만든다. */}
-      <div className="mt-10 rounded-card border border-border bg-surface p-6 sm:p-8">
+      {/* 패널(테두리+r20+패딩)은 좁은 화면 전용이다 — 요소들이 세로로 쌓일 때
+          경계가 없으면 정리 안 된 느낌이 강해서 넣었다. sm 이상에서는 장르·
+          검색·정렬이 한 줄에 다 들어가 이미 정돈돼 보이므로 패널을 벗겨
+          기존처럼 플레인한 한 줄 필터 행으로 되돌린다. */}
+      <div className="mt-10 rounded-card border border-border bg-surface p-6 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           {/* 모바일에서는 칩 대신 셀렉트 하나로 묶는다 — 칩이 줄바꿈돼도 결국
               여러 줄을 차지해 정렬 셀렉트보다 훨씬 어수선해 보인다 */}
