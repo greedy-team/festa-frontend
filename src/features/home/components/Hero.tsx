@@ -5,7 +5,6 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import type { UpcomingFestival } from "@/features/home/types";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
-import { HeroArrow } from "@/components/ui/HeroArrow";
 import { HeroDots } from "@/components/ui/HeroDots";
 
 // lg 슬롯 수(2/3/4)를 리터럴 클래스로 미리 다 적어둔다 — 템플릿 문자열로 만들면
@@ -73,8 +72,6 @@ export function Hero({ festivals }: Props) {
     });
   }, [emblaApi, onSelect]);
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
   const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi]);
 
   if (festivals.length === 0) {
@@ -98,22 +95,11 @@ export function Hero({ festivals }: Props) {
         </div>
       </div>
 
-      {hasCarousel ? (
-        <>
-          {/* 화살표는 마진 32에 붙는다 — 콘텐츠가 아니라 히어로 위의 컨트롤이다 */}
-          <div className="absolute inset-y-0 left-8 flex items-center">
-            <HeroArrow direction="prev" onClick={scrollPrev} />
-          </div>
-          <div className="absolute inset-y-0 right-8 flex items-center">
-            <HeroArrow direction="next" onClick={scrollNext} />
-          </div>
-
-          {scrollSnaps.length > 1 ? (
-            <div className="pointer-events-none absolute inset-x-0 bottom-9 flex justify-center">
-              <HeroDots count={scrollSnaps.length} current={selectedIndex} onSelect={scrollTo} />
-            </div>
-          ) : null}
-        </>
+      {/* 오토플레이 캐러셀이라 화살표는 없앴다 — 도트로만 현재 위치 확인·수동 이동한다 */}
+      {hasCarousel && scrollSnaps.length > 1 ? (
+        <div className="pointer-events-none absolute inset-x-0 bottom-9 flex justify-center">
+          <HeroDots count={scrollSnaps.length} current={selectedIndex} onSelect={scrollTo} />
+        </div>
       ) : null}
     </section>
   );
