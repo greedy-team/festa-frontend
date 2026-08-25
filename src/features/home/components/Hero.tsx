@@ -76,14 +76,18 @@ export function Hero({ festivals }: Props) {
 
   if (festivals.length === 0) {
     return (
-      <section className="flex h-[560px] items-center justify-center bg-canvas lg:h-[952px]">
+      <section className="flex h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] items-center justify-center bg-canvas">
         <p className="text-body text-muted">표시할 축제가 없습니다.</p>
       </section>
     );
   }
 
   return (
-    <section className="relative h-[560px] w-full lg:h-[952px]">
+    // nav(72px)를 뺀 나머지 화면 높이를 그대로 채운다 — 화면 크기가 달라도
+    // 첫 화면 아래 끝까지 히어로가 닿는다. 952px는 DESIGN.md 시안 높이를
+    // 상한으로만 남긴 것이고, 그보다 큰 화면(초고해상도 모니터 등)에서
+    // 무한정 늘어나지 않게 막는다.
+    <section className="relative h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] w-full">
       {/* 패널은 풀블리드다. 여백도 radius도 없이 맞닿는다 */}
       <div className="h-full w-full overflow-hidden" ref={hasCarousel ? emblaRef : undefined}>
         <div className="flex h-full">
