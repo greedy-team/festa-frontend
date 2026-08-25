@@ -38,12 +38,12 @@ export default function ShowcaseHeroPage() {
         {/* 실제 Hero는 h-[calc(100vh-72px)]라 표본에 그대로 못 넣는다.
             같은 slideBasisClass를 실제 화면 폭 데스크톱 기준(lg)으로
             재현해서, 개수가 슬롯(4)보다 적을 때 빈 칸 없이 채워지는 걸
-            보여준다. HeroPanel 내부 텍스트가 top-[68px]/bottom-14 같은
-            절대 좌표라, 너무 낮은 상자에 넣으면 D-day와 정보 블록이
-            겹친다 — 520px는 그 둘이 안 겹치는 최소한이다. */}
+            보여준다. 높이는 위 "Panel" 표본과 똑같이 952px(실제 히어로
+            최대 높이)로 맞춘다 — 다른 값을 쓰면 같은 컴포넌트인데 표본마다
+            세로 길이가 달라 보인다. */}
         {[1, 2, 3].map((n) => (
           <Specimen key={n} name={`축제 ${n}개`} size={`lg 기준, 슬롯 4개 중 ${n}개 사용`} full>
-            <div className="flex h-[520px] w-full">
+            <div className="flex h-[952px] w-full">
               {SAMPLE_UPCOMING_LIST.slice(0, n).map((festival) => (
                 <div key={festival.festivalId} className={slideBasisClass(n)}>
                   <HeroPanel festival={festival} />
