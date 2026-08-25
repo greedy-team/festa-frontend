@@ -87,25 +87,29 @@ export default async function ArtistsPage({ searchParams }: Props) {
         </span>
       </div>
 
-      {/* 좁은 화면에서는 장르 행 / 검색·정렬 행을 아예 세로로 쌓는다 — 한 줄에 억지로
-          다 넣으면 칩·검색창·드롭다운이 서로를 밀어내며 찌그러진다 */}
-      <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <span className="mt-2 shrink-0 text-meta text-muted">장르</span>
-          <div className="flex flex-wrap items-center gap-2">
-            {GENRE_OPTIONS.map((option) => (
-              <Link key={option.value ?? "all"} href={makeHref({ genre: option.value })}>
-                <Chip active={option.value === (genre ?? null)}>
-                  {option.label}
-                </Chip>
-              </Link>
-            ))}
+      {/* 필터·검색·정렬을 하나의 패널로 묶는다 — 경계 없이 요소만 떠 있으면 좁은
+          화면에서 세로로 쌓일 때 특히 정리 안 된 느낌이 강하다. LostPanel·
+          search-filter-panel과 같은 패널 언어(테두리+r20+패딩)를 재사용해 헤더·
+          결과 목록과 시각적으로 구분되는 하나의 섹션으로 만든다. */}
+      <div className="mt-10 rounded-card border border-border bg-surface p-6 sm:p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="mt-2 shrink-0 text-meta text-muted">장르</span>
+            <div className="flex flex-wrap items-center gap-2">
+              {GENRE_OPTIONS.map((option) => (
+                <Link key={option.value ?? "all"} href={makeHref({ genre: option.value })}>
+                  <Chip active={option.value === (genre ?? null)}>
+                    {option.label}
+                  </Chip>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <SearchPill placeholder="아티스트 이름 검색" />
-          <SortDropdown value={sort} options={SORT_OPTIONS} />
+          <div className="flex flex-wrap items-center gap-3">
+            <SearchPill placeholder="아티스트 이름 검색" />
+            <SortDropdown value={sort} options={SORT_OPTIONS} />
+          </div>
         </div>
       </div>
 
