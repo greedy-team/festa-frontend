@@ -87,10 +87,12 @@ export default async function ArtistsPage({ searchParams }: Props) {
         </span>
       </div>
 
-      <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="text-meta text-muted">장르</span>
-          <div className="flex items-center gap-2">
+      {/* 좁은 화면에서는 장르 행 / 검색·정렬 행을 아예 세로로 쌓는다 — 한 줄에 억지로
+          다 넣으면 칩·검색창·드롭다운이 서로를 밀어내며 찌그러진다 */}
+      <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="mt-2 shrink-0 text-meta text-muted">장르</span>
+          <div className="flex flex-wrap items-center gap-2">
             {GENRE_OPTIONS.map((option) => (
               <Link key={option.value ?? "all"} href={makeHref({ genre: option.value })}>
                 <Chip active={option.value === (genre ?? null)}>
@@ -101,7 +103,7 @@ export default async function ArtistsPage({ searchParams }: Props) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <SearchPill placeholder="아티스트 이름 검색" />
           <SortDropdown value={sort} options={SORT_OPTIONS} />
         </div>

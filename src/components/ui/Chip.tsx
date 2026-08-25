@@ -30,7 +30,10 @@ export function Chip({
 
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-pill ${STYLE[key]} ${className}`}
+      // shrink-0 + whitespace-nowrap — 칩 목록이 좁은 화면에서 줄바꿈될 때
+      // 칩 자체가 찌그러들며 라벨 중간이 다음 줄로 잘리는 것을 막는다
+      // (예: "발라드·R&B"가 "·R&B"만 떨어져 나가는 문제)
+      className={`inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-pill ${STYLE[key]} ${className}`}
     >
       {children}
     </span>
