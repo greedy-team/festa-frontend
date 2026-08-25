@@ -4,13 +4,17 @@
 
 import { Container } from "@/components/layout/Container";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
+import { slideBasisClass } from "@/features/home/components/Hero";
 import { HeroArrow } from "@/components/ui/HeroArrow";
 import { HeroDots } from "@/components/ui/HeroDots";
 import {
   Specimen,
   SpecimenSection,
 } from "@/app/showcase/_components/Specimen";
-import { SAMPLE_UPCOMING } from "@/app/showcase/_components/samples";
+import {
+  SAMPLE_UPCOMING,
+  SAMPLE_UPCOMING_LIST,
+} from "@/app/showcase/_components/samples";
 
 export default function ShowcaseHeroPage() {
   return (
@@ -28,6 +32,26 @@ export default function ShowcaseHeroPage() {
             <HeroPanel festival={SAMPLE_UPCOMING} />
           </div>
         </Specimen>
+      </SpecimenSection>
+
+      <SpecimenSection title="패널 폭 — 축제 개수별">
+        {/* 실제 Hero는 h-[calc(100vh-72px)]라 표본에 그대로 못 넣는다.
+            같은 slideBasisClass를 실제 화면 폭 데스크톱 기준(lg)으로
+            재현해서, 개수가 슬롯(4)보다 적을 때 빈 칸 없이 채워지는 걸
+            보여준다. HeroPanel 내부 텍스트가 top-[68px]/bottom-14 같은
+            절대 좌표라, 너무 낮은 상자에 넣으면 D-day와 정보 블록이
+            겹친다 — 520px는 그 둘이 안 겹치는 최소한이다. */}
+        {[1, 2, 3].map((n) => (
+          <Specimen key={n} name={`축제 ${n}개`} size={`lg 기준, 슬롯 4개 중 ${n}개 사용`} full>
+            <div className="flex h-[520px] w-full">
+              {SAMPLE_UPCOMING_LIST.slice(0, n).map((festival) => (
+                <div key={festival.festivalId} className={slideBasisClass(n)}>
+                  <HeroPanel festival={festival} />
+                </div>
+              ))}
+            </div>
+          </Specimen>
+        ))}
       </SpecimenSection>
 
       <SpecimenSection title="Controls">

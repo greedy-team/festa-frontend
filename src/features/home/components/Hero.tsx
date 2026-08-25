@@ -23,7 +23,7 @@ const LG_BASIS: Record<number, string> = {
  * 목표 슬롯: 모바일 1 / sm(640) 2 / lg(1024) 4 — 축제가 그보다 적으면 있는
  * 만큼만 채워서 빈 칸 없이 꽉 차게 한다.
  */
-function slideBasisClass(count: number): string {
+export function slideBasisClass(count: number): string {
   const lgSlots = Math.min(4, count);
   return `shrink-0 basis-full sm:basis-1/2 ${LG_BASIS[lgSlots] ?? "lg:basis-1/4"}`;
 }
