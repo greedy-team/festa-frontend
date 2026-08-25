@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import { ChevronDown } from "lucide-react";
 import type { UpcomingFestival } from "@/features/home/types";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
-import { HeroDots } from "@/components/ui/HeroDots";
 
 // lg 슬롯 수(2/3/4)를 리터럴 클래스로 미리 다 적어둔다 — 템플릿 문자열로 만들면
 // Tailwind가 빌드 시점에 클래스를 못 찾아서 스타일이 안 먹는다.
@@ -28,6 +28,34 @@ function slideBasisClass(count: number): string {
   return `shrink-0 basis-full sm:basis-1/2 ${LG_BASIS[lgSlots] ?? "lg:basis-1/4"}`;
 }
 
+// 히어로가 이제 화면 높이를 꽉 채우므로, 아래에 더 볼 게 있다는 걸 알려주는
+// 스크롤 힌트다. 누르면 바로 다음 섹션으로 내려간다. 바깥 래퍼가 inset-x-0라
+// 전체 폭을 차지하는데, pointer-events-none을 안 주면 그 빈 영역이 밑에 깔린
+// 패널 링크의 클릭을 가로챈다(#68에서 도트가 똑같은 이유로 겪은 문제).
+function ScrollHint() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  return (
+    <div
+      ref={(node) => {
+        sectionRef.current = node?.closest("section") ?? null;
+      }}
+      className="pointer-events-none absolute inset-x-0 bottom-9 flex justify-center"
+    >
+      <button
+        type="button"
+        onClick={() =>
+          sectionRef.current?.nextElementSibling?.scrollIntoView({ behavior: "smooth" })
+        }
+        aria-label="아래로 스크롤"
+        className="pointer-events-auto animate-bounce rounded-pill bg-surface p-2 text-ink motion-reduce:animate-none"
+      >
+        <ChevronDown size={20} aria-hidden />
+      </button>
+    </div>
+  );
+}
+
 type Props = {
   festivals: UpcomingFestival[];
 };
@@ -48,31 +76,9 @@ export function Hero({ festivals }: Props) {
   );
   const [emblaRef, emblaApi] = useEmblaCarousel(emblaOptions, emblaPlugins);
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
   useEffect(() => {
-    if (!emblaApi) return;
-    // emblaApi가 non-null이 되는 시점엔 embla의 init 이벤트가 이미 지나가 있어서,
-    // "init" 리스너로는 첫 스냅 목록을 못 받는다 — 최초 1회는 동기 호출이 유일한 방법이다
-    // (embla-carousel-react 공식 예제와 동일한 패턴).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setScrollSnaps(emblaApi.scrollSnapList());
-    onSelect();
-    emblaApi.plugins().autoplay?.play();
-    emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", () => {
-      setScrollSnaps(emblaApi.scrollSnapList());
-      onSelect();
-    });
-  }, [emblaApi, onSelect]);
-
-  const scrollTo = useCallback((index: number) => emblaApi?.scrollTo(index), [emblaApi]);
+    emblaApi?.plugins().autoplay?.play();
+  }, [emblaApi]);
 
   if (festivals.length === 0) {
     return (
@@ -99,12 +105,7 @@ export function Hero({ festivals }: Props) {
         </div>
       </div>
 
-      {/* 오토플레이 캐러셀이라 화살표는 없앴다 — 도트로만 현재 위치 확인·수동 이동한다 */}
-      {hasCarousel && scrollSnaps.length > 1 ? (
-        <div className="pointer-events-none absolute inset-x-0 bottom-9 flex justify-center">
-          <HeroDots count={scrollSnaps.length} current={selectedIndex} onSelect={scrollTo} />
-        </div>
-      ) : null}
+      <ScrollHint />
     </section>
   );
 }
