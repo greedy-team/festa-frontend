@@ -117,7 +117,9 @@ export default async function ArtistsPage({ searchParams }: Props) {
         // 실사진이 없는 아티스트를 카드 그리드로 키워봤자 이니셜 원 하나뿐이라
         // 정보 밀도가 낮다 — 행으로 나열해 한 화면에 더 많이 훑을 수 있게 한다.
         // 그리드와 달리 컬럼 수 브레이크포인트가 필요 없어 반응형도 더 단순하다.
-        <div className="mt-10 flex flex-col gap-3">
+        // 개별 박스 대신 divide-y 구분선만 그어 텍스트가 위 제목과 같은 위치에서
+        // 시작하게 한다(윈도우 탐색기 자세히보기 느낌).
+        <div className="mt-10 flex flex-col divide-y divide-border">
           {data.items.map((artist) => (
             <ArtistRow key={artist.artistId} artist={artist} />
           ))}
