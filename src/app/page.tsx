@@ -59,8 +59,9 @@ export default async function Home() {
 
       {/* 시안의 560:680 비율을 유지하면서 컨테이너 폭을 꽉 채운다 — 고정폭(560px+680px)으로
           두면 컨테이너가 1280보다 넓을 때 위 카드 그리드 오른쪽 끝과 어긋난다. */}
-      {/* mb-16: 섹션 간격 64 — Footer 앞에도 위 섹션들과 같은 간격을 둔다 */}
-      <Container className="mt-16 mb-16 grid grid-cols-1 gap-10 sm:grid-cols-[560fr_680fr]">
+      {/* mt-20: 위 "최근 등록된 축제" 섹션과 같은 위쪽 여백. mb-16: 섹션 간격 64 —
+          Footer 앞에는 원래 섹션 간격을 그대로 둔다 */}
+      <Container className="mt-20 mb-16 grid grid-cols-1 gap-10 sm:grid-cols-[560fr_680fr]">
         <LostPanel />
         <AdSlot />
       </Container>
