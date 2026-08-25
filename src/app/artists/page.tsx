@@ -22,6 +22,15 @@ const GENRE_OPTIONS: { value: ArtistGenre | null; label: string }[] = [
   })),
 ];
 
+// SortDropdown은 GET 폼 + 네이티브 select라 모바일에서 칩 줄바꿈보다 훨씬
+// 깔끔하다 — 정렬과 같은 컴포넌트를 그대로 재사용한다. null(전체)은 select에
+// 담을 수 없어 빈 문자열로 바꾼다("genre=" 쿼리는 페이지에서 undefined와
+// 동일하게 처리돼 그대로 "전체"가 된다).
+const GENRE_SELECT_OPTIONS = GENRE_OPTIONS.map(({ value, label }) => ({
+  value: value ?? "",
+  label,
+}));
+
 const SORT_OPTIONS: { value: ArtistSort; label: string }[] = [
   { value: "APPEARANCES", label: "출연 많은 순" },
   { value: "NAME", label: "이름순" },
@@ -93,7 +102,18 @@ export default async function ArtistsPage({ searchParams }: Props) {
           결과 목록과 시각적으로 구분되는 하나의 섹션으로 만든다. */}
       <div className="mt-10 rounded-card border border-border bg-surface p-6 sm:p-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
+          {/* 모바일에서는 칩 대신 셀렉트 하나로 묶는다 — 칩이 줄바꿈돼도 결국
+              여러 줄을 차지해 정렬 셀렉트보다 훨씬 어수선해 보인다 */}
+          <div className="sm:hidden">
+            <SortDropdown
+              value={genre ?? ""}
+              options={GENRE_SELECT_OPTIONS}
+              name="genre"
+              ariaLabel="장르"
+            />
+          </div>
+
+          <div className="hidden items-start gap-3 sm:flex">
             <span className="mt-2 shrink-0 text-meta text-muted">장르</span>
             <div className="flex flex-wrap items-center gap-2">
               {GENRE_OPTIONS.map((option) => (
