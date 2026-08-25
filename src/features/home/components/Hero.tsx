@@ -1,18 +1,44 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { ChevronDown } from "lucide-react";
+import { CalendarDays, ChevronDown, ChevronRight, Music2, Search } from "lucide-react";
 import type { UpcomingFestival } from "@/features/home/types";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
 
-// lg 슬롯 수(2/3/4)를 리터럴 클래스로 미리 다 적어둔다 — 템플릿 문자열로 만들면
-// Tailwind가 빌드 시점에 클래스를 못 찾아서 스타일이 안 먹는다.
-const LG_BASIS: Record<number, string> = {
-  2: "lg:basis-1/2",
-  3: "lg:basis-1/3",
-  4: "lg:basis-1/4",
+// 다가오는 축제가 0건일 때(방학 등) 보여줄 바로가기 3개 — 실제 목적지 화면이
+// 있는 라우트만 넣는다. 분실물은 아직 목적지 화면이 없어(LostPanel.tsx 주석
+// 참고) 제외했다.
+const QUICK_LINKS = [
+  {
+    href: "/festivals",
+    icon: CalendarDays,
+    title: "축제 라인업",
+    desc: "다가오는 축제와 최근 등록된 축제를 확인하세요",
+  },
+  {
+    href: "/artists",
+    icon: Music2,
+    title: "아티스트",
+    desc: "출연 아티스트와 소속 정보를 찾아보세요",
+  },
+  {
+    href: "/search",
+    icon: Search,
+    title: "통합 검색",
+    desc: "축제·아티스트를 한 번에 검색하세요",
+  },
+] as const;
+
+// 슬롯 수(1~4)별 폭을 리터럴 클래스로 미리 다 적어둔다 — 템플릿 문자열로
+// 만들면 Tailwind가 빌드 시점에 클래스를 못 찾아서 스타일이 안 먹는다.
+const BASIS_CLASS: Record<number, string> = {
+  1: "basis-full",
+  2: "basis-full sm:basis-1/2",
+  3: "basis-full sm:basis-1/2 lg:basis-1/3",
+  4: "basis-full sm:basis-1/2 lg:basis-1/4",
 };
 
 /**
@@ -24,8 +50,8 @@ const LG_BASIS: Record<number, string> = {
  * 만큼만 채워서 빈 칸 없이 꽉 차게 한다.
  */
 export function slideBasisClass(count: number): string {
-  const lgSlots = Math.min(4, count);
-  return `shrink-0 basis-full sm:basis-1/2 ${LG_BASIS[lgSlots] ?? "lg:basis-1/4"}`;
+  const slots = Math.min(4, Math.max(1, count));
+  return `shrink-0 ${BASIS_CLASS[slots]}`;
 }
 
 // 히어로가 이제 화면 높이를 꽉 채우므로, 아래에 더 볼 게 있다는 걸 알려주는
@@ -80,10 +106,66 @@ export function Hero({ festivals }: Props) {
     emblaApi?.plugins().autoplay?.play();
   }, [emblaApi]);
 
+  // 다가오는 축제가 하나도 없는 시즌(방학 등)도 실제로 있다 — 빈 문구 대신
+  // 실제 패널과 같은 톤(다크 틴트 + 흰 타이포)으로 서비스를 소개하고
+  // 다른 콘텐츠로 이어준다. 특정 축제 색이 아니라 서비스 자체를 나타내는
+  // 자리라 hero-1을 고정으로 쓴다(축제 id 해시 대상이 없다).
   if (festivals.length === 0) {
     return (
-      <section className="flex h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] items-center justify-center bg-canvas">
-        <p className="text-body text-muted">표시할 축제가 없습니다.</p>
+      <section className="relative flex h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] w-full flex-col items-center justify-center gap-10 overflow-hidden bg-hero-1 px-6 text-center">
+        {/* 은은하게 떠다니는 글로우 — 축제가 없어도 화면이 멈춰 있지 않다는
+            인상을 준다. prefers-reduced-motion이면 정지 상태로 남는다 */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-1/4 top-1/4 size-[600px] rounded-pill bg-white/10 blur-3xl animate-hero-drift motion-reduce:animate-none"
+        />
+
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <p className="animate-fade-up text-caption-strong text-on-media/75 motion-reduce:animate-none">
+            FESTA
+          </p>
+          <h1
+            className="max-w-[720px] animate-fade-up text-balance text-hero text-on-media motion-reduce:animate-none"
+            style={{ animationDelay: "100ms" }}
+          >
+            전국 대학 축제 라인업을 한눈에
+          </h1>
+          <p
+            className="max-w-[480px] animate-fade-up text-body text-on-media/85 motion-reduce:animate-none"
+            style={{ animationDelay: "200ms" }}
+          >
+            다가오는 축제가 없는 지금, 이런 걸 먼저 둘러보세요.
+          </p>
+        </div>
+
+        <div
+          className="relative z-10 grid w-full max-w-[900px] animate-fade-up grid-cols-1 gap-4 text-left motion-reduce:animate-none sm:grid-cols-3"
+          style={{ animationDelay: "300ms" }}
+        >
+          {QUICK_LINKS.map(({ href, icon: Icon, title, desc }) => (
+            <Link
+              key={href}
+              href={href}
+              className="group flex flex-col gap-3 rounded-card border border-white/20 bg-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            >
+              <span className="flex size-[44px] items-center justify-center rounded-pill bg-white/20 text-on-media">
+                <Icon size={20} aria-hidden />
+              </span>
+              <span className="text-subtitle text-on-media">{title}</span>
+              <span className="text-caption-strong text-on-media/75">{desc}</span>
+              <span className="mt-auto inline-flex items-center gap-1 text-caption-strong text-on-media/85">
+                바로가기
+                <ChevronRight
+                  size={14}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                  aria-hidden
+                />
+              </span>
+            </Link>
+          ))}
+        </div>
+
+        <ScrollHint />
       </section>
     );
   }
