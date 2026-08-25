@@ -6,6 +6,7 @@ import { LineupSection } from "@/features/festivals/components/LineupSection";
 import { AdmissionInfo } from "@/features/festivals/components/AdmissionInfo";
 import { LocationSection } from "@/features/festivals/components/LocationSection";
 import { Container } from "@/components/layout/Container";
+import { FadeInSection } from "@/components/ui/FadeInSection";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -39,10 +40,19 @@ export default async function FestivalDetailPage({ params }: Props) {
 
   return (
     <Container className="mt-10 mb-16 flex flex-col gap-16">
+      {/* 히어로는 화면 진입 즉시 보이는 자리라 그대로 두고, 그 아래
+          섹션들만 스크롤해서 들어올 때 부드럽게 나타나게 한다 — 화면
+          전체가 한 번에 뚝 뜨는 대신 내려볼 때마다 드러나는 느낌 */}
       <FestivalHero festival={festival} />
-      <LineupSection lineup={festival.lineup} />
-      <AdmissionInfo admission={festival.admission} />
-      <LocationSection location={festival.location} />
+      <FadeInSection>
+        <LineupSection lineup={festival.lineup} />
+      </FadeInSection>
+      <FadeInSection>
+        <AdmissionInfo admission={festival.admission} />
+      </FadeInSection>
+      <FadeInSection>
+        <LocationSection location={festival.location} />
+      </FadeInSection>
     </Container>
   );
 }
