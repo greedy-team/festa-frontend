@@ -31,7 +31,7 @@ export default async function Home() {
       {upcomingRes.ok ? (
         <Hero festivals={upcoming} />
       ) : (
-        <section className="flex h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] items-center justify-center bg-canvas">
+        <section className="flex h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] items-center justify-center bg-canvas xl:max-h-[1100px] 2xl:max-h-[1300px]">
           <p className="text-body text-muted">축제 정보를 불러오지 못했습니다.</p>
         </section>
       )}

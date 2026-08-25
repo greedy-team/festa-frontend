@@ -112,7 +112,7 @@ export function Hero({ festivals }: Props) {
   // 자리라 hero-1을 고정으로 쓴다(축제 id 해시 대상이 없다).
   if (festivals.length === 0) {
     return (
-      <section className="relative flex h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] w-full flex-col items-center justify-center gap-10 overflow-hidden bg-hero-1 px-6 text-center">
+      <section className="relative flex h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] w-full flex-col items-center justify-center gap-10 overflow-hidden bg-hero-1 px-6 text-center xl:max-h-[1100px] 2xl:max-h-[1300px]">
         {/* 은은하게 떠다니는 글로우 — 축제가 없어도 화면이 멈춰 있지 않다는
             인상을 준다. prefers-reduced-motion이면 정지 상태로 남는다 */}
         <div
@@ -174,8 +174,11 @@ export function Hero({ festivals }: Props) {
     // nav(72px)를 뺀 나머지 화면 높이를 그대로 채운다 — 화면 크기가 달라도
     // 첫 화면 아래 끝까지 히어로가 닿는다. 952px는 DESIGN.md 시안 높이를
     // 상한으로만 남긴 것이고, 그보다 큰 화면(초고해상도 모니터 등)에서
-    // 무한정 늘어나지 않게 막는다.
-    <section className="relative h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] w-full">
+    // 무한정 늘어나지 않게 막는다. 다만 상한이 폭과 무관한 고정값이라 와이드
+    // 모니터(패널 4개가 풀블리드로 넓어지는데 높이는 952에 눌림)에서 패널이
+    // 납작해지는 문제가 있었다 — xl/2xl에서 상한을 단계적으로 풀어 비율을
+    // 시안(360:952)에 더 가깝게 유지한다.
+    <section className="relative h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] w-full xl:max-h-[1100px] 2xl:max-h-[1300px]">
       {/* 패널은 풀블리드다. 여백도 radius도 없이 맞닿는다 */}
       <div className="h-full w-full overflow-hidden" ref={hasCarousel ? emblaRef : undefined}>
         <div className="flex h-full">
