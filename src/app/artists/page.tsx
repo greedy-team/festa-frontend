@@ -11,6 +11,7 @@ import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Chip } from "@/components/ui/Chip";
+import { PageFadeIn } from "@/components/ui/PageFadeIn";
 
 const PAGE_SIZE = 10;
 
@@ -77,94 +78,98 @@ export default async function ArtistsPage({ searchParams }: Props) {
   }
 
   return (
-    <Container className="mt-10 mb-16">
-      <nav className="flex items-center gap-1 text-meta text-muted-soft">
-        <Link href="/">홈</Link>
-        <span>›</span>
-        <span className="text-ink">아티스트</span>
-      </nav>
+    // nav의 "아티스트" 링크로 들어오는 화면이라, 뚝 뜨지 않고 진입 시
+    // 부드럽게 나타나게 한다(축제 목록과 같은 PageFadeIn)
+    <PageFadeIn>
+      <Container className="mt-10 mb-16">
+        <nav className="flex items-center gap-1 text-meta text-muted-soft">
+          <Link href="/">홈</Link>
+          <span>›</span>
+          <span className="text-ink">아티스트</span>
+        </nav>
 
-      <div className="mt-2 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-hero text-ink">아티스트</h1>
-          {/* 모바일에서는 필터 패널까지 합치면 화면 대부분을 설명 텍스트가
-              차지해서 뺀다 — 데스크톱은 여유가 있어 그대로 둔다 */}
-          <p className="mt-2 hidden text-body text-muted sm:block">
-            대학 축제 무대에 오른 아티스트를 출연 기록으로 찾아보세요
-          </p>
-        </div>
-        <span className="mt-4 shrink-0 text-caption-strong text-muted">
-          전체 {data.totalElements}팀 ›
-        </span>
-      </div>
-
-      {/* 패널(테두리+r20+패딩)은 좁은 화면 전용이다 — 요소들이 세로로 쌓일 때
-          경계가 없으면 정리 안 된 느낌이 강해서 넣었다. sm 이상에서는 장르·
-          검색·정렬이 한 줄에 다 들어가 이미 정돈돼 보이므로 패널을 벗겨
-          기존처럼 플레인한 한 줄 필터 행으로 되돌린다. */}
-      <div className="mt-10 rounded-card border border-border bg-surface p-6 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0">
-        {/* 모바일 전용 레이아웃 — 검색이 위, 장르·정렬 셀렉트를 한 줄에 나란히 */}
-        <div className="flex flex-col gap-3 sm:hidden">
-          <SearchPill placeholder="아티스트 이름 검색" />
-          <div className="flex items-center gap-3">
-            <SortDropdown
-              value={genre ?? ""}
-              options={GENRE_SELECT_OPTIONS}
-              name="genre"
-              ariaLabel="장르"
-            />
-            <SortDropdown value={sort} options={SORT_OPTIONS} />
+        <div className="mt-2 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-hero text-ink">아티스트</h1>
+            {/* 모바일에서는 필터 패널까지 합치면 화면 대부분을 설명 텍스트가
+                차지해서 뺀다 — 데스크톱은 여유가 있어 그대로 둔다 */}
+            <p className="mt-2 hidden text-body text-muted sm:block">
+              대학 축제 무대에 오른 아티스트를 출연 기록으로 찾아보세요
+            </p>
           </div>
+          <span className="mt-4 shrink-0 text-caption-strong text-muted">
+            전체 {data.totalElements}팀 ›
+          </span>
         </div>
 
-        {/* sm 이상 — 기존 그대로 (장르 칩 왼쪽, 검색·정렬 오른쪽) */}
-        <div className="hidden sm:flex sm:items-center sm:justify-between sm:gap-4">
-          <div className="flex items-start gap-3">
-            <span className="mt-2 shrink-0 text-meta text-muted">장르</span>
-            <div className="flex flex-wrap items-center gap-2">
-              {GENRE_OPTIONS.map((option) => (
-                <Link key={option.value ?? "all"} href={makeHref({ genre: option.value })}>
-                  <Chip active={option.value === (genre ?? null)}>
-                    {option.label}
-                  </Chip>
-                </Link>
-              ))}
+        {/* 패널(테두리+r20+패딩)은 좁은 화면 전용이다 — 요소들이 세로로 쌓일 때
+            경계가 없으면 정리 안 된 느낌이 강해서 넣었다. sm 이상에서는 장르·
+            검색·정렬이 한 줄에 다 들어가 이미 정돈돼 보이므로 패널을 벗겨
+            기존처럼 플레인한 한 줄 필터 행으로 되돌린다. */}
+        <div className="mt-10 rounded-card border border-border bg-surface p-6 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0">
+          {/* 모바일 전용 레이아웃 — 검색이 위, 장르·정렬 셀렉트를 한 줄에 나란히 */}
+          <div className="flex flex-col gap-3 sm:hidden">
+            <SearchPill placeholder="아티스트 이름 검색" />
+            <div className="flex items-center gap-3">
+              <SortDropdown
+                value={genre ?? ""}
+                options={GENRE_SELECT_OPTIONS}
+                name="genre"
+                ariaLabel="장르"
+              />
+              <SortDropdown value={sort} options={SORT_OPTIONS} />
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <SearchPill placeholder="아티스트 이름 검색" />
-            <SortDropdown value={sort} options={SORT_OPTIONS} />
+          {/* sm 이상 — 기존 그대로 (장르 칩 왼쪽, 검색·정렬 오른쪽) */}
+          <div className="hidden sm:flex sm:items-center sm:justify-between sm:gap-4">
+            <div className="flex items-start gap-3">
+              <span className="mt-2 shrink-0 text-meta text-muted">장르</span>
+              <div className="flex flex-wrap items-center gap-2">
+                {GENRE_OPTIONS.map((option) => (
+                  <Link key={option.value ?? "all"} href={makeHref({ genre: option.value })}>
+                    <Chip active={option.value === (genre ?? null)}>
+                      {option.label}
+                    </Chip>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <SearchPill placeholder="아티스트 이름 검색" />
+              <SortDropdown value={sort} options={SORT_OPTIONS} />
+            </div>
           </div>
         </div>
-      </div>
 
-      {data.items.length ? (
-        // 실사진이 없는 아티스트를 카드 그리드로 키워봤자 이니셜 원 하나뿐이라
-        // 정보 밀도가 낮다 — 행으로 나열해 한 화면에 더 많이 훑을 수 있게 한다.
-        // 그리드와 달리 컬럼 수 브레이크포인트가 필요 없어 반응형도 더 단순하다.
-        // 개별 박스 대신 divide-y 구분선만 그어 텍스트가 위 제목과 같은 위치에서
-        // 시작하게 한다(윈도우 탐색기 자세히보기 느낌).
-        <div className="mt-10 flex flex-col divide-y divide-border">
-          {data.items.map((artist) => (
-            <ArtistRow key={artist.artistId} artist={artist} />
-          ))}
-        </div>
-      ) : (
-        <p className="mt-10 text-body text-muted">해당하는 아티스트가 없습니다.</p>
-      )}
+        {data.items.length ? (
+          // 실사진이 없는 아티스트를 카드 그리드로 키워봤자 이니셜 원 하나뿐이라
+          // 정보 밀도가 낮다 — 행으로 나열해 한 화면에 더 많이 훑을 수 있게 한다.
+          // 그리드와 달리 컬럼 수 브레이크포인트가 필요 없어 반응형도 더 단순하다.
+          // 개별 박스 대신 divide-y 구분선만 그어 텍스트가 위 제목과 같은 위치에서
+          // 시작하게 한다(윈도우 탐색기 자세히보기 느낌).
+          <div className="mt-10 flex flex-col divide-y divide-border">
+            {data.items.map((artist) => (
+              <ArtistRow key={artist.artistId} artist={artist} />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-10 text-body text-muted">해당하는 아티스트가 없습니다.</p>
+        )}
 
-      {data.totalPages > 1 ? (
-        <Pagination
-          className="mt-16"
-          page={page}
-          totalPages={data.totalPages}
-          totalElements={data.totalElements}
-          makeHref={(p) => makeHref({ page: p })}
-        />
-      ) : null}
+        {data.totalPages > 1 ? (
+          <Pagination
+            className="mt-16"
+            page={page}
+            totalPages={data.totalPages}
+            totalElements={data.totalElements}
+            makeHref={(p) => makeHref({ page: p })}
+          />
+        ) : null}
 
-      <AdSlot variant="banner" className="mt-16" />
-    </Container>
+        <AdSlot variant="banner" className="mt-16" />
+      </Container>
+    </PageFadeIn>
   );
 }
