@@ -32,7 +32,14 @@ export function HeroSurface({ className = "", children }: Props) {
       { rootMargin: `-${HEADER_HEIGHT}px 0px 0px 0px` },
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      // 언마운트(다른 페이지로 이동 등) 직전에 옵저버 콜백이 한 번 더 늦게
+      // 걸려 overHero를 true로 되돌리는 경우가 있다 — 그러면 이 히어로가
+      // 사라진 뒤에도 헤더가 계속 투명한 채로 고정된다. 사라질 때는
+      // 무조건 false로 확정한다.
+      setOverHero(false);
+    };
   }, [setOverHero]);
 
   return (
