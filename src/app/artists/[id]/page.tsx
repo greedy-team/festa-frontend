@@ -35,8 +35,10 @@ export default async function ArtistDetailPage({ params }: Props) {
       <Container className="mt-10 mb-16 flex flex-col gap-16">
         <ArtistHero artist={artist} />
 
-        {/* 시안(09-2)은 예정 공연(넓게) / 출연 이력(좁게) 2단 좌우 배치다 */}
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr]">
+        {/* 시안(09-2)은 예정 공연(넓게) / 출연 이력(좁게) 2단 좌우 배치다.
+            바텀시트(DESIGN.md)의 좌우 2단 구분선 관례를 재사용해 lg 이상에서만
+            세로 구분선을 넣는다 — 모바일은 세로로 쌓이니 필요 없다. */}
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr] lg:divide-x lg:divide-border">
           <UpcomingShowsSection
             artistId={artist.id}
             items={artist.upcomingShows.items}

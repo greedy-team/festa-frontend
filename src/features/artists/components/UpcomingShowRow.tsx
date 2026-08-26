@@ -32,13 +32,18 @@ export function UpcomingShowRow({ show }: Props) {
 
       <div className="min-w-0 flex-1">
         <h3 className="truncate text-entity-name text-ink">{name}</h3>
+        {/* 날짜(언제)와 장소(어디서)를 한 줄에 몰아넣으면 정보 4종류가 섞여 스캔하기
+            어렵고, 좁은 화면에서는 장소가 줄임표 뒤로 통째로 잘려 안 보인다 — 성격별로
+            두 줄로 나눈다. D-day가 공연일(performanceDate) 기준이라, 옆 날짜도 축제
+            전체 기간이 아니라 실제 공연일을 보여준다. */}
         <p className="mt-1 flex items-center gap-1.5 text-caption-strong text-muted">
           <Calendar size={14} className="shrink-0" aria-hidden />
-          {/* D-day가 공연일(performanceDate) 기준이라, 옆 날짜도 축제 전체 기간이 아니라
-              실제 공연일을 보여준다 — 안 그러면 숫자가 화면에 없는 날짜를 가리키게 된다 */}
           <span className="truncate">
-            DAY {day} · {fullDate(performanceDate)} · {hostName} · {venueName}
+            DAY {day} · {fullDate(performanceDate)}
           </span>
+        </p>
+        <p className="mt-0.5 truncate text-label-regular text-muted-soft">
+          {hostName} · {venueName}
         </p>
       </div>
 

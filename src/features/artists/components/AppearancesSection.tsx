@@ -33,11 +33,10 @@ export function AppearancesSection({ artistId, items, total }: Props) {
                 {appearance.startDate.slice(0, 4)}
               </p>
               <h3 className="text-entity-name text-ink">{appearance.name}</h3>
+              {/* 학교·기간을 각각 한 줄씩 두면 둘 다 같은 옅은 회색이라 구분 없이
+                  늘어져 보인다 — 같은 성격(부가 정보)이니 한 줄로 묶는다 */}
               <p className="mt-0.5 text-label-regular text-muted">
-                {appearance.hostName}
-              </p>
-              <p className="text-label-regular text-muted-soft">
-                {dateRange(appearance.startDate, appearance.endDate)}
+                {appearance.hostName} · {dateRange(appearance.startDate, appearance.endDate)}
               </p>
             </div>
           ))}
