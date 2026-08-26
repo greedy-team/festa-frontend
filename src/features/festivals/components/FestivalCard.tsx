@@ -12,10 +12,12 @@ export function FestivalCard({ festival }: Props) {
   const { festivalId, name, startDate, endDate, posterUrl, host } = festival;
 
   return (
-    <Link href={`/festivals/${festivalId}`} className="flex flex-col">
-      {/* 포스터 비율 236:320 — festival-card 컴포넌트 스펙 (recent-card는 236:300) */}
+    <Link href={`/festivals/${festivalId}`} className="group flex flex-col">
+      {/* 포스터 비율 236:320 — festival-card 컴포넌트 스펙 (recent-card는 236:300).
+          hover 시 살짝 커지는 것 — DESIGN.md {elevation.hover}(카드 hover 그림자)를
+          여기서 처음 실사용한다 */}
       <div
-        className={`relative aspect-[236/320] w-full overflow-hidden rounded-media ${gridTint(festivalId)}`}
+        className={`relative aspect-[236/320] w-full overflow-hidden rounded-media transition-transform duration-300 group-hover:scale-105 group-hover:shadow-hover motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${gridTint(festivalId)}`}
       >
         <PosterImage
           src={posterUrl}
