@@ -23,7 +23,7 @@ export function UpcomingShowsSection({ artistId, items, total }: Props) {
       </div>
 
       {items.length ? (
-        <div className="mt-4 flex flex-col gap-3">
+        <div className="mt-4 flex flex-col divide-y divide-border">
           {items.map((show) => (
             <UpcomingShowRow key={`${show.festivalId}-${show.day}`} show={show} />
           ))}

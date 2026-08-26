@@ -15,10 +15,11 @@ export function UpcomingShowRow({ show }: Props) {
     show;
 
   return (
-    // 축제 상세(#45)가 develop에 아직 없어 임시로 홈에 연결한다
+    // 상자로 감싸지 않고 부모의 divide-y 구분선만으로 나눈다(아티스트 목록
+    // 행과 같은 이유) — 포스터는 축제 이미지라 남기고, 테두리·좌우 패딩만 뺀다
     <Link
-      href="/"
-      className="flex items-center gap-4 rounded-row border border-border bg-surface px-6 py-4"
+      href={`/festivals/${festivalId}`}
+      className="flex items-center gap-4 py-4"
     >
       <div
         className={`relative h-[64px] w-[64px] shrink-0 overflow-hidden rounded-media ${gridTint(festivalId)}`}
