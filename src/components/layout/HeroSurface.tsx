@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 import { HEADER_HEIGHT, useHeroVisibility } from "./HeroVisibilityContext";
+
+// 서버에는 useLayoutEffect가 없다(경고를 낸다). 브라우저에서만 레이아웃 단계로 올린다.
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 type Props = {
   className?: string;
@@ -22,6 +26,16 @@ type Props = {
 export function HeroSurface({ className = "", children }: Props) {
   const ref = useRef<HTMLElement>(null);
   const { setOverHero } = useHeroVisibility();
+
+  // 스크롤된 상태로 새로고침하면(브라우저 스크롤 복원) 이 면이 이미 헤더 위로
+  // 지나가 있는데, 컨텍스트 초기값은 경로만 보고 투명으로 잡는다. 옵저버는
+  // 첫 페인트 뒤에야 보정하므로 그 사이 흰 본문 위에 흰 글자 헤더가 스친다.
+  // 페인트 전(layout 단계)에 실제 위치로 한 번 맞춰 둔다.
+  useIsomorphicLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    setOverHero(el.getBoundingClientRect().bottom > HEADER_HEIGHT);
+  }, [setOverHero]);
 
   useEffect(() => {
     const el = ref.current;
