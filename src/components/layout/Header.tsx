@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Container } from "./Container";
 import { NavSearchForm } from "./NavSearchForm";
 import { useHeroVisibility } from "./HeroVisibilityContext";
+import { useRouteResetState } from "@/lib/hooks/useRouteResetState";
+import { isActiveRoute } from "@/lib/activeRoute";
 import { SITE_NAME } from "@/lib/site";
 
 const MENU = [
@@ -15,19 +17,44 @@ const MENU = [
   { label: "아티스트", href: "/artists" },
 ] as const;
 
+/**
+ * 메뉴 링크 목록. 데스크톱 nav와 모바일 드롭다운이 같은 활성 판정·마크업을 쓰고,
+ * 다른 것은 링크에 붙는 클래스뿐이라 그 부분만 호출부가 넘긴다.
+ */
+function NavLinks({
+  pathname,
+  linkClassName,
+}: {
+  pathname: string;
+  linkClassName: (isActive: boolean) => string;
+}) {
+  return (
+    <>
+      {MENU.map((item) => {
+        const isActive = isActiveRoute(pathname, item.href);
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={isActive ? "page" : undefined}
+            className={linkClassName(isActive)}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
 export function Header() {
   const pathname = usePathname();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // 홈 히어로(HeroSurface)가 헤더 아래에 깔려 있는 동안 true — 그때는 투명하게 그린다.
-  const { overHero } = useHeroVisibility();
-
   // 경로가 바뀌면(메뉴 클릭 등) 열린 드롭다운을 닫는다 — Header는
   // 라우트 이동에도 언마운트되지 않는 셸이라 상태가 그대로 남는다.
-  const [renderedPathname, setRenderedPathname] = useState(pathname);
-  if (pathname !== renderedPathname) {
-    setRenderedPathname(pathname);
-    setIsMenuOpen(false);
-  }
+  const [isMenuOpen, setIsMenuOpen] = useRouteResetState(() => false);
+  // 홈 히어로(HeroSurface)가 헤더 아래에 깔려 있는 동안 true — 그때는 투명하게 그린다.
+  const { overHero } = useHeroVisibility();
 
   // 드롭다운을 연 채로 창을 sm 이상으로 넓히면 햄버거 버튼도 드롭다운도
   // sm:hidden으로 사라진다 — 그런데 isMenuOpen은 true로 남아 헤더가 솔리드로
@@ -41,7 +68,9 @@ export function Header() {
     close(); // 하이드레이션 시점에 이미 넓은 경우
     desktop.addEventListener("change", close);
     return () => desktop.removeEventListener("change", close);
-  }, []);
+    // setIsMenuOpen은 useState의 setter라 안정적이다 — 훅을 거치면 lint가
+    // 그걸 못 보므로 명시한다. 구독은 여전히 마운트 시 한 번만 걸린다.
+  }, [setIsMenuOpen]);
 
   // 드롭다운이 열리면 투명 상태에서도 솔리드로 — 흰 패널 위에 흰 글씨가 뜨지 않게.
   const solid = !overHero || isMenuOpen;
@@ -69,39 +98,22 @@ export function Header() {
         </Link>
 
         <nav className="hidden min-w-0 items-center gap-3 sm:flex sm:gap-8 lg:gap-12">
-          {MENU.map((item) => {
-            // 경계를 명시한다. `startsWith(item.href)`만으로는 나중에
-            // `/festivals-archive`가 생겼을 때 "축제"가 같이 켜진다.
-            const isActive =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
-
-            // 히어로 위에서는 인디고를 쓰지 않는다 — 흰색 + 불투명도만 (DESIGN.md Don'ts).
-            return isActive ? (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current="page"
-                // 인디케이터는 글자 폭과 같은 너비 × 2px (DESIGN.md 819)
-                className={`relative shrink-0 text-nav-active transition-colors duration-300 after:absolute after:-bottom-[5px] after:left-0 after:h-[2px] after:w-full after:transition-colors after:duration-300 ${
-                  solid
-                    ? "text-primary after:bg-primary"
-                    : "text-on-media after:bg-on-media"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`shrink-0 text-body transition-colors duration-300 ${
-                  solid ? "text-muted" : "text-on-media/75"
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+          {/* 히어로 위에서는 인디고를 쓰지 않는다 — 흰색 + 불투명도만 (DESIGN.md Don'ts).
+              활성 인디케이터는 글자 폭과 같은 너비 × 2px (DESIGN.md 819) */}
+          <NavLinks
+            pathname={pathname}
+            linkClassName={(isActive) =>
+              isActive
+                ? `relative shrink-0 text-nav-active transition-colors duration-300 after:absolute after:-bottom-[5px] after:left-0 after:h-[2px] after:w-full after:transition-colors after:duration-300 ${
+                    solid
+                      ? "text-primary after:bg-primary"
+                      : "text-on-media after:bg-on-media"
+                  }`
+                : `shrink-0 text-body transition-colors duration-300 ${
+                    solid ? "text-muted" : "text-on-media/75"
+                  }`
+            }
+          />
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-6">
@@ -134,26 +146,15 @@ export function Header() {
         <div className="absolute inset-x-0 top-full z-20 border-b border-border bg-surface sm:hidden">
           <Container>
             <nav className="flex flex-col py-2">
-              {MENU.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  pathname.startsWith(`${item.href}/`);
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    aria-current={isActive ? "page" : undefined}
-                    className={
-                      isActive
-                        ? "py-3 text-nav-active text-primary"
-                        : "py-3 text-body text-muted"
-                    }
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
+              {/* 드롭다운은 항상 흰 패널 위라 solid 분기가 없다 */}
+              <NavLinks
+                pathname={pathname}
+                linkClassName={(isActive) =>
+                  isActive
+                    ? "py-3 text-nav-active text-primary"
+                    : "py-3 text-body text-muted"
+                }
+              />
             </nav>
           </Container>
         </div>
