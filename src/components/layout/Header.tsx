@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -28,6 +28,20 @@ export function Header() {
     setRenderedPathname(pathname);
     setIsMenuOpen(false);
   }
+
+  // 드롭다운을 연 채로 창을 sm 이상으로 넓히면 햄버거 버튼도 드롭다운도
+  // sm:hidden으로 사라진다 — 그런데 isMenuOpen은 true로 남아 헤더가 솔리드로
+  // 고정되고 닫을 UI도 없다. 미디어 쿼리가 CSS로 숨기는 시점에 상태도 함께 닫는다.
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 40rem)"); // Tailwind sm
+    const close = () => {
+      if (desktop.matches) setIsMenuOpen(false);
+    };
+
+    close(); // 하이드레이션 시점에 이미 넓은 경우
+    desktop.addEventListener("change", close);
+    return () => desktop.removeEventListener("change", close);
+  }, []);
 
   // 드롭다운이 열리면 투명 상태에서도 솔리드로 — 흰 패널 위에 흰 글씨가 뜨지 않게.
   const solid = !overHero || isMenuOpen;
