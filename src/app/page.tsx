@@ -4,6 +4,7 @@ import { RecentCard } from "@/features/home/components/RecentCard";
 import { LostPanel } from "@/features/home/components/LostPanel";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Container } from "@/components/layout/Container";
+import { HeroSurface } from "@/components/layout/HeroSurface";
 import { SectionHeaderRow } from "@/components/ui/SectionHeaderRow";
 import { FadeInSection } from "@/components/ui/FadeInSection";
 
@@ -31,9 +32,11 @@ export default async function Home() {
       {upcomingRes.ok ? (
         <Hero festivals={upcoming} />
       ) : (
-        <section className="flex h-[calc(100vh-72px)] min-h-[420px] max-h-[952px] items-center justify-center bg-canvas xl:max-h-[1100px] 2xl:max-h-[1300px]">
-          <p className="text-body text-muted">축제 정보를 불러오지 못했습니다.</p>
-        </section>
+        // 히어로와 같은 자리·같은 크기·같은 어두운 톤 — 헤더가 홈에서는 첫 렌더부터
+        // 투명(흰 글자)으로 그려지므로, 이 자리가 밝으면 헤더가 안 보인다 (SiteChrome.tsx).
+        <HeroSurface className="flex items-center justify-center bg-hero-1 pt-[72px]">
+          <p className="text-body text-on-media/85">축제 정보를 불러오지 못했습니다.</p>
+        </HeroSurface>
       )}
 
       {/* 히어로가 화면을 꽉 채우고 나서 내려오는 첫 섹션이라, 뚝 끊기지 않고

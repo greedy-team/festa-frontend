@@ -6,18 +6,20 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Container } from "./Container";
 import { NavSearchForm } from "./NavSearchForm";
+import { useHeroVisibility } from "./HeroVisibilityContext";
 import { SITE_NAME } from "@/lib/site";
 
 const MENU = [
   { label: "홈", href: "/" },
   { label: "축제", href: "/festivals" },
   { label: "아티스트", href: "/artists" },
-  { label: "분실물", href: "/lost-items" },
 ] as const;
 
 export function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // 홈 히어로(HeroSurface)가 헤더 아래에 깔려 있는 동안 true — 그때는 투명하게 그린다.
+  const { overHero } = useHeroVisibility();
 
   // 경로가 바뀌면(메뉴 클릭 등) 열린 드롭다운을 닫는다 — Header는
   // 라우트 이동에도 언마운트되지 않는 셸이라 상태가 그대로 남는다.
@@ -27,29 +29,50 @@ export function Header() {
     setIsMenuOpen(false);
   }
 
+  // 드롭다운이 열리면 투명 상태에서도 솔리드로 — 흰 패널 위에 흰 글씨가 뜨지 않게.
+  const solid = !overHero || isMenuOpen;
+
   return (
-    <header className="relative h-[72px] shrink-0 border-b border-border bg-surface">
+    // sticky: 스크롤해도 상단에 붙는다. 히어로 위에서는 투명이었다가 지나가면
+    // 흰 배경·테두리가 서서히(300ms) 나타난다. 높이 72는 HEADER_HEIGHT와 같은 값.
+    <header
+      className={`sticky top-0 z-30 h-[72px] shrink-0 border-b transition-colors duration-300 ${
+        solid
+          ? "border-border bg-surface"
+          : "border-transparent bg-transparent"
+      }`}
+    >
       {/* 로고와 메뉴 사이 간격은 화면이 넓을수록 벌린다.
           시안의 로고→첫 메뉴 거리는 그 프레임에서의 한 사례일 뿐이다. */}
-      <Container className="flex h-full items-center gap-4 sm:gap-8 lg:gap-16">
-        <Link href="/" className="shrink-0 text-logo text-ink">
+      <Container className="flex h-full items-center gap-4 sm:gap-10 lg:gap-20">
+        <Link
+          href="/"
+          className={`shrink-0 text-logo transition-colors duration-300 ${
+            solid ? "text-ink" : "text-on-media"
+          }`}
+        >
           {SITE_NAME}
         </Link>
 
-        <nav className="hidden min-w-0 items-center gap-3 sm:flex sm:gap-6 lg:gap-10">
+        <nav className="hidden min-w-0 items-center gap-3 sm:flex sm:gap-8 lg:gap-12">
           {MENU.map((item) => {
             // 경계를 명시한다. `startsWith(item.href)`만으로는 나중에
             // `/festivals-archive`가 생겼을 때 "축제"가 같이 켜진다.
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
 
+            // 히어로 위에서는 인디고를 쓰지 않는다 — 흰색 + 불투명도만 (DESIGN.md Don'ts).
             return isActive ? (
               <Link
                 key={item.href}
                 href={item.href}
                 aria-current="page"
                 // 인디케이터는 글자 폭과 같은 너비 × 2px (DESIGN.md 819)
-                className="relative shrink-0 text-nav-active text-primary after:absolute after:-bottom-[5px] after:left-0 after:h-[2px] after:w-full after:bg-primary"
+                className={`relative shrink-0 text-nav-active transition-colors duration-300 after:absolute after:-bottom-[5px] after:left-0 after:h-[2px] after:w-full after:transition-colors after:duration-300 ${
+                  solid
+                    ? "text-primary after:bg-primary"
+                    : "text-on-media after:bg-on-media"
+                }`}
               >
                 {item.label}
               </Link>
@@ -57,7 +80,9 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="shrink-0 text-body text-muted"
+                className={`shrink-0 text-body transition-colors duration-300 ${
+                  solid ? "text-muted" : "text-on-media/75"
+                }`}
               >
                 {item.label}
               </Link>
@@ -73,7 +98,9 @@ export function Header() {
             onClick={() => setIsMenuOpen((open) => !open)}
             aria-label={isMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
             aria-expanded={isMenuOpen}
-            className="text-ink sm:hidden"
+            className={`transition-colors duration-300 sm:hidden ${
+              solid ? "text-ink" : "text-on-media"
+            }`}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -84,7 +111,7 @@ export function Header() {
           {/* 알림·북마크는 로그인을 전제하는데 MVP 이후 기능이라 뺐다.
               로그인이 생기면 그때 다시 넣는다. */}
           <span className="hidden lg:block">
-            <NavSearchForm />
+            <NavSearchForm onDark={!solid} />
           </span>
         </div>
       </Container>

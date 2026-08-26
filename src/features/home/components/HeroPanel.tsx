@@ -28,8 +28,9 @@ export function HeroPanel({ festival }: Props) {
       {/* 하단 스크림 — 순검정 55% 단일 단계. 그라데이션이 아니다 */}
       <div className="absolute inset-x-0 bottom-0 h-[364px] bg-scrim-hero" />
 
-      {/* D-day는 스크림 밖 상단. 56/700 흰색 100% */}
-      <p className="absolute left-10 top-[68px] text-hero-dday text-on-media">
+      {/* D-day는 스크림 밖 상단. 56/700 흰색 100%. 패널이 헤더 아래까지 올라와
+          있어서(Hero.tsx) 시안의 프레임 좌표 y140을 그대로 쓴다 — 헤더 72 + 인셋 68 */}
+      <p className="absolute left-10 top-[140px] text-hero-dday text-on-media">
         {dDay(startDate)}
       </p>
 
