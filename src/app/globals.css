@@ -211,4 +211,31 @@
   /* --- Elevation. outline과 shadow는 배타적으로 쓴다 --- */
   --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+
+  /* --- Motion. 히어로 빈 상태(다가오는 축제 0건)가 화면이 멈춰 있지 않다는
+     인상을 주도록 쓴다. prefers-reduced-motion에서는 항상 motion-reduce:로
+     끈다 (DESIGN.md에 정의된 값이 아니라 이 자리 전용 최소 추가). --- */
+  --animate-hero-drift: hero-drift 18s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.7s ease-out both;
+}
+
+@keyframes hero-drift {
+  0%,
+  100% {
+    transform: translate(-8%, -6%) scale(1);
+  }
+  50% {
+    transform: translate(8%, 6%) scale(1.15);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
