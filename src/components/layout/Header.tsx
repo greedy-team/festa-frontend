@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, Bookmark } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Container } from "./Container";
 import { NavSearchForm } from "./NavSearchForm";
 import { SITE_NAME } from "@/lib/site";
@@ -16,9 +17,18 @@ const MENU = [
 
 export function Header() {
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // 경로가 바뀌면(메뉴 클릭 등) 열린 드롭다운을 닫는다 — Header는
+  // 라우트 이동에도 언마운트되지 않는 셸이라 상태가 그대로 남는다.
+  const [renderedPathname, setRenderedPathname] = useState(pathname);
+  if (pathname !== renderedPathname) {
+    setRenderedPathname(pathname);
+    setIsMenuOpen(false);
+  }
 
   return (
-    <header className="h-[72px] shrink-0 border-b border-border bg-surface">
+    <header className="relative h-[72px] shrink-0 border-b border-border bg-surface">
       {/* 로고와 메뉴 사이 간격은 화면이 넓을수록 벌린다.
           시안의 로고→첫 메뉴 거리는 그 프레임에서의 한 사례일 뿐이다. */}
       <Container className="flex h-full items-center gap-4 sm:gap-8 lg:gap-16">
@@ -26,7 +36,7 @@ export function Header() {
           {SITE_NAME}
         </Link>
 
-        <nav className="flex min-w-0 items-center gap-3 sm:gap-6 lg:gap-10">
+        <nav className="hidden min-w-0 items-center gap-3 sm:flex sm:gap-6 lg:gap-10">
           {MENU.map((item) => {
             // 경계를 명시한다. `startsWith(item.href)`만으로는 나중에
             // `/festivals-archive`가 생겼을 때 "축제"가 같이 켜진다.
@@ -56,24 +66,57 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-6">
-          {/* 검색은 실제로 /search로 이동한다 (#53). 알림·북마크는 로그인을
-              전제해 계속 표시 전용이다 (스펙 2.3). 좁은 화면에서는 셋 다 접어
-              자리를 아낀다. display 클래스는 래퍼에 건다 — NavSearchForm의
-              inline-flex와 충돌해서 className으로 넘긴 hidden이 밀린다. */}
+          {/* 640px 미만에서는 네비 자체가 숨어 있으니(hidden sm:flex),
+              그 자리를 대신할 햄버거 버튼을 연다. */}
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-label={isMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
+            aria-expanded={isMenuOpen}
+            className="text-ink sm:hidden"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+          {/* 검색은 실제로 /search로 이동한다 (#53). 좁은 화면에서는
+              접어 자리를 아낀다. display 클래스는 래퍼에 건다 —
+              NavSearchForm의 inline-flex와 충돌해서 className으로
+              넘긴 hidden이 밀린다. */}
+          {/* 알림·북마크는 로그인을 전제하는데 MVP 이후 기능이라 뺐다.
+              로그인이 생기면 그때 다시 넣는다. */}
           <span className="hidden lg:block">
             <NavSearchForm />
           </span>
-          {/* 알림·북마크·프로필은 로그인을 전제한다. MVP에 로그인이 없어
-              링크가 아니라 표시 전용이다 (스펙 2.3). */}
-          <span className="hidden text-muted sm:inline" aria-hidden>
-            <Bell size={24} />
-          </span>
-          <span className="hidden text-muted sm:inline" aria-hidden>
-            <Bookmark size={24} />
-          </span>
-          <span className="size-[36px] rounded-pill bg-primary" aria-hidden />
         </div>
       </Container>
+
+      {isMenuOpen ? (
+        <div className="absolute inset-x-0 top-full z-20 border-b border-border bg-surface sm:hidden">
+          <Container>
+            <nav className="flex flex-col py-2">
+              {MENU.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={
+                      isActive
+                        ? "py-3 text-nav-active text-primary"
+                        : "py-3 text-body text-muted"
+                    }
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </Container>
+        </div>
+      ) : null}
     </header>
   );
 }
