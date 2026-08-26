@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { ADMIN_ROUTE_PREFIX } from "@/constants/routes";
+import { useRouteResetState } from "@/lib/hooks/useRouteResetState";
 import { HeroVisibilityContext } from "./HeroVisibilityContext";
 
 type Props = {
@@ -34,15 +35,13 @@ export function SiteChrome({ header, footer, children }: Props) {
   // 홈만 히어로(HeroSurface)가 헤더 아래까지 올라온다. 첫 렌더(SSR 포함)부터 투명으로
   // 그려야 로드·라우트 전환 직후 흰 헤더가 번쩍이지 않아서 경로로 초기값을 정하고,
   // 그 뒤의 스크롤 전환은 HeroSurface의 옵저버가 맡는다.
-  const [overHero, setOverHero] = useState(() => pathname === "/");
-  const [renderedPathname, setRenderedPathname] = useState(pathname);
-  if (pathname !== renderedPathname) {
-    setRenderedPathname(pathname);
-    setOverHero(pathname === "/");
-  }
+  const [overHero, setOverHero] = useRouteResetState((path) => path === "/");
 
   // value가 매 렌더 새 객체면 overHero가 그대로여도 구독자가 전부 다시 그려진다.
-  const heroVisibility = useMemo(() => ({ overHero, setOverHero }), [overHero]);
+  const heroVisibility = useMemo(
+    () => ({ overHero, setOverHero }),
+    [overHero, setOverHero],
+  );
 
   // 관리자는 자기 셸(사이드바)을 (console) 레이아웃에서 그린다.
   return isAdmin ? (
