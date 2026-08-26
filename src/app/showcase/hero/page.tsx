@@ -27,9 +27,14 @@ export default function ShowcaseHeroPage() {
 
       <SpecimenSection title="Panel">
         <Specimen name="hero-panel" size="360×952" usedIn="06-C, 06-D">
-          {/* 시안 실측 크기 그대로 보여준다. 좁은 화면에서는 폭만 줄어든다 */}
-          <div className="h-[952px] w-[360px] max-w-full">
-            <HeroPanel festival={SAMPLE_UPCOMING} />
+          {/* 실제 화면에서 패널 상단 72px은 헤더 아래에 깔린다(HeroSurface의
+              -mt-[72px]). 표본도 그 조건을 재현해야 D-day가 시안 위치(패널
+              상단에서 140 = 헤더 72 + 인셋 68)에 보인다 — 그냥 952 박스에
+              넣으면 D-day만 72px 내려앉는다 */}
+          <div className="h-[880px] w-[360px] max-w-full overflow-hidden">
+            <div className="-mt-[72px] h-[952px]">
+              <HeroPanel festival={SAMPLE_UPCOMING} />
+            </div>
           </div>
         </Specimen>
       </SpecimenSection>

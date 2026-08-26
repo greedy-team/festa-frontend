@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ADMIN_ROUTE_PREFIX } from "@/constants/routes";
 import { HeroVisibilityContext } from "./HeroVisibilityContext";
@@ -41,11 +41,14 @@ export function SiteChrome({ header, footer, children }: Props) {
     setOverHero(pathname === "/");
   }
 
+  // value가 매 렌더 새 객체면 overHero가 그대로여도 구독자가 전부 다시 그려진다.
+  const heroVisibility = useMemo(() => ({ overHero, setOverHero }), [overHero]);
+
   // 관리자는 자기 셸(사이드바)을 (console) 레이아웃에서 그린다.
   return isAdmin ? (
     <>{children}</>
   ) : (
-    <HeroVisibilityContext.Provider value={{ overHero, setOverHero }}>
+    <HeroVisibilityContext.Provider value={heroVisibility}>
       <div className="flex flex-1 flex-col bg-canvas">
         {header}
         <main className="flex-1">{children}</main>
