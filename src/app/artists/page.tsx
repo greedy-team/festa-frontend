@@ -81,7 +81,8 @@ export default async function ArtistsPage({ searchParams }: Props) {
     // nav의 "아티스트" 링크로 들어오는 화면이라, 뚝 뜨지 않고 진입 시
     // 부드럽게 나타나게 한다(축제 목록과 같은 PageFadeIn)
     <PageFadeIn>
-      <Container className="mt-10 mb-16">
+      {/* 상세 화면과 같은 읽기 폭(1200px)으로 맞춘다 */}
+      <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
         <nav className="flex items-center gap-1 text-meta text-muted-soft">
           <Link href="/">홈</Link>
           <span>›</span>
