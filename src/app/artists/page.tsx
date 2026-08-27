@@ -89,25 +89,18 @@ export default async function ArtistsPage({ searchParams }: Props) {
           <span className="text-ink">아티스트</span>
         </nav>
 
-        <div className="mt-2 flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-hero text-ink">아티스트</h1>
-            {/* 모바일에서는 필터 패널까지 합치면 화면 대부분을 설명 텍스트가
-                차지해서 뺀다 — 데스크톱은 여유가 있어 그대로 둔다 */}
-            <p className="mt-2 hidden text-body text-muted sm:block">
-              대학 축제 무대에 오른 아티스트를 출연 기록으로 찾아보세요
-            </p>
-          </div>
-          <span className="mt-4 shrink-0 text-caption-strong text-muted">
-            전체 {data.totalElements}팀 ›
-          </span>
+        <div className="mt-2">
+          <h1 className="text-hero text-ink">아티스트</h1>
+          {/* 모바일에서는 필터까지 합치면 화면 대부분을 설명 텍스트가
+              차지해서 뺀다 — 데스크톱은 여유가 있어 그대로 둔다 */}
+          <p className="mt-2 hidden text-body text-muted sm:block">
+            대학 축제 무대에 오른 아티스트를 출연 기록으로 찾아보세요
+          </p>
         </div>
 
-        {/* 패널(테두리+r20+패딩)은 좁은 화면 전용이다 — 요소들이 세로로 쌓일 때
-            경계가 없으면 정리 안 된 느낌이 강해서 넣었다. sm 이상에서는 장르·
-            검색·정렬이 한 줄에 다 들어가 이미 정돈돼 보이므로 패널을 벗겨
-            기존처럼 플레인한 한 줄 필터 행으로 되돌린다. */}
-        <div className="mt-10 rounded-card border border-border bg-surface p-6 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0">
+        {/* 패널(테두리+배경)로 묶었다가 뺐다 — 모바일에서도 장식 없이
+            심플하게, 위 제목·아래 목록과 같은 톤으로 이어지게 한다. */}
+        <div className="mt-10">
           {/* 모바일 전용 레이아웃 — 검색이 위, 장르·정렬 셀렉트를 한 줄에 나란히 */}
           <div className="flex flex-col gap-3 sm:hidden">
             <SearchPill placeholder="아티스트 이름 검색" />
