@@ -26,7 +26,7 @@ function SearchBar({ q }: { q: string }) {
   return (
     <form
       action="/search"
-      className="flex h-[64px] items-center gap-3 rounded-card border border-border bg-surface px-6"
+      className="flex h-[64px] items-center gap-3 rounded-card border border-border bg-surface px-6 focus-within:ring-2 focus-within:ring-primary"
     >
       <SearchIcon size={20} className="shrink-0 text-muted-soft" aria-hidden />
       <input

@@ -18,7 +18,7 @@ export function ArtistSearchForm({ defaultValue, genre, sort, className = "" }: 
   return (
     <form
       action="/artists"
-      className={`inline-flex h-[36px] w-[320px] max-w-full items-center justify-between rounded-pill bg-surface-field px-4 ${className}`}
+      className={`inline-flex h-[36px] w-[320px] max-w-full items-center justify-between rounded-pill bg-surface-field px-4 focus-within:ring-2 focus-within:ring-primary ${className}`}
     >
       {genre ? <input type="hidden" name="genre" value={genre} /> : null}
       {sort !== "APPEARANCES" ? <input type="hidden" name="sort" value={sort} /> : null}
