@@ -12,7 +12,11 @@ export function NavSearchForm({ className = "", onDark = false }: Props) {
     <form
       action="/search"
       className={`inline-flex h-[40px] w-[280px] max-w-full items-center justify-between rounded-pill px-4 transition-colors duration-300 ${
-        onDark ? "bg-white/15" : "bg-surface-field"
+        // 히어로 위에서는 인디고를 쓰지 않는다(DESIGN.md Don'ts) — 포커스 링도
+        // 예외가 아니라 흰색으로 낸다.
+        onDark
+          ? "bg-white/15 focus-within:ring-2 focus-within:ring-on-media"
+          : "bg-surface-field focus-within:ring-2 focus-within:ring-primary"
       } ${className}`}
     >
       <input

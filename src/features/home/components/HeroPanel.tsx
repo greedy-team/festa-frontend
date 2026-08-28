@@ -18,7 +18,11 @@ export function HeroPanel({ festival }: Props) {
     // 없거나 로드에 실패해도 밑의 틴트가 그대로 보인다 (스펙 3.2).
     <Link
       href={`/festivals/${festivalId}`}
-      className={`relative block h-full w-full overflow-hidden ${heroTint(festivalId)}`}
+      // 포커스 링은 사이트 기본이 인디고(globals.css)지만, 이 링크는 포스터 이미지
+      // 전체에 겹쳐 있어 DESIGN.md("히어로 안에 인디고를 넣지 않는다")에 따라
+      // 흰색으로 예외를 둔다. 패널끼리 여백 없이 맞닿아 있어(DESIGN.md) 기본
+      // outline-offset(2px)을 그대로 쓰면 옆 패널을 침범해 안쪽으로 당긴다.
+      className={`relative block h-full w-full overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-on-media ${heroTint(festivalId)}`}
     >
       <PosterImage
         src={posterUrl}

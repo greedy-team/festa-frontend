@@ -26,7 +26,7 @@ function SearchBar({ q }: { q: string }) {
   return (
     <form
       action="/search"
-      className="flex h-[64px] items-center gap-3 rounded-card border border-border bg-surface px-6"
+      className="flex h-[64px] items-center gap-3 rounded-card border border-border bg-surface px-6 focus-within:ring-2 focus-within:ring-primary"
     >
       <SearchIcon size={20} className="shrink-0 text-muted-soft" aria-hidden />
       <input
@@ -62,6 +62,10 @@ export default async function SearchPage({ searchParams }: Props) {
   if (!q) {
     return (
       <Container className="mt-10 mb-16">
+        {/* 검색창은 있지만 페이지 제목이 시각적으로는 필요 없는 화면이라, 시맨틱
+            구조만 sr-only h1로 채운다 — h2 결과 섹션들이 짚을 상위 헤딩이 없으면
+            스크린리더 사용자가 페이지 시작점을 못 잡는다. */}
+        <h1 className="sr-only">검색</h1>
         <SearchBar q="" />
         <p className="mt-10 text-body text-muted">검색어를 입력해주세요.</p>
       </Container>
@@ -73,6 +77,7 @@ export default async function SearchPage({ searchParams }: Props) {
     console.error("GET /search 실패", res.status, res.message);
     return (
       <Container className="mt-10 mb-16">
+        <h1 className="sr-only">검색</h1>
         <SearchBar q={q} />
         <p className="mt-10 text-body text-muted">검색 결과를 불러오지 못했습니다.</p>
       </Container>
@@ -82,6 +87,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
   return (
     <Container className="mt-10 mb-16">
+      <h1 className="sr-only">검색</h1>
       <SearchBar q={q} />
 
       <p className="mt-8 text-body text-muted">

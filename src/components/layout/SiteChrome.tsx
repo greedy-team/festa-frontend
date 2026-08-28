@@ -48,9 +48,19 @@ export function SiteChrome({ header, footer, children }: Props) {
     <>{children}</>
   ) : (
     <HeroVisibilityContext.Provider value={heroVisibility}>
+      {/* 키보드 사용자가 페이지마다 nav 3개를 매번 Tab으로 통과하지 않도록,
+          평소엔 안 보이다가 포커스가 오면 나타나는 본문 바로가기 링크를 맨 앞에 둔다. */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-button focus:text-on-primary"
+      >
+        본문으로 바로가기
+      </a>
       <div className="flex flex-1 flex-col bg-canvas">
         {header}
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
         {footer}
       </div>
     </HeroVisibilityContext.Provider>
