@@ -128,7 +128,7 @@ export function Header() {
               solid ? "text-ink" : "text-on-media"
             }`}
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X size={24} aria-hidden /> : <Menu size={24} aria-hidden />}
           </button>
           {/* 검색은 실제로 /search로 이동한다 (#53). 좁은 화면에서는
               접어 자리를 아낀다. display 클래스는 래퍼에 건다 —
