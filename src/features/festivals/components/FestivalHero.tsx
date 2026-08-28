@@ -87,9 +87,8 @@ export function FestivalHero({ festival }: Props) {
             </p>
           </div>
 
-          {/* 주최 상세(DESIGN.md 10 School Detail, #46)가 아직 없어 임시로 홈에 연결한다 */}
           <Link
-            href="/"
+            href={`/hosts/${host.id}`}
             className="inline-flex w-fit items-center gap-1 rounded-pill bg-white/20 px-4 py-2 text-caption-strong text-on-media"
           >
             주최 · {host.name} ›
