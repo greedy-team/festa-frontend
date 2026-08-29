@@ -1,0 +1,65 @@
+# ===================================================================
+# E2E 테스트 (PR 검증)
+# ===================================================================
+#
+# ⚠️ 파일명에 PROJECT- 접두어를 쓰지 않습니다.
+#   .github/workflows/PROJECT-* 는 `npx projectops` 업데이트에 덮어써집니다 (DOC-0003).
+#   PROJECT-REACT-CI.yaml(빌드 검증)이 이미 그 대상이라, 테스트 단계를 거기 끼워
+#   넣는 대신 별도 파일로 분리해 덮어쓰기에서 안전하게 뒀다.
+#
+# CI에는 실제 백엔드가 없다 — NEXT_PUBLIC_API_MOCKING을 켜서 서버 사이드 MSW
+# (src/instrumentation.ts)로 앱을 띄운다. 로컬에서 .env.local로 목/실제를
+# 선택하는 것과 달리 CI는 항상 목으로 고정한다.
+# ===================================================================
+
+name: FESTA-E2E
+
+on:
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_PUBLIC_API_MOCKING: "true"
+
+jobs:
+  e2e:
+    name: E2E 테스트
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v5
+
+      - name: pnpm 설정
+        uses: pnpm/action-setup@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: 의존성 설치
+        run: pnpm install --frozen-lockfile
+
+      - name: Playwright 브라우저 설치
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: E2E 테스트
+        run: pnpm test:e2e
+
+      - name: 리포트 업로드 (실패 시)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
