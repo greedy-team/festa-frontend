@@ -16,6 +16,13 @@ describe("safeHttpUrl", () => {
     expect(safeHttpUrl("JavaScript:alert(1)")).toBeNull();
   });
 
+  it("http(s)://가 맨 앞이 아니라 문자열 어딘가에 있어도 막는다", () => {
+    // 정규식의 ^ 앵커가 빠지면(예: /https?:\/\//i) 이 케이스만 통과해버린다 —
+    // "차단해야 할" 값 안에 http(s)://가 섞여 있는 유일한 테스트라 앵커
+    // 회귀를 여기서 잡는다.
+    expect(safeHttpUrl("javascript:alert('https://ok.example')")).toBeNull();
+  });
+
   it("data: 스킴은 null로 막는다", () => {
     expect(safeHttpUrl("data:text/html,<script>")).toBeNull();
   });
