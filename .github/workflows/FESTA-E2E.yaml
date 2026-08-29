@@ -7,9 +7,9 @@
 #   PROJECT-REACT-CI.yaml(빌드 검증)이 이미 그 대상이라, 테스트 단계를 거기 끼워
 #   넣는 대신 별도 파일로 분리해 덮어쓰기에서 안전하게 뒀다.
 #
-# CI에는 실제 백엔드가 없다 — NEXT_PUBLIC_API_MOCKING을 켜서 서버 사이드 MSW
-# (src/instrumentation.ts)로 앱을 띄운다. 로컬에서 .env.local로 목/실제를
-# 선택하는 것과 달리 CI는 항상 목으로 고정한다.
+# CI에는 실제 백엔드가 없다 — NEXT_PUBLIC_API_MOCKING="true" 강제는 여기가 아니라
+# playwright.config.ts의 webServer.env에 있다. 로컬·CI가 항상 같은 값을 쓰게
+# 한 곳에서만 정하고(같은 규칙을 두 곳에 적지 않는다), 여기서는 반복하지 않는다.
 # ===================================================================
 
 name: FESTA-E2E
@@ -25,9 +25,6 @@ concurrency:
 
 permissions:
   contents: read
-
-env:
-  NEXT_PUBLIC_API_MOCKING: "true"
 
 jobs:
   e2e:

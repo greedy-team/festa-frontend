@@ -15,6 +15,9 @@ test("아티스트를 검색하면 결과가 검색어로 좁혀진다", async (
   await searchInput.fill(query);
   await searchInput.press("Enter");
 
-  await expect(page).toHaveURL(new RegExp(`q=${encodeURIComponent(query)}`));
+  // encodeURIComponent는 ( ) . * ! 를 인코딩하지 않는다 — 그 문자가 들어간
+  // 검색어(예: "(여자)아이들")로 정규식을 만들면 괄호가 안 닫힌 채로 깨진다.
+  // URL을 파싱해서 실제 값으로 비교하면 인코딩 규칙을 신경 쓸 필요가 없다.
+  expect(new URL(page.url()).searchParams.get("q")).toBe(query);
   await expect(page.locator("h3").first()).toContainText(query);
 });
