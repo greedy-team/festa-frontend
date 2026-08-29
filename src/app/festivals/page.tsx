@@ -40,8 +40,10 @@ export default async function FestivalsPage({ searchParams }: Props) {
 
   // 상한 클램프 — ?page=99(총 2페이지)로 들어오면 목록은 비고 캡션·이전 화살표만
   // 잘못된 페이지를 가리키게 된다. 실제로 존재하는 마지막 페이지로 다시 받는다.
+  // totalPages가 0(필터 결과 자체가 0건)이면 클램프 대상이 없다 — 그대로 두면
+  // page: -1로 재요청하게 되어 정상적인 빈 상태 대신 에러 화면이 뜬다.
   let currentPage = page;
-  if (currentPage > res.data.totalPages) {
+  if (currentPage > res.data.totalPages && res.data.totalPages > 0) {
     currentPage = res.data.totalPages;
     res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, artistId });
     if (!res.ok) {
