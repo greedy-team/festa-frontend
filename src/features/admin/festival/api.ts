@@ -24,8 +24,9 @@ let rows: AdminFestival[] = adminFestivalsFixture;
 
 /**
  * 백엔드 연결일에 이 본문이 adminFetch 호출로 바뀐다:
- *   return adminFetch<PageResponse<AdminFestival>>(`/admin/festivals?${qs}`)
- * 시그니처와 반환 타입은 그대로다.
+ *   return adminFetch<PageResponse<AdminFestival>>(`/api/admin/festivals?${qs}`)
+ * 시그니처와 반환 타입은 그대로다. 경로에 /api 접두사가 붙는다 — 2026-08-23
+ * 백엔드 결정(DEC-0099), #127 참고.
  */
 export async function getFestivals(
   params: FestivalReviewParams,
@@ -57,8 +58,8 @@ export async function getFestivals(
  * 칩 건수용. 필터와 무관한 전체 집계라 목록과 따로 부른다.
  *
  * 실제 API 뒤에는 이 호출을 받쳐줄 전용 엔드포인트가 없다 (스펙 §1 — 축제 검수 화면에는
- * GET /admin/festivals와 발행 3종만 있다). 백엔드 연결 시에는 필터 상태(unpublished /
- * published / 전체)마다 size=1로 GET /admin/festivals를 한 번씩, 총 세 번 불러
+ * GET /api/admin/festivals와 발행 3종만 있다). 백엔드 연결 시에는 필터 상태(unpublished /
+ * published / 전체)마다 size=1로 GET /api/admin/festivals를 한 번씩, 총 세 번 불러
  * totalElements만 읽어내는 방식이 된다 — 요청 3개의 비용이 감당할 만한지는 아직
  * 결정되지 않았다.
  */
@@ -86,7 +87,7 @@ export function publishBlocker(
   return null;
 }
 
-/** POST /admin/festivals/publish — 부분 성공 허용 */
+/** POST /api/admin/festivals/publish — 부분 성공 허용 */
 export async function publishFestivals(
   ids: number[],
 ): Promise<BulkPublishResult> {
@@ -119,7 +120,7 @@ export async function publishFestivals(
   };
 }
 
-/** DELETE /admin/festivals/{id}/publish — affected는 뺀다 (스펙 §2) */
+/** DELETE /api/admin/festivals/{id}/publish — affected는 뺀다 (스펙 §2) */
 export async function unpublishFestival(
   festivalId: number,
 ): Promise<{ festivalId: number; published: boolean; unpublishedAt: string }> {

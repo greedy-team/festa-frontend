@@ -1,8 +1,11 @@
 import { MOCKING_ENABLED } from "@/lib/mocking";
 
 // 목 핸들러가 가로채는 값과 같아야 한다 (src/mocks/handlers/*.ts의 API 상수).
+// /api 접두사: 2026-08-23 백엔드 결정(DEC-0099)으로 모든 경로(공개·관리자)가
+// /api 아래로 옮겨갔다. 여기 한 곳만 고치면 fetchJson을 쓰는 공개 화면과, 이
+// 상수를 그대로 가져다 쓰는 features/admin/auth/api.ts에도 같이 반영된다.
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.festa.kr";
+  `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.festa.kr"}/api`;
 
 /**
  * 요청 결과. 성공과 실패를 한 값에 담아 호출부가 분기하게 한다.
