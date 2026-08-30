@@ -90,6 +90,10 @@ FESTA 프론트는 2인 체제로 진행 중이고, 화면 개발은 API 명세�
   이력 계산 — `artists.ts`와 `search.ts`가 공유해서 두 엔드포인트의 `appearanceCount`가
   항상 일치하게 한다)가 추가됐다. `src/mocks/README.md`와 `CODE_GUIDE.md`는 이미 반영돼
   있었는데 이 문서만 최초 작성 시점(2.3 작성 당시)에 멈춰 있었다.
+- **핸들러가 1개 늘었다.** 2.3이 적은 4개(festivals/artists/hosts/search) 외에
+  `handlers/adminAuth.ts`(`POST /admin/auth/login`)가 `handlers/index.ts`에 등록돼
+  있다 — 관리자 로그인만 이 MSW 구조를 쓰고, 그 이후 화면은 별도 방식이다(아래
+  2026-08-30 항목 참고).
 - **`host.type` 필드가 사실상 결론이 났다 — `hosts.ts`뿐 아니라 `festivals.ts`의 host 요약
   3곳(목록 카드·상세·업커밍)에도 같은 필드가 있다.** 이 필드의 세부 사정(부록은 "제거
   예정", 필드표는 "포함" — 팀 컨펌 필요)은 이 ADR이 아니라 `README.md`/`CODE_GUIDE.md`에
@@ -119,4 +123,8 @@ FESTA 프론트는 2인 체제로 진행 중이고, 화면 개발은 API 명세�
   `features/search/types.ts`의 `HostResult`) + showcase 표본 데이터
   (`src/app/showcase/_components/samples.ts`)까지 `pnpm exec tsc --noEmit`으로 잡히는
   참조가 총 8개 파일에 걸쳐 있었다. 실제 제거는 문서 정리(#64)와 별개의 코드 변경이라
-  이슈를 따로 파서 진행한다 — 이 범위 확인 결과를 그 이슈에 그대로 옮겨 쓰면 된다.
+  이슈(#125)를 따로 파서 진행한다.
+  **이 항목이 `host.type`에 대한 정본이다** — `hosts.ts`·`features/festivals/types.ts`
+  등 코드의 인라인 주석과 `README.md`/`CODE_GUIDE.md`/`docs/mocking-strategy.md`는
+  전체 설명을 반복하지 않고 여기로 링크만 건다. 실제 제거 작업 이력은 #125/PR #126에
+  있다.

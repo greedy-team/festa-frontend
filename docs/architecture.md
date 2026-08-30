@@ -40,7 +40,7 @@ flowchart TB
     Comp --> Layout
     Api --> Lib
     Api --> Types
-    Lib -.->|로컬 개발 시 가로챔| Mocks
+    Lib -.->|모킹 켜짐 시 직접 호출| Mocks
 ```
 
 | 레이어 | 역할 | 강제 여부 |
@@ -48,7 +48,12 @@ flowchart TB
 | `app/` | URL ↔ 화면 연결. `page.tsx`는 데이터를 가져와서 배치만 하는 얇은 껍데기 | Next.js 프레임워크가 강제(폴더 구조 = URL 구조) |
 | `features/<domain>/` | 그 화면의 실제 데이터 페칭(`api.ts`)·타입(`types.ts`)·컴포넌트(`components/`) | 팀 컨벤션 |
 | `components/ui`, `components/layout` | 2곳 이상에서 재사용되는 공용 UI. 처음엔 `features` 안에서 화면 전용으로 만들고, 재사용처가 생기면 승격 | 팀 컨벤션 |
-| `lib/` | 화면과 무관한 순수 계산 함수(날짜 포맷, D-day 계산, 열거값→한글 매핑 등) | 팀 컨벤션 |
+| `lib/` | 화면과 무관한 순수 계산 함수(날짜 포맷, D-day 계산, 열거값→한글 매핑 등)와, 서버·클라이언트 요청 계약을 정의하는 `api.ts`(`fetchJson`) | 팀 컨벤션 |
+
+무엇을 어디에 두는지(파일별 배치 기준)는 [`folder-structure.md`](./folder-structure.md)가
+정본이다 — 이 표는 그 판단을 다시 정의하지 않고, 레이어 간 호출 방향만 보여준다. 예를 들어
+백엔드 응답 타입은 여러 도메인이 공유하는 것만 `types/api.ts`(현재 `PageResponse<T>` 하나)에
+있고, 도메인 전용 응답 타입은 folder-structure.md 그대로 `features/<domain>/types.ts`에 있다.
 
 ### 예시: 축제 상세 화면(`/festivals/{id}`)의 컴포넌트 트리
 
@@ -114,14 +119,20 @@ sequenceDiagram
 
 ### 실패 처리 계약
 
-`lib/api.ts`의 `fetchJson`이 모든 요청의 단일 진입점입니다. 예외를 던지지 않고 결과값
-하나로 성공/실패를 표현합니다.
+`lib/api.ts`의 `fetchJson`이 **서버 컴포넌트가 직접 fetch하는** 화면(공개 화면 전체)의
+단일 진입점입니다. 예외를 던지지 않고 결과값 하나로 성공/실패를 표현합니다.
 
 ```ts
 export type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: number | null; message: string };
 ```
+
+관리자 화면(`features/admin/*/api.ts`)은 이 계약을 안 씁니다 — TanStack Query의
+`useQuery`가 `isError`를 세우려면 `queryFn`이 실제로 throw해야 하는데, `ApiResult`처럼
+에러를 성공 값 안에 담아 resolve하면 `useQuery`가 그걸 성공으로 보고 화면이 `isError`
+분기를 못 탑니다. 그래서 관리자 쪽은 의도적으로 `AdminApiError`를 throw하는 별도 계약을
+씁니다(`features/admin/festival/api.ts` 상단 주석 참고).
 
 - `status`가 채워져 있으면 서버가 응답은 했다는 뜻(4xx/5xx)
 - `status`가 `null`이면 서버에 닿지도 못한 것(연결 실패·타임아웃)
@@ -178,10 +189,15 @@ export type ApiResult<T> =
 | 홈 — 최근 등록된 축제 | `GET /festivals/recent` | `limit`(1~30, 기본 5) |
 | 축제 목록 | `GET /festivals` | `page`, `size`, `sort`(`LATEST`\|`UPCOMING`), `hostId?`, `year?`, `artistId?` |
 | 축제 상세 | `GET /festivals/{id}` | — |
-| 아티스트 목록 | `GET /artists` | `page`, `size`, `sort`, `genre?` |
+| 아티스트 목록 | `GET /artists` | `page`, `size`, `sort`, `genre?`, `q?`(이름·다른 이름 부분 일치 검색) |
 | 아티스트 상세 | `GET /artists/{id}` | — |
 | 주최 상세 | `GET /hosts/{id}` | — |
 | 주최 축제 이력 | `GET /festivals` | `hostId`, `year?`, `page`, `size`, `sort` — 별도 엔드포인트가 아니라 축제 목록 API를 필터링해 재사용 |
+| 관리자 로그인 | `POST /admin/auth/login` | `username`, `password` — 위 공개 화면과 달리 `fetchJson`이 아니라 `AdminApiError`를 throw하는 별도 계약(위 「실패 처리 계약」 참고) |
+
+관리자 콘솔의 나머지 화면(축제 심사 등)은 아직 이 표에 없다 — `features/admin/festival/api.ts`가
+네트워크를 전혀 안 타고 모듈 스코프 로컬 픽스처를 직접 조작하는 상태라(로그인만 실제
+MSW 엔드포인트를 탄다), "서버와의 인터페이스"라고 부를 게 아직 없다.
 | 통합 검색 | `GET /search` | `q`, `type`(기본 `ALL`) |
 
 `hostId`/`year`/`artistId`처럼 한 목록 API에 여러 화면이 다른 목적으로 파라미터를 얹는
