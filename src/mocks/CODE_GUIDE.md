@@ -106,22 +106,30 @@ export const worker = setupWorker(...handlers); // 브라우저 환경 (Client C
 - **Node(`server.ts`)**: fetch 함수 자체를 patch하는 방식
 - **브라우저(`browser.ts`)**: 진짜 Service Worker(브라우저 API)를 등록해서 네트워크 레이어에서 가로채는 방식
 
-### 2.5 `instrumentation.ts` — 서버 켤 때 자동 실행
+### 2.5 `instrumentation.ts` — 파일은 남아 있지만 서버 사이드 모킹의 실제 경로가 아니다
 
-Next.js는 `instrumentation.ts` 파일에 `register()` 함수가 있으면 **서버 시작 시 자동으로 한 번 호출**해준다(Next.js가 제공하는 훅, 우리가 만든 게 아님).
+이 파일은 `msw/node`의 `setupServer()`로 네트워크 레벨에서 fetch를 가로채는 방식이었는데,
+**이 인터셉션이 Vercel 서버리스 함수에서는 안 걸리는 문제가 있었다(#75).** 그래서 서버
+사이드는 인터셉션 자체를 우회하는 방식으로 바뀌었다 — `lib/api.ts`의 `fetchJson`이
+`MOCKING_ENABLED`일 때 네트워크를 아예 안 타고, `mocks/handlers`의
+`RequestHandler.run()`을 직접 호출해서 응답을 만든다(`fetchMockJson`, `api.ts` 참고).
 
 ```ts
-import { MOCKING_ENABLED } from '@/lib/mocking';
-
-export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs' && MOCKING_ENABLED) {
-    const { server } = await import('@/mocks/server');
-    server.listen({ onUnhandledRequest: 'bypass' });
+async function fetchMockJson<T>(path: string): Promise<ApiResult<T>> {
+  const { handlers } = await import('@/mocks/handlers');
+  const request = new Request(`${API_BASE}${path}`);
+  for (const handler of handlers) {
+    const result = await handler.run({ request, requestId: crypto.randomUUID() });
+    if (result?.response) return /* ApiResult로 변환 */;
   }
+  // ...
 }
 ```
 
-`server.listen()` 호출 이후부터 서버에서 나가는 모든 요청이 가로채인다.
+`instrumentation.ts`의 `server.listen()`은 로컬 `next start`에서는 여전히 동작하지만,
+**실제로 쓰이는 경로는 이제 이쪽이 아니다** — 배포 환경(Vercel)에서 서버 사이드 모킹을
+살리는 건 전적으로 `fetchMockJson`이다. 클라이언트 사이드(`MockProvider.tsx`)는 여전히
+원래 방식(Service Worker 인터셉션)을 쓴다 — 브라우저에는 서버리스 문제가 없기 때문이다.
 
 ### 2.6 `MockProvider.tsx` — 브라우저 쪽은 자동이 아니라서 직접 켜야 함
 
@@ -149,8 +157,8 @@ if (!ready) return null; // 워커 켜지기 전까진 아무것도 안 그림
 
 ## 3. 실제 흐름 예시 — 축제 상세 페이지(id=21) 진입 시
 
-1. Next.js 서버가 `app/festivals/[id]/page.tsx`(Server Component)를 렌더하면서 `fetch('.../festivals/21')` 호출
-2. `instrumentation.ts`가 이미 `server.listen()`을 해놨기 때문에, 이 fetch가 진짜 네트워크로 안 나가고 `handlers/festivals.ts`의 `GET /festivals/:id` handler로 감
+1. Next.js 서버가 `app/festivals/[id]/page.tsx`(Server Component)를 렌더하면서 `getFestival(21)` → `lib/api.ts`의 `fetchJson('/festivals/21')` 호출
+2. `fetchJson`이 `MOCKING_ENABLED`를 보고 실제 fetch 대신 `fetchMockJson`으로 분기 — `handlers/festivals.ts`의 `GET /festivals/:id` handler의 `run()`을 직접 호출한다(네트워크 자체를 안 탄다. 2.5절 참고)
 3. handler가 `festivalsDb`에서 id=21을 찾고, `hostsDb`/`artistsDb`에서 관련 데이터를 조인해서 명세서 스펙대로 JSON 조립
 4. 그 JSON을 페이지 컴포넌트가 평소처럼 받아서 렌더링
 
@@ -171,7 +179,7 @@ if (!ready) return null; // 워커 켜지기 전까진 아무것도 안 그림
 
 ### hosts.ts
 - `frequentArtists`(자주 온 아티스트)도 저장된 값이 아니라, 해당 host의 축제 라인업을 순회하면서 등장 횟수를 집계(`Map`)해서 만든다.
-- `type` 필드는 변경사항 메모(제거 예정)와 실제 필드표(포함)가 서로 달라 일단 필드표 기준으로 포함해뒀다 — 팀 컨펌 필요.
+- `type` 필드 결론·제거 범위는 `MOCKING_STRATEGY.md`의 "5. 갱신"이 정본이다(#125/PR #126) — 여기서 반복하지 않는다.
 
 ### search.ts
 - 매칭 로직은 단순 `includes()` 뿐이다. 실제 검색엔진의 랭킹/형태소 분석을 흉내내지 않는다 — UI가 `type` 분기(`ALL`/`ARTIST`/`HOST`/`FESTIVAL`)와 `primary`가 `null`인 경우를 잘 처리하는지 확인하는 용도로만 쓸 것.
