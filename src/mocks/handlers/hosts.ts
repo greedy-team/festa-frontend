@@ -65,7 +65,7 @@ export const hostsHandlers = [
 
     return HttpResponse.json({
       id: host.id,
-      type: host.type, // 부록 변경사항엔 제거 예정이라고 되어 있으나, 실제 필드표/응답 예시엔 남아있어서 스펙 원문 기준으로 포함. 팀 컨펌 나오면 이 줄만 지우면 됨.
+      type: host.type, // 확정된 ERD에 없는 필드 — 경위는 mocks/MOCKING_STRATEGY.md "5. 갱신" 참고 (#125/PR #126에서 제거)
       name: host.name,
       shortName: host.shortName,
       region: host.region,
