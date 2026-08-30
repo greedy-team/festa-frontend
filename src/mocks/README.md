@@ -66,12 +66,13 @@ pnpm exec msw init public/ --save
 - **`db.ts`가 유일한 데이터 소스**다. festivals/artists/hosts 핸들러가 각자 하드코딩하지 않고
   전부 여기서 파생시킨다. F-13 순환탐색(축제→아티스트→축제) E2E가 실제로 의미 있으려면
   라인업의 artistId가 진짜 존재하는 아티스트를 가리켜야 하는데, 이 구조가 그걸 보장한다.
-- **`hosts.type` 필드는 최종적으로 뺐다.** 부록 변경사항("제거 예정")과 필드표/응답
-  예시("포함") 사이의 불일치를 스펙 원문 기준으로 일단 포함해서 시작했는데, 이후 주최
-  상세 화면(#46) 작업에서 "확정된 ERD에 없는 필드"로 결론이 났다. 화면 쪽은 이미 참조하지
-  않고 있었고, 이번에 `db.ts`의 `HostRecord.type`과 `hosts.ts`/`festivals.ts`/`search.ts`
-  응답의 `type`·`hostType` 필드까지 전부 지웠다(#64). 실제 API도 이 필드를 내려주지 않는
-  것으로 맞춘다.
+- **`hosts.type` 필드는 결론이 났지만 아직 안 지웠다.** 부록 변경사항("제거 예정")과
+  필드표/응답 예시("포함") 사이의 불일치를 스펙 원문 기준으로 일단 포함해서 시작했는데,
+  이후 주최 상세 화면(#46) 작업에서 "확정된 ERD에 없는 필드"로 결론이 났다. 화면 쪽은 이미
+  참조하지 않고 있다. 실제로 지우려면 `db.ts`의 `HostRecord.type`뿐 아니라
+  `hosts.ts`/`festivals.ts`(3곳)/`search.ts`(`hostType`이라는 다른 이름)의 응답, 프론트
+  타입 3곳(`HostSummary`/`FestivalHostSummary`/`HostResult`), showcase 표본 데이터까지
+  8개 파일에 걸려 있다(#64 조사 결과) — 별도 이슈로 진행한다.
 - **`/auth/me`는 만들지 않았다** — 이번 버전은 로그인 기능 자체가 없는 것으로 확정.
 - **날짜 계산(`festivalStatus`, `dday`)은 `fixtures/date.ts`의 `todayStr()`/`daysUntil()`/
   `festivalStatus()`로 통일했다.** 문자열(YYYY-MM-DD) 비교라 UTC/로컬 파싱 불일치 버그는

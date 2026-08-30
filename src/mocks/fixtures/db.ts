@@ -13,8 +13,7 @@ export type HostRecord = {
   id: number;
   name: string;
   shortName: string;
-  // type 필드(UNIVERSITY 등)는 뺐다 — 확정된 ERD에 없는 필드라 화면 어디서도
-  // 참조하지 않는다 (features/hosts/types.ts, HostHero.tsx 주석, #46/#64 참고).
+  type: 'UNIVERSITY' | 'LOCAL_GOV' | 'AGENCY' | 'ORGANIZATION';
   region: string;
   logoUrl: string | null;
   bannerUrl: string | null;
@@ -66,6 +65,7 @@ export const hostsDb: HostRecord[] = [
     id: 3,
     name: '연세대학교 신촌 캠퍼스',
     shortName: '연세대',
+    type: 'UNIVERSITY',
     region: '서울 서대문구',
     logoUrl: 'https://cdn.festa.kr/hosts/3/logo.png',
     bannerUrl: 'https://cdn.festa.kr/hosts/3/banner.jpg',
@@ -76,6 +76,7 @@ export const hostsDb: HostRecord[] = [
     id: 4,
     name: '고려대학교',
     shortName: '고려대',
+    type: 'UNIVERSITY',
     region: '서울 성북구',
     logoUrl: 'https://cdn.festa.kr/hosts/4/logo.png',
     bannerUrl: 'https://cdn.festa.kr/hosts/4/banner.jpg',
@@ -86,6 +87,7 @@ export const hostsDb: HostRecord[] = [
     id: 5,
     name: '성균관대학교',
     shortName: '성균관대',
+    type: 'UNIVERSITY',
     region: '서울 종로구',
     logoUrl: 'https://cdn.festa.kr/hosts/5/logo.png',
     bannerUrl: 'https://cdn.festa.kr/hosts/5/banner.jpg',
@@ -96,6 +98,7 @@ export const hostsDb: HostRecord[] = [
     id: 7,
     name: '세종대학교',
     shortName: '세종대',
+    type: 'UNIVERSITY',
     region: '서울 광진구',
     logoUrl: 'https://cdn.festa.kr/hosts/7/logo.png',
     bannerUrl: 'https://cdn.festa.kr/hosts/7/banner.jpg',
@@ -106,6 +109,7 @@ export const hostsDb: HostRecord[] = [
     id: 8,
     name: '한양대학교 서울 캠퍼스',
     shortName: '한양대',
+    type: 'UNIVERSITY',
     region: '서울 성동구',
     logoUrl: null,
     bannerUrl: null,
@@ -116,6 +120,7 @@ export const hostsDb: HostRecord[] = [
     id: 9,
     name: '중앙대학교 서울 캠퍼스',
     shortName: '중앙대',
+    type: 'UNIVERSITY',
     region: '서울 동작구',
     logoUrl: null,
     bannerUrl: null,
@@ -126,6 +131,7 @@ export const hostsDb: HostRecord[] = [
     id: 10,
     name: '경희대학교 서울 캠퍼스',
     shortName: '경희대',
+    type: 'UNIVERSITY',
     region: '서울 동대문구',
     logoUrl: null,
     bannerUrl: null,
@@ -136,6 +142,7 @@ export const hostsDb: HostRecord[] = [
     id: 11,
     name: '건국대학교 서울 캠퍼스',
     shortName: '건국대',
+    type: 'UNIVERSITY',
     region: '서울 광진구',
     logoUrl: null,
     bannerUrl: null,
@@ -146,6 +153,7 @@ export const hostsDb: HostRecord[] = [
     id: 12,
     name: '홍익대학교 서울 캠퍼스',
     shortName: '홍익대',
+    type: 'UNIVERSITY',
     region: '서울 마포구',
     logoUrl: null,
     bannerUrl: null,
@@ -156,6 +164,7 @@ export const hostsDb: HostRecord[] = [
     id: 13,
     name: '숭실대학교',
     shortName: '숭실대',
+    type: 'UNIVERSITY',
     region: '서울 동작구',
     logoUrl: null,
     bannerUrl: null,
@@ -166,6 +175,7 @@ export const hostsDb: HostRecord[] = [
     id: 14,
     name: '서울대학교 관악 캠퍼스',
     shortName: '서울대',
+    type: 'UNIVERSITY',
     region: '서울 관악구',
     logoUrl: null,
     bannerUrl: null,

@@ -10,6 +10,7 @@ import type { RecentFestival, UpcomingFestival } from "@/features/home/types";
 const SAMPLE_HOST = {
   id: 3,
   name: "연세대학교 신촌 캠퍼스",
+  type: "UNIVERSITY",
   logoUrl: null,
 };
 
@@ -33,7 +34,7 @@ export const SAMPLE_UPCOMING_LIST: UpcomingFestival[] = [
     startDate: "2026-09-11",
     endDate: "2026-09-13",
     posterUrl: null,
-    host: { id: 4, name: "고려대학교 안암 캠퍼스", logoUrl: null },
+    host: { id: 4, name: "고려대학교 안암 캠퍼스", type: "UNIVERSITY", logoUrl: null },
   },
   {
     festivalId: 23,
@@ -42,7 +43,7 @@ export const SAMPLE_UPCOMING_LIST: UpcomingFestival[] = [
     startDate: "2026-09-18",
     endDate: "2026-09-20",
     posterUrl: null,
-    host: { id: 5, name: "성균관대학교 명륜 캠퍼스", logoUrl: null },
+    host: { id: 5, name: "성균관대학교 명륜 캠퍼스", type: "UNIVERSITY", logoUrl: null },
   },
 ];
 
@@ -55,6 +56,7 @@ export const SAMPLE_RECENT: RecentFestival = {
   host: {
     id: 8,
     name: "한양대학교 서울 캠퍼스",
+    type: "UNIVERSITY",
     logoUrl: null,
   },
 };
@@ -68,7 +70,7 @@ export const SAMPLE_RECENT_LIST: RecentFestival[] = [
     startDate: "2026-08-28",
     endDate: "2026-08-30",
     posterUrl: null,
-    host: { id: 9, name: "중앙대학교 서울 캠퍼스", logoUrl: null },
+    host: { id: 9, name: "중앙대학교 서울 캠퍼스", type: "UNIVERSITY", logoUrl: null },
   },
   {
     festivalId: 54,
@@ -76,7 +78,7 @@ export const SAMPLE_RECENT_LIST: RecentFestival[] = [
     startDate: "2026-09-02",
     endDate: "2026-09-03",
     posterUrl: null,
-    host: { id: 10, name: "경희대학교 서울 캠퍼스", logoUrl: null },
+    host: { id: 10, name: "경희대학교 서울 캠퍼스", type: "UNIVERSITY", logoUrl: null },
   },
   {
     festivalId: 55,
@@ -84,7 +86,7 @@ export const SAMPLE_RECENT_LIST: RecentFestival[] = [
     startDate: "2026-09-08",
     endDate: "2026-09-10",
     posterUrl: null,
-    host: { id: 11, name: "건국대학교 서울 캠퍼스", logoUrl: null },
+    host: { id: 11, name: "건국대학교 서울 캠퍼스", type: "UNIVERSITY", logoUrl: null },
   },
   {
     festivalId: 56,
@@ -92,6 +94,6 @@ export const SAMPLE_RECENT_LIST: RecentFestival[] = [
     startDate: "2026-09-14",
     endDate: "2026-09-16",
     posterUrl: null,
-    host: { id: 12, name: "홍익대학교 서울 캠퍼스", logoUrl: null },
+    host: { id: 12, name: "홍익대학교 서울 캠퍼스", type: "UNIVERSITY", logoUrl: null },
   },
 ];

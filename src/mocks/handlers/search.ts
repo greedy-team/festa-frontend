@@ -36,6 +36,7 @@ function toHostResult(h: (typeof hostsDb)[number]) {
     id: h.id,
     name: h.name,
     logoUrl: h.logoUrl,
+    hostType: h.type,
     festivalCount: hostFestivals.length,
     latestFestivalYearMonth: latest ? latest.startDate.slice(0, 7) : null,
   };

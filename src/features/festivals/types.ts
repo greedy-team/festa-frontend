@@ -28,6 +28,8 @@ export type FestivalSort = "LATEST" | "UPCOMING";
  * 인스타그램·공식 사이트 링크에 필요한 필드가 추가로 있다 */
 export type FestivalHostSummary = {
   id: number;
+  /** 응답엔 있지만 화면에서 쓰지 않는다 — 확정된 ERD에 없는 필드다 (hosts.type과 동일한 사정, #46) */
+  type: string;
   name: string;
   logoUrl: string | null;
   instagramUrl: string | null;

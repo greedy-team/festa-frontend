@@ -1,6 +1,7 @@
 export type HostSummary = {
   id: number;
   name: string;
+  type: string;
   logoUrl: string | null;
 };
 

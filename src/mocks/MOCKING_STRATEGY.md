@@ -109,13 +109,14 @@ FESTA 프론트는 2인 체제로 진행 중이고, 화면 개발은 API 명세�
 
 **2026-08-30 확인**
 
-- **`host.type`(및 search 응답의 `hostType`) 필드를 최종적으로 뺐다.** 위 08-23 항목에서
-  "결론은 났는데 필드는 안 지웠다"고 남겨둔 상태를 마무리한 것이다. 실제로 지워보니 08-23
-  메모가 적어둔 범위(`hosts.ts` 한 줄)보다 넓었다 — `db.ts`의 `HostRecord.type` 선언과
-  픽스처 11건, `festivals.ts`의 host 요약 3곳(목록·상세·업커밍), `search.ts`의
-  `hostType`(같은 필드를 다른 이름으로 한 번 더 내려주고 있었다)까지 총 4개 핸들러 파일 +
-  프론트 타입 선언 3곳(`features/home/types.ts`의 `HostSummary`,
-  `features/festivals/types.ts`의 `FestivalHostSummary`, `features/search/types.ts`의
-  `HostResult`)이 걸려 있었다. `pnpm exec tsc --noEmit`으로 참조 누락을 전부 잡아가며
-  지웠다 — showcase 표본 데이터(`src/app/showcase/_components/samples.ts`)에도 같은 필드가
-  있어서 같이 지웠다.
+- **`host.type`(및 search 응답의 `hostType`) 필드의 실제 제거 범위를 확인했다 — 아직
+  지우지는 않았다.** 위 08-23 항목에서 "결론은 났는데 필드는 안 지웠다"고 남겨둔 상태를
+  실제로 지워보며 범위를 재보니, 08-23 메모가 적어둔 범위(`hosts.ts` 한 줄)보다 훨씬
+  넓었다 — `db.ts`의 `HostRecord.type` 선언과 픽스처 11건, `festivals.ts`의 host 요약
+  3곳(목록·상세·업커밍), `search.ts`의 `hostType`(같은 필드를 다른 이름으로 한 번 더
+  내려주고 있었다)까지 4개 핸들러 파일 + 프론트 타입 선언 3곳(`features/home/types.ts`의
+  `HostSummary`, `features/festivals/types.ts`의 `FestivalHostSummary`,
+  `features/search/types.ts`의 `HostResult`) + showcase 표본 데이터
+  (`src/app/showcase/_components/samples.ts`)까지 `pnpm exec tsc --noEmit`으로 잡히는
+  참조가 총 8개 파일에 걸쳐 있었다. 실제 제거는 문서 정리(#64)와 별개의 코드 변경이라
+  이슈를 따로 파서 진행한다 — 이 범위 확인 결과를 그 이슈에 그대로 옮겨 쓰면 된다.
