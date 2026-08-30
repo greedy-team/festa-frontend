@@ -65,7 +65,6 @@ export const hostsHandlers = [
 
     return HttpResponse.json({
       id: host.id,
-      type: host.type, // 확정된 ERD에 없는 필드 — 경위는 mocks/MOCKING_STRATEGY.md "5. 갱신" 참고 (#125/PR #126에서 제거)
       name: host.name,
       shortName: host.shortName,
       region: host.region,

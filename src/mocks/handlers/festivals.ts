@@ -12,7 +12,7 @@ const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
 function hostSummary(hostId: number) {
   const host = hostsDb.find((h) => h.id === hostId);
   if (!host) throw new Error(`fixture 오류: hostId=${hostId}에 해당하는 host 없음`);
-  return { id: host.id, name: host.name, type: host.type, logoUrl: host.logoUrl };
+  return { id: host.id, name: host.name, logoUrl: host.logoUrl };
 }
 
 function festivalListItem(f: FestivalRecord) {
@@ -135,7 +135,6 @@ export const festivalsHandlers = [
       name: f.name,
       host: {
         id: host.id,
-        type: host.type,
         name: host.name,
         logoUrl: host.logoUrl,
         instagramUrl: host.instagramUrl,
@@ -189,7 +188,7 @@ export const festivalsHandlers = [
       startDate: f.startDate,
       endDate: f.endDate,
       dday,
-      host: { id: host.id, type: host.type, name: host.name, logoUrl: host.logoUrl },
+      host: { id: host.id, name: host.name, logoUrl: host.logoUrl },
       venueName: f.venueName,
       latitude: f.latitude,
       longitude: f.longitude,
