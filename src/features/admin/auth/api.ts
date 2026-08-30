@@ -4,7 +4,7 @@ import { ADMIN_ERROR_CODE, AdminApiError } from "@/lib/adminError";
 /** DEC-0085: POST /admin/auth/login → { accessToken, expiresIn }. expiresIn은 초. */
 export type LoginResponse = { accessToken: string; expiresIn: number };
 
-/** DEC-0084: 경로에 `/api` 접두사를 붙이지 않는다. */
+// DEC-0099가 DEC-0084(접두사 없음)를 대체했다 — /api는 API_BASE가 붙인다(lib/api.ts).
 const LOGIN_PATH = "/admin/auth/login";
 
 /**

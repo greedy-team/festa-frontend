@@ -4,7 +4,8 @@ import { Errors } from '@/mocks/fixtures/errors';
 import { todayStr, daysUntil } from '@/mocks/fixtures/date';
 import { findAppearances } from '@/mocks/fixtures/appearances';
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
+// /api 접두사: 2026-08-23 백엔드 결정(DEC-0099), #127 참고.
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr'}/api`;
 
 export const hostsHandlers = [
   // 5.1 GET /hosts/{id}
