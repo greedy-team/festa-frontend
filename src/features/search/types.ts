@@ -12,7 +12,6 @@ export type HostResult = {
   id: number;
   name: string;
   logoUrl: string | null;
-  hostType: string;
   festivalCount: number;
   latestFestivalYearMonth: string | null;
 };

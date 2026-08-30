@@ -106,3 +106,16 @@ FESTA 프론트는 2인 체제로 진행 중이고, 화면 개발은 API 명세�
   둘뿐이다.** `POPULAR`는 어느 화면에서도 요청하지 않는다 — 에러를 안 내려고 넓게 열어둔
   값이라 잘못된 건 아니지만, "명세서에 있던 값과 프론트가 실제로 쓰는 값이 다를 수 있다"는
   예시로 남겨둔다.
+
+**2026-08-30 확인**
+
+- **`host.type`(및 search 응답의 `hostType`) 필드를 최종적으로 뺐다.** 위 08-23 항목에서
+  "결론은 났는데 필드는 안 지웠다"고 남겨둔 상태를 마무리한 것이다. 실제로 지워보니 08-23
+  메모가 적어둔 범위(`hosts.ts` 한 줄)보다 넓었다 — `db.ts`의 `HostRecord.type` 선언과
+  픽스처 11건, `festivals.ts`의 host 요약 3곳(목록·상세·업커밍), `search.ts`의
+  `hostType`(같은 필드를 다른 이름으로 한 번 더 내려주고 있었다)까지 총 4개 핸들러 파일 +
+  프론트 타입 선언 3곳(`features/home/types.ts`의 `HostSummary`,
+  `features/festivals/types.ts`의 `FestivalHostSummary`, `features/search/types.ts`의
+  `HostResult`)이 걸려 있었다. `pnpm exec tsc --noEmit`으로 참조 누락을 전부 잡아가며
+  지웠다 — showcase 표본 데이터(`src/app/showcase/_components/samples.ts`)에도 같은 필드가
+  있어서 같이 지웠다.
