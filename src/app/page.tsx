@@ -4,7 +4,9 @@ import { RecentCard } from "@/features/home/components/RecentCard";
 import { LostPanel } from "@/features/home/components/LostPanel";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Container } from "@/components/layout/Container";
+import { HeroSurface } from "@/components/layout/HeroSurface";
 import { SectionHeaderRow } from "@/components/ui/SectionHeaderRow";
+import { FadeInSection } from "@/components/ui/FadeInSection";
 
 export default async function Home() {
   const [upcomingRes, recentRes] = await Promise.all([
@@ -30,31 +32,39 @@ export default async function Home() {
       {upcomingRes.ok ? (
         <Hero festivals={upcoming} />
       ) : (
-        <section className="flex h-[560px] items-center justify-center bg-canvas lg:h-[952px]">
-          <p className="text-body text-muted">축제 정보를 불러오지 못했습니다.</p>
-        </section>
+        // 히어로와 같은 자리·같은 크기·같은 어두운 톤 — 헤더가 홈에서는 첫 렌더부터
+        // 투명(흰 글자)으로 그려지므로, 이 자리가 밝으면 헤더가 안 보인다 (SiteChrome.tsx).
+        <HeroSurface className="flex items-center justify-center bg-hero-1 pt-[72px]">
+          <p className="text-body text-on-media/85">축제 정보를 불러오지 못했습니다.</p>
+        </HeroSurface>
       )}
 
-      <Container className="mt-16">
-        {/* /festivals 목록 화면이 생겼다 (같은 PR의 축제 목록 조립 커밋) */}
-        <SectionHeaderRow title="최근 등록된 축제" href="/festivals" />
-        {recentRes.ok ? (
-          <div className="mt-5 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
-            {recent.map((festival) => (
-              <RecentCard key={festival.festivalId} festival={festival} />
-            ))}
-          </div>
-        ) : (
-          <p className="mt-5 text-body text-muted">
-            최근 등록된 축제를 불러오지 못했습니다.
-          </p>
-        )}
-      </Container>
+      {/* 히어로가 화면을 꽉 채우고 나서 내려오는 첫 섹션이라, 뚝 끊기지 않고
+          부드럽게 나타나게 한다(스크롤재킹 없이 가벼운 느낌만). */}
+      <FadeInSection>
+        {/* 히어로 바로 다음이라 다른 섹션 간격(mt-16)보다 위쪽 여백을 더 준다 */}
+        <Container className="mt-20">
+          {/* /festivals 목록 화면이 생겼다 (같은 PR의 축제 목록 조립 커밋) */}
+          <SectionHeaderRow title="최근 등록된 축제" href="/festivals" />
+          {recentRes.ok ? (
+            <div className="mt-5 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
+              {recent.map((festival) => (
+                <RecentCard key={festival.festivalId} festival={festival} />
+              ))}
+            </div>
+          ) : (
+            <p className="mt-5 text-body text-muted">
+              최근 등록된 축제를 불러오지 못했습니다.
+            </p>
+          )}
+        </Container>
+      </FadeInSection>
 
       {/* 시안의 560:680 비율을 유지하면서 컨테이너 폭을 꽉 채운다 — 고정폭(560px+680px)으로
           두면 컨테이너가 1280보다 넓을 때 위 카드 그리드 오른쪽 끝과 어긋난다. */}
-      {/* mb-16: 섹션 간격 64 — Footer 앞에도 위 섹션들과 같은 간격을 둔다 */}
-      <Container className="mt-16 mb-16 grid grid-cols-1 gap-10 sm:grid-cols-[560fr_680fr]">
+      {/* mt-20: 위 "최근 등록된 축제" 섹션과 같은 위쪽 여백. mb-16: 섹션 간격 64 —
+          Footer 앞에는 원래 섹션 간격을 그대로 둔다 */}
+      <Container className="mt-20 mb-16 grid grid-cols-1 gap-10 sm:grid-cols-[560fr_680fr]">
         <LostPanel />
         <AdSlot />
       </Container>

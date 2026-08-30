@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { Menu } from "lucide-react";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { useRouteResetState } from "@/lib/hooks/useRouteResetState";
 
 /**
  * 관리자 콘솔의 셸. 사이드바를 넓은 화면에서는 고정 열로, 좁은 화면에서는 서랍으로 둔다.
@@ -15,17 +15,9 @@ import { AdminSidebar } from "@/components/layout/AdminSidebar";
  * 형제라, 공통 조상이 들고 있어야 한다.
  */
 export function AdminShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
-
-  // 항목을 누르면 이동은 되는데 서랍이 열린 채 남아 목적지를 가린다.
-  // effect에서 setState하는 대신 렌더 중 경로 변화를 감지해 접는다 — React가
-  // 권장하는 "이전 값과 비교" 패턴이라 추가 렌더 한 번으로 끝나고 lint도 통과한다.
-  const [lastPathname, setLastPathname] = useState(pathname);
-  if (pathname !== lastPathname) {
-    setLastPathname(pathname);
-    setDrawerOpen(false);
-  }
+  // 항목을 누르면 이동은 되는데 서랍이 열린 채 남아 목적지를 가린다 — 경로가
+  // 바뀌면 접는다 (패턴 설명은 useRouteResetState 참고).
+  const [isDrawerOpen, setDrawerOpen] = useRouteResetState(() => false);
 
   // 서랍은 화면을 덮으므로 Esc로 닫히지 않으면 좁은 화면에서 갇힌 느낌이 된다.
   useEffect(() => {
@@ -35,7 +27,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isDrawerOpen]);
+  }, [isDrawerOpen, setDrawerOpen]);
 
   return (
     <div className="flex flex-1 flex-col bg-surface-field lg:flex-row">

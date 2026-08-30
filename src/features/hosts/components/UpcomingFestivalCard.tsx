@@ -14,9 +14,8 @@ export function UpcomingFestivalCard({ festival }: Props) {
   const { festivalId, name, posterUrl, startDate, endDate, dday } = festival;
 
   return (
-    // 축제 상세(#45)가 develop에 아직 없어 임시로 홈에 연결한다
     <Link
-      href="/"
+      href={`/festivals/${festivalId}`}
       className={`relative flex h-[372px] w-[356px] max-w-full flex-col justify-end overflow-hidden rounded-card ${gridTint(festivalId)}`}
     >
       <PosterImage

@@ -211,4 +211,46 @@
   /* --- Elevation. outline과 shadow는 배타적으로 쓴다 --- */
   --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.12);
+
+  /* --- Motion. 히어로 빈 상태(다가오는 축제 0건)가 화면이 멈춰 있지 않다는
+     인상을 주도록 쓴다. prefers-reduced-motion에서는 항상 motion-reduce:로
+     끈다 (DESIGN.md에 정의된 값이 아니라 이 자리 전용 최소 추가). --- */
+  --animate-hero-drift: hero-drift 18s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.7s ease-out both;
+}
+
+@keyframes hero-drift {
+  0%,
+  100% {
+    transform: translate(-8%, -6%) scale(1);
+  }
+  50% {
+    transform: translate(8%, 6%) scale(1.15);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 키보드 포커스 표시. 사이트 전역 기본은 {colors.primary}(인디고) — 마우스 클릭이
+   아니라 키보드로 도달했을 때만 보이는 :focus-visible에만 건다. 히어로 위(포스터
+   이미지에 직접 겹치는 요소)는 예외로 흰색을 쓴다 — DESIGN.md "히어로 안에 인디고를
+   넣지 않는다"를 그대로 따른다(NavSearchForm의 onDark 분기, HeroPanel 참고).
+   @layer base에 둔다 — Tailwind의 @import는 레이어를 쓰는데, 레이어 밖 CSS는
+   특이도와 무관하게 항상 이긴다. base에 넣어야 개별 컴포넌트의
+   focus-visible: 유틸리티(같은 utilities 레이어, 더 구체적인 선택자)가 정상적으로
+   이 기본값을 덮어쓴다. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
 }

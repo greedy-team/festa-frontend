@@ -5,6 +5,7 @@ import { UpcomingShowsSection } from "@/features/artists/components/UpcomingShow
 import { AppearancesSection } from "@/features/artists/components/AppearancesSection";
 import { Container } from "@/components/layout/Container";
 import { AdSlot } from "@/components/ui/AdSlot";
+import { PageFadeIn } from "@/components/ui/PageFadeIn";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -28,27 +29,40 @@ export default async function ArtistDetailPage({ params }: Props) {
   const artist = res.data;
 
   return (
-    <Container className="mt-10 mb-16 flex flex-col gap-16">
-      <ArtistHero artist={artist} />
+    // 카드 클릭으로 들어오는 화면이라 뚝 뜨지 않고 진입 시 전체가 한 번
+    // 부드럽게 나타나게 한다(축제 상세와 같은 PageFadeIn).
+    <PageFadeIn>
+      {/* 이 화면만 읽기 폭을 좁힌다 — 이름·타임라인 텍스트가 위주라 Container의
+          기본 유동 폭(상한 없음)을 그대로 쓰면 큰 모니터에서 한 줄이 너무
+          길어져 읽기 불편하다. 카드 행은 폭이 좁아져도 가로 스크롤로 그대로 동작한다. */}
+      <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
+        {/* Container 자체의 모바일 여백(px-4)만으로는 박스(패널)를 걷어낸 뒤라
+            글자가 화면 끝에 붙어 보였다 — sm 미만에서만 안쪽 여백을 살짝 더 준다.
+            Container의 px-4와 같은 속성을 다른 요소(자식)에 얹는 거라 클래스
+            우선순위 충돌 없이 그대로 더해진다. */}
+        <div className="flex flex-col gap-16 px-2 sm:px-0">
+          <ArtistHero artist={artist} />
 
-      {/* 시안(09-2)은 예정 공연(넓게) / 출연 이력(좁게) 2단 좌우 배치다 */}
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[2fr_1fr]">
-        <UpcomingShowsSection
-          artistId={artist.id}
-          items={artist.upcomingShows.items}
-          total={artist.upcomingShows.total}
-        />
-        <AppearancesSection
-          artistId={artist.id}
-          items={artist.appearances.items}
-          total={artist.appearances.total}
-        />
-      </div>
+          {/* 시안(09-2)은 예정 공연(넓게) / 출연 이력(좁게) 2단 좌우 배치였는데,
+              둘을 세로로 전폭 스택으로 바꿨다 — 예정 공연은 포스터 카드 가로
+              스크롤이라 폭이 좁아지면 카드가 눌리고, 출연 이력은 타임라인이라
+              세로 흐름과 더 잘 맞는다. 성격이 다른 두 콘텐츠(미래·행동 유도형 /
+              과거·기록형)를 형태로도 구분한다. */}
+          <UpcomingShowsSection
+            artistId={artist.id}
+            items={artist.upcomingShows.items}
+            total={artist.upcomingShows.total}
+          />
+          <AppearancesSection
+            artistId={artist.id}
+            items={artist.appearances.items}
+            total={artist.appearances.total}
+          />
 
-      {/* DEC-0087: 로그인 없는 개인화 영역은 페이지당 광고 하나로 대체.
-          시안(09-2)은 두 컬럼 전체 폭 아래에 걸쳐 있다 — 예정 공연 컬럼에만
-          좁게 넣었던 걸 바로잡았다 */}
-      <AdSlot variant="banner" />
-    </Container>
+          {/* DEC-0087: 로그인 없는 개인화 영역은 페이지당 광고 하나로 대체 */}
+          <AdSlot variant="banner" />
+        </div>
+      </Container>
+    </PageFadeIn>
   );
 }

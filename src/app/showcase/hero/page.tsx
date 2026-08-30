@@ -4,13 +4,17 @@
 
 import { Container } from "@/components/layout/Container";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
+import { slideBasisClass } from "@/features/home/components/Hero";
 import { HeroArrow } from "@/components/ui/HeroArrow";
 import { HeroDots } from "@/components/ui/HeroDots";
 import {
   Specimen,
   SpecimenSection,
 } from "@/app/showcase/_components/Specimen";
-import { SAMPLE_UPCOMING } from "@/app/showcase/_components/samples";
+import {
+  SAMPLE_UPCOMING,
+  SAMPLE_UPCOMING_LIST,
+} from "@/app/showcase/_components/samples";
 
 export default function ShowcaseHeroPage() {
   return (
@@ -23,11 +27,36 @@ export default function ShowcaseHeroPage() {
 
       <SpecimenSection title="Panel">
         <Specimen name="hero-panel" size="360×952" usedIn="06-C, 06-D">
-          {/* 시안 실측 크기 그대로 보여준다. 좁은 화면에서는 폭만 줄어든다 */}
-          <div className="h-[952px] w-[360px] max-w-full">
-            <HeroPanel festival={SAMPLE_UPCOMING} />
+          {/* 실제 화면에서 패널 상단 72px은 헤더 아래에 깔린다(HeroSurface의
+              -mt-[72px]). 표본도 그 조건을 재현해야 D-day가 시안 위치(패널
+              상단에서 140 = 헤더 72 + 인셋 68)에 보인다 — 그냥 952 박스에
+              넣으면 D-day만 72px 내려앉는다 */}
+          <div className="h-[880px] w-[360px] max-w-full overflow-hidden">
+            <div className="-mt-[72px] h-[952px]">
+              <HeroPanel festival={SAMPLE_UPCOMING} />
+            </div>
           </div>
         </Specimen>
+      </SpecimenSection>
+
+      <SpecimenSection title="패널 폭 — 축제 개수별">
+        {/* 실제 Hero는 h-dvh(뷰포트 높이 전체)라 표본에 그대로 못 넣는다.
+            같은 slideBasisClass를 실제 화면 폭 데스크톱 기준(lg)으로
+            재현해서, 개수가 슬롯(4)보다 적을 때 빈 칸 없이 채워지는 걸
+            보여준다. 높이는 위 "Panel" 표본과 똑같이 952px(시안의 히어로
+            높이)로 맞춘다 — 다른 값을 쓰면 같은 컴포넌트인데 표본마다
+            세로 길이가 달라 보인다. */}
+        {[1, 2, 3].map((n) => (
+          <Specimen key={n} name={`축제 ${n}개`} size={`lg 기준, 슬롯 4개 중 ${n}개 사용`} full>
+            <div className="flex h-[952px] w-full">
+              {SAMPLE_UPCOMING_LIST.slice(0, n).map((festival) => (
+                <div key={festival.festivalId} className={slideBasisClass(n)}>
+                  <HeroPanel festival={festival} />
+                </div>
+              ))}
+            </div>
+          </Specimen>
+        ))}
       </SpecimenSection>
 
       <SpecimenSection title="Controls">
@@ -59,8 +88,8 @@ export default function ShowcaseHeroPage() {
         계산한다. 시안의 8개는 축제 32개를 전제한 그림이다.
       </p>
       <p className="mt-2 text-label text-muted-soft">
-        패널 클릭 동작은 아직 없다 — DESIGN.md Known Gaps에 세 안이 경합 중이라
-        팀이 정한 뒤 붙인다.
+        패널 전체가 링크다 — 클릭하면 요약 없이 축제 상세로 직행한다(DEC-0060).
+        이 표본에서는 실제 이동을 막기 위해 감싸는 div에 고정 크기만 줬다.
       </p>
     </Container>
   );
