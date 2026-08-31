@@ -71,6 +71,7 @@ export const hostsHandlers = [
       region: host.region,
       logoUrl: host.logoUrl,
       bannerUrl: host.bannerUrl,
+      homepageUrl: host.homepageUrl,
       availableYears: [...new Set(hostFestivals.map((f) => Number(f.startDate.slice(0, 4))))].sort((a, b) => b - a),
       upcomingFestivals,
       festivalHistory: { items: historyAll.slice(0, 2), total: historyAll.length },
