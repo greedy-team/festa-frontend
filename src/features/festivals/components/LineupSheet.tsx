@@ -82,8 +82,9 @@ export function LineupSheet({ lineup, initialDay, onClose }: Props) {
                     key={artist.id ?? `secret-${i}`}
                     className="flex items-center gap-3 rounded-row border border-border px-4 py-3"
                   >
+                    {/* DEC-0109: order 필드가 없다 — 배열 순서가 곧 계약이라 순번은 인덱스로 만든다 */}
                     <span className="w-6 shrink-0 text-meta-medium text-muted-soft">
-                      {artist.order}
+                      {i + 1}
                     </span>
                     <div
                       className={`relative size-[36px] shrink-0 overflow-hidden rounded-pill ${
