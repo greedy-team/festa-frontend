@@ -20,7 +20,7 @@ export function FrequentArtistsSection({ artists }: Props) {
           <Link
             key={artist.artistId}
             href="/"
-            className="flex flex-col items-start gap-2 rounded-card border border-border bg-surface p-5"
+            className="flex flex-col items-start gap-2 rounded-card border border-border bg-surface p-5 transition-shadow duration-300 hover:shadow-hover"
           >
             <span className="text-meta-medium text-muted-soft">
               {String(artist.rank).padStart(2, "0")}

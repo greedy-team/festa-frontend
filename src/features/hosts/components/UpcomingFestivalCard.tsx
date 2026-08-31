@@ -16,7 +16,10 @@ export function UpcomingFestivalCard({ festival }: Props) {
   return (
     <Link
       href={`/festivals/${festivalId}`}
-      className={`relative flex h-[372px] w-[356px] max-w-full flex-col justify-end overflow-hidden rounded-card ${gridTint(festivalId)}`}
+      // 포스터 전면형이라 예정 공연 카드(upcoming-show-card)와 같은 hover를 준다.
+      // 이 카드는 Link 자체가 포스터 컨테이너라 스케일을 Link에 직접 건다.
+      // 큰 카드(356px)라 5% 확대는 캐러셀 폭을 넘겨 — 3%로 낮춘다.
+      className={`relative flex h-[372px] w-[356px] max-w-full flex-col justify-end overflow-hidden rounded-card transition-transform duration-300 hover:scale-[1.03] hover:shadow-hover motion-reduce:transition-none motion-reduce:hover:scale-100 ${gridTint(festivalId)}`}
     >
       <PosterImage
         src={posterUrl}

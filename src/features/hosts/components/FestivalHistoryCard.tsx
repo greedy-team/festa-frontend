@@ -22,9 +22,10 @@ export function FestivalHistoryCard({ festival }: Props) {
   const { festivalId, name, startDate, endDate, posterUrl } = festival;
 
   return (
-    <Link href={`/festivals/${festivalId}`} className="flex flex-col">
+    <Link href={`/festivals/${festivalId}`} className="group flex flex-col">
+      {/* hover 시 살짝 커지는 것 — festival-card와 동일 (DESIGN.md {elevation.hover}) */}
       <div
-        className={`relative aspect-[236/320] w-full overflow-hidden rounded-media ${gridTint(festivalId)}`}
+        className={`relative aspect-[236/320] w-full overflow-hidden rounded-media transition-transform duration-300 group-hover:scale-105 group-hover:shadow-hover motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${gridTint(festivalId)}`}
       >
         <PosterImage
           src={posterUrl}
