@@ -10,6 +10,7 @@ import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Chip } from "@/components/ui/Chip";
+import { PageFadeIn } from "@/components/ui/PageFadeIn";
 
 const PAGE_SIZE = 10;
 
@@ -80,71 +81,75 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
   const minYear = Math.min(...host.availableYears);
 
   return (
-    <Container className="mt-10 mb-16">
-      <nav className="flex items-center gap-1 text-meta text-muted-soft">
-        <Link href="/">홈</Link>
-        <span>›</span>
-        <span>학교</span>
-        <span>›</span>
-        <span>{host.name}</span>
-        <span>›</span>
-        <span className="text-ink">축제 이력</span>
-      </nav>
+    // 학교 상세로에서 넘어오는 화면이라 뚝 뜨지 않고 진입 시 부드럽게 나타나게 한다
+    // (축제·아티스트 목록 화면과 같은 PageFadeIn)
+    <PageFadeIn>
+      <Container className="mt-10 mb-16">
+        <nav className="flex items-center gap-1 text-meta text-muted-soft">
+          <Link href="/">홈</Link>
+          <span>›</span>
+          <span>학교</span>
+          <span>›</span>
+          <span>{host.name}</span>
+          <span>›</span>
+          <span className="text-ink">축제 이력</span>
+        </nav>
 
-      <div className="mt-2 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-hero text-ink">축제 이력</h1>
-          <p className="mt-2 text-body text-muted">
-            {host.shortName} · {minYear}년부터 아카이브된 축제 {data.totalElements}개
-          </p>
+        <div className="mt-2 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-hero text-ink">축제 이력</h1>
+            <p className="mt-2 text-body text-muted">
+              {host.shortName} · {minYear}년부터 아카이브된 축제 {data.totalElements}개
+            </p>
+          </div>
+          <Link
+            href={`/hosts/${hostId}`}
+            className="mt-4 shrink-0 text-caption-strong text-muted"
+          >
+            학교 상세로 →
+          </Link>
         </div>
-        <Link
-          href={`/hosts/${hostId}`}
-          className="mt-4 shrink-0 text-caption-strong text-muted"
-        >
-          학교 상세로 →
-        </Link>
-      </div>
 
-      <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="text-meta text-muted">연도</span>
-          <div className="flex items-center gap-2">
-            <Link href={makeHref({ year: null })}>
-              <Chip active={!year}>전체</Chip>
-            </Link>
-            {host.availableYears.map((y) => (
-              <Link key={y} href={makeHref({ year: y })}>
-                <Chip active={year === y}>{y}</Chip>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-meta text-muted">연도</span>
+            <div className="flex items-center gap-2">
+              <Link href={makeHref({ year: null })}>
+                <Chip active={!year}>전체</Chip>
               </Link>
+              {host.availableYears.map((y) => (
+                <Link key={y} href={makeHref({ year: y })}>
+                  <Chip active={year === y}>{y}</Chip>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <SortDropdown value={sort} options={SORT_OPTIONS} />
+        </div>
+
+        {data.items.length ? (
+          <div className="mt-10 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
+            {data.items.map((festival) => (
+              <FestivalHistoryCard key={festival.festivalId} festival={festival} />
             ))}
           </div>
-        </div>
+        ) : (
+          <p className="mt-10 text-body text-muted">해당 연도의 축제 이력이 없습니다.</p>
+        )}
 
-        <SortDropdown value={sort} options={SORT_OPTIONS} />
-      </div>
+        {data.totalPages > 1 ? (
+          <Pagination
+            className="mt-16"
+            page={page}
+            totalPages={data.totalPages}
+            totalElements={data.totalElements}
+            makeHref={(p) => makeHref({ page: p })}
+          />
+        ) : null}
 
-      {data.items.length ? (
-        <div className="mt-10 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
-          {data.items.map((festival) => (
-            <FestivalHistoryCard key={festival.festivalId} festival={festival} />
-          ))}
-        </div>
-      ) : (
-        <p className="mt-10 text-body text-muted">해당 연도의 축제 이력이 없습니다.</p>
-      )}
-
-      {data.totalPages > 1 ? (
-        <Pagination
-          className="mt-16"
-          page={page}
-          totalPages={data.totalPages}
-          totalElements={data.totalElements}
-          makeHref={(p) => makeHref({ page: p })}
-        />
-      ) : null}
-
-      <AdSlot variant="banner" className="mt-16" />
-    </Container>
+        <AdSlot variant="banner" className="mt-16" />
+      </Container>
+    </PageFadeIn>
   );
 }
