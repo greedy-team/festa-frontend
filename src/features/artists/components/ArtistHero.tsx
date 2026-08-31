@@ -2,6 +2,7 @@
 import { AtSign } from "lucide-react";
 import type { ArtistDetail } from "@/features/artists/types";
 import { GENRE_LABELS } from "@/lib/artistGenre";
+import { safeHttpUrl } from "@/lib/safeUrl";
 import { Badge } from "@/components/ui/Badge";
 
 type Props = {
@@ -14,6 +15,8 @@ type Props = {
 export function ArtistHero({ artist }: Props) {
   const { name, otherNames, genre, instagramUrl } = artist;
   const genreLabel = genre && GENRE_LABELS[genre] ? GENRE_LABELS[genre] : null;
+  // 관리자 등록 API가 URL 형식을 검사하지 않는다 (DEC-0107) — http(s)가 아니면 링크로 그리지 않는다
+  const safeInstagramUrl = instagramUrl ? safeHttpUrl(instagramUrl) : null;
 
   return (
     <div className="flex min-w-0 flex-col gap-3">
@@ -25,9 +28,9 @@ export function ArtistHero({ artist }: Props) {
 
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-hero text-ink">{name}</h1>
-        {instagramUrl ? (
+        {safeInstagramUrl ? (
           <a
-            href={instagramUrl}
+            href={safeInstagramUrl}
             target="_blank"
             rel="noreferrer"
             aria-label="인스타그램"
