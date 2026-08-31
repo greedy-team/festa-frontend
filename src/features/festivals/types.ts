@@ -34,8 +34,11 @@ export type FestivalHostSummary = {
   homepageUrl: string | null;
 };
 
-/** revealed로 id/name/imageUrl/genre 유무가 갈린다 — 판별 유니온이라 !(non-null assertion) 없이 좁혀진다 */
-export type LineupArtist = { order: number } & (
+/**
+ * revealed로 id/name/imageUrl/genre 유무가 갈린다 — 판별 유니온이라 !(non-null assertion) 없이 좁혀진다.
+ * order 필드는 없다 — DEC-0109: 배열 순서 자체가 계약이고, 순번 표기는 프론트가 인덱스로 만든다.
+ */
+export type LineupArtist =
   | {
       revealed: true;
       id: number;
@@ -43,8 +46,7 @@ export type LineupArtist = { order: number } & (
       imageUrl: string | null;
       genre: ArtistGenre | null;
     }
-  | { revealed: false; id: null; name: null; imageUrl: null; genre: null }
-);
+  | { revealed: false; id: null; name: null; imageUrl: null; genre: null };
 
 export type LineupDay = {
   day: number;
