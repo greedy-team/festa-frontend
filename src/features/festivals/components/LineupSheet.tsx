@@ -88,10 +88,10 @@ export function LineupSheet({ lineup, initialDay, onClose }: Props) {
                     </span>
                     <div
                       className={`relative size-[36px] shrink-0 overflow-hidden rounded-pill ${
-                        artist.revealed ? gridTint(artist.id) : "bg-divider"
+                        artist.id !== null ? gridTint(artist.id) : "bg-divider"
                       }`}
                     >
-                      {artist.revealed ? (
+                      {artist.id !== null ? (
                         <PosterImage
                           src={artist.imageUrl}
                           className="absolute inset-0 h-full w-full object-cover"
@@ -100,14 +100,14 @@ export function LineupSheet({ lineup, initialDay, onClose }: Props) {
                     </div>
                     <span
                       className={`flex-1 text-caption-strong ${
-                        artist.revealed ? "text-ink" : "text-muted-soft"
+                        artist.id !== null ? "text-ink" : "text-muted-soft"
                       }`}
                     >
-                      {artist.revealed ? artist.name : "공개 예정"}
+                      {artist.id !== null ? artist.name : "공개 예정"}
                     </span>
                     {/* 미공개 아티스트는 장르도 아직 안 보여준다 — 이름과 마찬가지로 자리만 유지.
                         장르가 없으면 칩 자리를 비워두지 않고 아예 그리지 않는다 (ArtistHero와 동일 관례) */}
-                    {artist.revealed && artist.genre ? (
+                    {artist.id !== null && artist.genre ? (
                       <span className="shrink-0 text-label-regular text-muted-soft">
                         {genreLabel(artist.genre)}
                       </span>
