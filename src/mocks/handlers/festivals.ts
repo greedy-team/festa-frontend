@@ -8,7 +8,7 @@ const VALID_STATUS = ['UPCOMING', 'ONGOING', 'ENDED'];
 const VALID_SORT = ['LATEST', 'UPCOMING', 'POPULAR']; // 최종 스펙 파라미터 표엔 없지만 호출 예시엔 등장 — 팀 컨펌 전까지 유지
 
 // /api 접두사: 2026-08-23 백엔드 결정(DEC-0099), #127 참고.
-const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr'}/api`;
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.every-festa.com'}/api`;
 
 function hostSummary(hostId: number) {
   const host = hostsDb.find((h) => h.id === hostId);

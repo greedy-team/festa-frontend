@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw';
 import { apiError } from '@/mocks/fixtures/errors';
 
 // /api 접두사: 2026-08-23 백엔드 결정(DEC-0099)이 DEC-0084(접두사 없음)를 대체했다.
-const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr'}/api`;
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.every-festa.com'}/api`;
 
 /**
  * 실제 계정은 백엔드의 AdminAccountSeeder가 환경변수로 심는다. 서버를 띄우지 않고

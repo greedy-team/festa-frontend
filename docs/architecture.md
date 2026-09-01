@@ -166,7 +166,7 @@ export type ApiResult<T> =
 
 ### 공통 규칙
 
-- **Base URL**: `NEXT_PUBLIC_API_BASE_URL` 환경변수(기본값 `https://api.festa.kr`)
+- **Base URL**: `NEXT_PUBLIC_API_BASE_URL` 환경변수(기본값 `https://api.every-festa.com`)
 - **페이지네이션 공통 포맷** (0-based `page`):
 
   ```ts

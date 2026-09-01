@@ -5,7 +5,7 @@ import { findAppearances } from '@/mocks/fixtures/appearances';
 import { todayStr } from '@/mocks/fixtures/date';
 
 // /api 접두사: 2026-08-23 백엔드 결정(DEC-0099), #127 참고.
-const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr'}/api`;
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.every-festa.com'}/api`;
 const VALID_TYPE = ['ALL', 'ARTIST', 'HOST', 'FESTIVAL'];
 
 function toFestivalResult(f: (typeof festivalsDb)[number]) {

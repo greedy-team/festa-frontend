@@ -9,7 +9,7 @@ const VALID_GENRE = ['HIPHOP', 'BALLAD_RNB', 'BAND', 'DANCE'];
 const VALID_SORT = ['APPEARANCES', 'RECENT', 'NAME'];
 
 // /api 접두사: 2026-08-23 백엔드 결정(DEC-0099), #127 참고.
-const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr'}/api`;
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.every-festa.com'}/api`;
 
 export const artistsHandlers = [
   // 4.1 GET /artists
