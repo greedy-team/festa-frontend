@@ -32,6 +32,7 @@ export type HostDetail = {
   region: string;
   logoUrl: string | null;
   bannerUrl: string | null;
+  homepageUrl: string | null;
   availableYears: number[];
   upcomingFestivals: UpcomingHostFestival[];
   festivalHistory: {

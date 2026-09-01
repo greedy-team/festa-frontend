@@ -4,6 +4,7 @@ import type { FestivalDetail } from "@/features/festivals/types";
 import { heroTint } from "@/lib/posterTint";
 import { dateRange, formatDday, festivalStatus } from "@/lib/festivalDate";
 import { ticketTypeLabel } from "@/lib/admission";
+import { safeHttpUrl } from "@/lib/safeUrl";
 import { PosterImage } from "@/components/ui/PosterImage";
 import { Badge } from "@/components/ui/Badge";
 
@@ -24,6 +25,9 @@ export function FestivalHero({ festival }: Props) {
     admission,
   } = festival;
   const status = festivalStatus(startDate, endDate);
+  // 관리자 등록 API가 URL 형식을 검사하지 않는다 (DEC-0107) — http(s)가 아니면 링크로 그리지 않는다
+  const safeInstagramUrl = host.instagramUrl ? safeHttpUrl(host.instagramUrl) : null;
+  const safeHomepageUrl = host.homepageUrl ? safeHttpUrl(host.homepageUrl) : null;
 
   return (
     <div
@@ -38,9 +42,9 @@ export function FestivalHero({ festival }: Props) {
 
       {/* 시안(08-2) 우상단 아이콘 — 주최의 인스타그램·공식 사이트 링크. 없으면 그리지 않는다 */}
       <div className="absolute right-6 top-6 z-10 flex items-center gap-2">
-        {host.instagramUrl ? (
+        {safeInstagramUrl ? (
           <a
-            href={host.instagramUrl}
+            href={safeInstagramUrl}
             target="_blank"
             rel="noreferrer"
             aria-label="주최 인스타그램"
@@ -49,9 +53,9 @@ export function FestivalHero({ festival }: Props) {
             <AtSign size={18} aria-hidden />
           </a>
         ) : null}
-        {host.homepageUrl ? (
+        {safeHomepageUrl ? (
           <a
-            href={host.homepageUrl}
+            href={safeHomepageUrl}
             target="_blank"
             rel="noreferrer"
             aria-label="주최 공식 사이트"

@@ -126,7 +126,7 @@ export default async function SearchPage({ searchParams }: Props) {
           <h2 className="text-block-title text-ink">학교</h2>
           <div className="mt-4 flex flex-col gap-3">
             {data.hosts.map((host) => (
-              <SchoolResultRow key={host.id} host={host} />
+              <SchoolResultRow key={host.hostId} host={host} />
             ))}
           </div>
         </section>
@@ -148,19 +148,7 @@ export default async function SearchPage({ searchParams }: Props) {
       ) : null}
 
       {!data.counts.all ? (
-        <div className="mt-10">
-          <p className="text-body text-muted">검색 결과가 없습니다.</p>
-          {data.relatedKeywords.length ? (
-            <div className="mt-4 flex flex-wrap items-center gap-2">
-              <span className="text-caption-strong text-muted">추천 검색어</span>
-              {data.relatedKeywords.map((keyword) => (
-                <Link key={keyword} href={`/search?q=${encodeURIComponent(keyword)}`}>
-                  <Chip>{keyword}</Chip>
-                </Link>
-              ))}
-            </div>
-          ) : null}
-        </div>
+        <p className="mt-10 text-body text-muted">검색 결과가 없습니다.</p>
       ) : null}
 
       <AdSlot variant="banner" className="mt-16" />
