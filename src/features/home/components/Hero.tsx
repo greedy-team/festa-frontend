@@ -8,6 +8,7 @@ import { CalendarDays, ChevronDown, ChevronRight, Music2, Search } from "lucide-
 import type { UpcomingFestival } from "@/features/home/types";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
 import { HeroSurface } from "@/components/layout/HeroSurface";
+import { PosterImage } from "@/components/ui/PosterImage";
 
 // 다가오는 축제가 0건일 때(방학 등) 보여줄 바로가기 3개 — 실제 목적지 화면이
 // 있는 라우트만 넣는다. 분실물은 아직 목적지 화면이 없어(LostPanel.tsx 주석
@@ -32,6 +33,12 @@ const QUICK_LINKS = [
     desc: "축제·아티스트를 한 번에 검색하세요",
   },
 ] as const;
+
+// 다가오는 축제가 0건일 때 히어로 배경. null이면 지금처럼 bg-hero-1 단색만
+// 보인다. public/ 아래 이미지 경로(예: "/hero/offseason.jpg")를 넣으면 그
+// 사진이 배경으로 깔리고 흰 타이포 가독성을 위한 스크림이 얹힌다. 이미지
+// 파일은 아직 없다 — 받아줄 자리만 만들어 둔 것이다(#150).
+const EMPTY_HERO_BACKGROUND_SRC: string | null = null;
 
 // 슬롯 수(1~4)별 폭을 리터럴 클래스로 미리 다 적어둔다 — 템플릿 문자열로
 // 만들면 Tailwind가 빌드 시점에 클래스를 못 찾아서 스타일이 안 먹는다.
@@ -115,12 +122,24 @@ export function Hero({ festivals }: Props) {
     return (
       // pt-[72px]: 헤더가 위에 겹치므로 그만큼 내려서 가운데를 맞춘다
       <HeroSurface className="flex flex-col items-center justify-center gap-10 overflow-hidden bg-hero-1 px-6 pt-[72px] text-center">
-        {/* 은은하게 떠다니는 글로우 — 축제가 없어도 화면이 멈춰 있지 않다는
-            인상을 준다. prefers-reduced-motion이면 정지 상태로 남는다 */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-1/4 top-1/4 size-[600px] rounded-pill bg-white/10 blur-3xl animate-hero-drift motion-reduce:animate-none"
-        />
+        {EMPTY_HERO_BACKGROUND_SRC ? (
+          <>
+            {/* 로드 실패 시 PosterImage가 스스로 사라져 bg-hero-1이 그대로 남는다 */}
+            <PosterImage
+              src={EMPTY_HERO_BACKGROUND_SRC}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            {/* 사진 위 흰 타이포 가독성 — 순검정 55% 단일 단계(DESIGN.md) */}
+            <div aria-hidden className="absolute inset-0 bg-scrim-hero" />
+          </>
+        ) : (
+          /* 은은하게 떠다니는 글로우 — 축제가 없어도 화면이 멈춰 있지 않다는
+             인상을 준다. prefers-reduced-motion이면 정지 상태로 남는다 */
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -left-1/4 top-1/4 size-[600px] rounded-pill bg-white/10 blur-3xl animate-hero-drift motion-reduce:animate-none"
+          />
+        )}
 
         <div className="relative z-10 flex flex-col items-center gap-4">
           <p className="animate-fade-up text-caption-strong text-on-media/75 motion-reduce:animate-none">
