@@ -13,8 +13,8 @@ import { clearToken } from "@/features/admin/auth/token";
 const NAV_ITEMS = [
   { href: ADMIN_ROUTES.imports, label: "크롤링 임포트", built: false },
   { href: ADMIN_ROUTES.festivals, label: "축제 검수", built: true },
-  { href: ADMIN_ROUTES.artists, label: "아티스트", built: false },
-  { href: ADMIN_ROUTES.hosts, label: "주최", built: false },
+  { href: ADMIN_ROUTES.artists, label: "아티스트", built: true },
+  { href: ADMIN_ROUTES.hosts, label: "주최", built: true },
   { href: ADMIN_ROUTES.lostItems, label: "분실물", built: false },
 ] as const;
 

@@ -29,6 +29,15 @@ describe("adminErrorMessage", () => {
     );
   });
 
+  it("모든 ADMIN_ERROR_CODE에 문구가 있다", () => {
+    // 코드만 추가하고 MESSAGES를 빠뜨리면 조용히 "(CODE)" 폴백으로 떨어져
+    // 운영자가 영문 코드를 보게 된다 — 실패가 조용한 자리라 여기서 못박는다.
+    const missing = Object.values(ADMIN_ERROR_CODE).filter(
+      (code) => adminErrorMessage(code) === `처리 중 문제가 발생했습니다 (${code})`,
+    );
+    expect(missing).toEqual([]);
+  });
+
   it("정의되지 않은 코드는 코드를 괄호에 남긴 문구로 떨어진다", () => {
     expect(adminErrorMessage("SOME_UNKNOWN_CODE")).toBe(
       "처리 중 문제가 발생했습니다 (SOME_UNKNOWN_CODE)",
