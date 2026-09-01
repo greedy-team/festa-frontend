@@ -11,7 +11,7 @@ import { clearToken } from "@/features/admin/auth/token";
 // 루트 not-found.tsx로 떨어진다. 링크로 두지 않고 span으로 렌더해 존재하지 않는
 // 경로를 광고하지 않는다.
 const NAV_ITEMS = [
-  { href: ADMIN_ROUTES.imports, label: "크롤링 임포트", built: false },
+  { href: ADMIN_ROUTES.imports, label: "크롤링 임포트", built: true },
   { href: ADMIN_ROUTES.festivals, label: "축제 검수", built: true },
   { href: ADMIN_ROUTES.artists, label: "아티스트", built: true },
   { href: ADMIN_ROUTES.hosts, label: "주최", built: true },

@@ -1,0 +1,192 @@
+"use client";
+
+import { Fragment } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { ADMIN_ROUTES } from "@/constants/routes";
+import type {
+  ImportPreview,
+  ImportPreviewRow,
+  ImportSection,
+} from "@/features/admin/import/types";
+
+type Props = {
+  preview: ImportPreview;
+  /** `${section}:${line}` 키 */
+  selected: Set<string>;
+  onToggle: (row: ImportPreviewRow) => void;
+  onCommit: () => void;
+  isCommitting: boolean;
+  errorMessage: string | null;
+};
+
+export function rowKey(row: ImportPreviewRow): string {
+  return `${row.section}:${row.line}`;
+}
+
+const SECTION_LABELS: Record<ImportSection, string> = {
+  FESTIVALS: "축제",
+  LINEUPS: "라인업",
+  ARTISTS: "아티스트",
+};
+
+const ACTION_TONE = {
+  CREATE: "success",
+  UPDATE: "neutral",
+  SKIP: "warning",
+  INVALID: "danger",
+} as const;
+
+/** 행의 대표 이름 — CSV 컬럼이 타입마다 달라 잘 알려진 키를 차례로 시도한다 */
+function rowName(row: ImportPreviewRow): string {
+  const v = row.values ?? {};
+  return v.name ?? v.artist_canonical ?? v.festival_name ?? row.importKey ?? `${row.line}행`;
+}
+
+/**
+ * 임포트 미리보기 — 행 선택과 커밋.
+ *
+ * INVALID 행은 선택할 수 없다(커밋해도 들어가지 않는다 — DEC-0096). 대신 importKey가
+ * 있으면 축제 검수 화면 검색으로 잇는다 — 미리보기에서 INVALID를 본 운영자가 곧바로
+ * 교정 화면으로 가는 동선이 이것이다 (#122의 존재 이유).
+ */
+export function PreviewPanel({
+  preview,
+  selected,
+  onToggle,
+  onCommit,
+  isCommitting,
+  errorMessage,
+}: Props) {
+  const { summary } = preview;
+
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <StatusBadge>{`전체 ${summary.total}`}</StatusBadge>
+        <StatusBadge tone="success">{`생성 ${summary.toCreate}`}</StatusBadge>
+        <StatusBadge>{`갱신 ${summary.toUpdate}`}</StatusBadge>
+        <StatusBadge tone="warning">{`스킵 ${summary.toSkip}`}</StatusBadge>
+        <StatusBadge tone="danger">{`INVALID ${summary.invalid}`}</StatusBadge>
+        {/* 만료 판정은 서버가 한다(IMPORT_EXPIRED 409) — 여기선 시한만 보여준다.
+            렌더 중 Date.now() 비교는 불순해서 안 하고, 지나서 커밋하면 에러 문구가 안내한다 */}
+        <span className="ml-auto text-label-regular text-muted">
+          만료: {new Date(preview.expiresAt).toLocaleTimeString("ko-KR")} (업로드 후 30분)
+        </span>
+      </div>
+
+      {preview.blockers.length > 0 ? (
+        <div className="rounded-card border border-border bg-surface p-4">
+          <p className="text-label-regular text-muted-soft">차단 사유 집계</p>
+          <ul className="mt-1 flex flex-col gap-1">
+            {preview.blockers.map((blocker) => (
+              <li key={blocker.code} className="text-label-regular text-danger-ink">
+                {blocker.code} × {blocker.count}
+                {blocker.values.length > 0 ? (
+                  <span className="text-muted-soft"> — {blocker.values.join(", ")}</span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      <div className="overflow-x-auto rounded-card border border-border bg-surface">
+        <table className="w-full min-w-[860px] border-collapse">
+          <thead>
+            <tr className="border-b border-divider text-left text-label-regular text-muted-soft">
+              <th className="p-3" />
+              <th className="p-3">행</th>
+              <th className="p-3">대상</th>
+              <th className="p-3">동작</th>
+              <th className="p-3">문제</th>
+              <th className="p-3" />
+            </tr>
+          </thead>
+          <tbody>
+            {preview.rows.map((row, i) => {
+              const selectable = row.action === "CREATE" || row.action === "UPDATE";
+              const problems = [...row.errors, ...row.warnings];
+              return (
+                <Fragment key={rowKey(row)}>
+                  {i === 0 || preview.rows[i - 1].section !== row.section ? (
+                    <tr className="border-b border-divider bg-surface-field">
+                      <td colSpan={6} className="p-2 text-label-regular text-muted">
+                        {SECTION_LABELS[row.section]}
+                      </td>
+                    </tr>
+                  ) : null}
+                  <tr className="border-b border-divider last:border-0">
+                    <td className="p-3">
+                      <input
+                        type="checkbox"
+                        aria-label={`${rowName(row)} 선택`}
+                        disabled={!selectable}
+                        checked={selected.has(rowKey(row))}
+                        onChange={() => onToggle(row)}
+                      />
+                    </td>
+                    <td className="p-3 text-label-regular text-muted">{row.line}</td>
+                    <td className="p-3 text-caption-regular text-ink">{rowName(row)}</td>
+                    <td className="p-3">
+                      <StatusBadge tone={ACTION_TONE[row.action]}>{row.action}</StatusBadge>
+                      {row.skipReason ? (
+                        <span className="ml-2 text-label-regular text-muted-soft">
+                          {row.skipReason}
+                        </span>
+                      ) : null}
+                    </td>
+                    <td className="p-3">
+                      {problems.length === 0 ? (
+                        <span className="text-label-regular text-muted-soft">—</span>
+                      ) : (
+                        <ul className="flex flex-col gap-0.5">
+                          {problems.map((problem, j) => (
+                            <li
+                              key={j}
+                              className={`text-label-regular ${problem.blocker ? "text-danger-ink" : "text-muted"}`}
+                            >
+                              {problem.code}
+                              <span className="text-muted-soft"> {problem.message}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </td>
+                    <td className="p-3 text-right">
+                      {row.action === "INVALID" && row.importKey ? (
+                        <Link
+                          href={`${ADMIN_ROUTES.festivals}?q=${encodeURIComponent(row.importKey)}`}
+                          className="text-label-regular text-primary underline"
+                        >
+                          검수에서 찾기
+                        </Link>
+                      ) : null}
+                    </td>
+                  </tr>
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {errorMessage === null ? null : (
+        <p role="alert" className="text-label-regular text-danger">
+          {errorMessage}
+        </p>
+      )}
+
+      <div className="flex justify-end">
+        <Button
+          type="button"
+          disabled={isCommitting || selected.size === 0}
+          onClick={onCommit}
+        >
+          {isCommitting ? "커밋 중…" : `${selected.size}행 커밋`}
+        </Button>
+      </div>
+    </section>
+  );
+}
