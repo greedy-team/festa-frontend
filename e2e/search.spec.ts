@@ -16,3 +16,15 @@ test("통합 검색에서 검색어를 입력하면 결과 화면으로 이동�
   // 실제로 결과가 왔는지까지 확인할 수 있다.
   await expect(page.getByText(/검색 결과 \d+건/)).toBeVisible();
 });
+
+// #145 재현: 타입 칩으로 좁혔을 때 그 타입 매치가 0건이면 헤더도 0건이고 빈 상태
+// 안내가 떠야 한다. "싸이"는 fixture(mocks/fixtures/db.ts)에서 아티스트로만
+// 존재하고 학교·축제명에는 없어, type=HOST로 좁히면 결과가 0건이 되는 검색어다.
+test("타입 칩으로 좁혀 결과가 0건이면 헤더도 0건이고 빈 상태 안내가 뜬다", async ({
+  page,
+}) => {
+  await page.goto("/search?q=싸이&type=HOST");
+
+  await expect(page.getByText("“싸이” 검색 결과 0건")).toBeVisible();
+  await expect(page.getByText("검색 결과가 없습니다.")).toBeVisible();
+});

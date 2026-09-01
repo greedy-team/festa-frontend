@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Search as SearchIcon } from "lucide-react";
 import { search } from "@/features/search/api";
-import type { SearchType } from "@/features/search/types";
+import type { SearchCounts, SearchType } from "@/features/search/types";
 import { ArtistResultCard } from "@/features/search/components/ArtistResultCard";
 import { SchoolResultRow } from "@/features/search/components/SchoolResultRow";
 import { FestivalResultRow } from "@/features/search/components/FestivalResultRow";
@@ -15,6 +15,14 @@ const TYPE_OPTIONS: { value: SearchType | null; label: string }[] = [
   { value: "HOST", label: "학교" },
   { value: "FESTIVAL", label: "축제" },
 ];
+
+// counts.all은 세 도메인 매치 수의 합이라 타입 필터와 무관하다. 특정 타입으로
+// 좁히면 그 타입 count만 봐야 헤더 수치와 실제로 그려진 섹션이 어긋나지 않는다 (#145).
+const COUNT_KEY: Record<Exclude<SearchType, "ALL">, keyof SearchCounts> = {
+  ARTIST: "artist",
+  HOST: "host",
+  FESTIVAL: "festival",
+};
 
 function typeHref(q: string, type: SearchType | null) {
   const params = new URLSearchParams({ q });
@@ -84,6 +92,10 @@ export default async function SearchPage({ searchParams }: Props) {
     );
   }
   const data = res.data;
+  const resultCount =
+    type === "ALL" ? data.counts.all : data.counts[COUNT_KEY[type]];
+  const isEmpty =
+    !data.artists.length && !data.hosts.length && !data.festivals.length;
 
   return (
     <Container className="mt-10 mb-16">
@@ -91,7 +103,7 @@ export default async function SearchPage({ searchParams }: Props) {
       <SearchBar q={q} />
 
       <p className="mt-8 text-body text-muted">
-        “{q}” 검색 결과 {data.counts.all}건
+        “{q}” 검색 결과 {resultCount}건
       </p>
 
       <div className="mt-6 flex items-center gap-2">
@@ -147,7 +159,7 @@ export default async function SearchPage({ searchParams }: Props) {
         </section>
       ) : null}
 
-      {!data.counts.all ? (
+      {isEmpty ? (
         <p className="mt-10 text-body text-muted">검색 결과가 없습니다.</p>
       ) : null}
 
