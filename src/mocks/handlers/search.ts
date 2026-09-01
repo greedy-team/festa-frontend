@@ -81,7 +81,8 @@ export const searchHandlers = [
       festivals: type === 'ALL' || type === 'FESTIVAL' ? matchedFestivals.map(toFestivalResult) : [],
       artists: type === 'ALL' || type === 'ARTIST' ? matchedArtists.map(toArtistResult) : [],
       hosts: type === 'ALL' || type === 'HOST' ? matchedHosts.map(toHostResult) : [],
-      relatedKeywords: counts.all === 0 ? ['연세대 아카라카', '대학 축제', '싸이'] : [],
+      // 연관 검색어 생성은 이번 검색 API 범위 밖 — 백엔드가 항상 [] 로 내린다. 필드는 계약에 남아 있다.
+      relatedKeywords: [] as string[],
     });
   }),
 
@@ -115,7 +116,7 @@ export const searchHandlers = [
       festivals: primary && (primary as { type: string }).type !== 'FESTIVAL' ? relatedFestivals : [],
       artists: primary && (primary as { type: string }).type !== 'ARTIST' ? relatedArtists : [],
       hosts: primary && (primary as { type: string }).type !== 'HOST' ? relatedHosts : [],
-      relatedKeywords: primary ? [] : ['연세대 아카라카', '대학 축제', '싸이'],
+      relatedKeywords: [] as string[],
     });
   }),
 ];
