@@ -169,9 +169,13 @@ export function PreviewPanel({
                       {row.action === "INVALID" && row.importKey ? (
                         <Link
                           href={`${ADMIN_ROUTES.festivals}?q=${encodeURIComponent(row.importKey)}`}
+                          // 새 탭 — 미리보기는 업로드 응답을 든 컴포넌트 상태가 전부라
+                          // (재조회 API 없음) 같은 탭으로 가면 돌아올 수 없다.
+                          target="_blank"
+                          rel="noreferrer noopener"
                           className="text-label-regular text-primary underline"
                         >
-                          검수에서 찾기
+                          검수에서 찾기 ↗
                         </Link>
                       ) : null}
                     </td>
