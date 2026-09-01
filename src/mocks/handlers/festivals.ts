@@ -149,9 +149,10 @@ export const festivalsHandlers = [
         day: day.day,
         date: day.date,
         // order 필드는 없다 — DEC-0109: 배열 순서 자체가 계약이고, 순번 표기는 프론트가 인덱스로 만든다.
+        // 시크릿 게스트는 필드 전부 null — DEC-0116: revealed 파생 불리언을 응답에 두지 않는다.
         artists: day.artists.map((a) => {
-          if (!a.revealed) {
-            return { id: null, name: null, imageUrl: null, genre: null, revealed: false };
+          if (a.artistId === null) {
+            return { id: null, name: null, imageUrl: null, genre: null };
           }
           const artist = artistsDb.find((ar) => ar.id === a.artistId)!;
           return {
@@ -159,7 +160,6 @@ export const festivalsHandlers = [
             name: artist.name,
             imageUrl: artist.imageUrl,
             genre: artist.genre,
-            revealed: true,
           };
         }),
       })),
@@ -200,10 +200,11 @@ export const festivalsHandlers = [
         ticketType: f.admission.ticketType,
         verification: f.admission.verification,
       },
+      // 시크릿 게스트는 필드 전부 null — DEC-0116: revealed 파생 불리언을 응답에 두지 않는다.
       lineup: flatLineup.map((a) => {
-        if (!a.revealed) return { id: null, name: null, imageUrl: null, revealed: false };
+        if (a.artistId === null) return { id: null, name: null, imageUrl: null };
         const artist = artistsDb.find((ar) => ar.id === a.artistId)!;
-        return { id: artist.id, name: artist.name, imageUrl: artist.imageUrl, revealed: true };
+        return { id: artist.id, name: artist.name, imageUrl: artist.imageUrl };
       }),
       lineupTotal: f.lineup.reduce((sum, d) => sum + d.artists.length, 0),
     });

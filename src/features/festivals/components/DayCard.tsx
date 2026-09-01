@@ -36,10 +36,10 @@ export function DayCard({ day, onMore }: Props) {
           >
             <div
               className={`relative size-[64px] shrink-0 overflow-hidden rounded-pill ${
-                artist.revealed ? gridTint(artist.id) : "bg-divider"
+                artist.id !== null ? gridTint(artist.id) : "bg-divider"
               }`}
             >
-              {artist.revealed ? (
+              {artist.id !== null ? (
                 <PosterImage
                   src={artist.imageUrl}
                   className="absolute inset-0 h-full w-full object-cover"
@@ -48,10 +48,10 @@ export function DayCard({ day, onMore }: Props) {
             </div>
             <span
               className={`w-full truncate text-center text-meta-medium ${
-                artist.revealed ? "text-ink" : "text-muted-soft"
+                artist.id !== null ? "text-ink" : "text-muted-soft"
               }`}
             >
-              {artist.revealed ? artist.name : "공개 예정"}
+              {artist.id !== null ? artist.name : "공개 예정"}
             </span>
           </div>
         ))}

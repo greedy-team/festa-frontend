@@ -11,7 +11,7 @@ export function findAppearances(artistId: number) {
   const rows: { festival: (typeof festivalsDb)[number]; day: number; performanceDate: string }[] = [];
   for (const f of festivalsDb) {
     for (const dayEntry of f.lineup) {
-      if (dayEntry.artists.some((a) => a.artistId === artistId && a.revealed)) {
+      if (dayEntry.artists.some((a) => a.artistId === artistId)) {
         rows.push({ festival: f, day: dayEntry.day, performanceDate: performanceDate(f.startDate, dayEntry.day) });
       }
     }

@@ -32,9 +32,9 @@ export type ArtistRecord = {
 };
 
 export type LineupArtist = {
-  artistId: number | null; // null이면 revealed=false (시크릿)
+  // artistId가 null이면 시크릿 게스트 — DEC-0116: revealed 파생 불리언을 두지 않고 null 여부로만 판별한다.
   // order 필드는 없다 — DEC-0109: 배열 순서(아래 fixture의 나열 순서) 자체가 계약이다.
-  revealed: boolean;
+  artistId: number | null;
 };
 
 export type FestivalRecord = {
@@ -211,13 +211,13 @@ export const festivalsDb: FestivalRecord[] = [
     hashtags: ['연세대축제', '아카라카', 'AKARAKA'],
     lineup: [
       { day: 1, date: '2026-08-14', artists: [
-        { artistId: 7, revealed: true },
-        { artistId: 9, revealed: true },
-        { artistId: 4, revealed: true },
-        { artistId: null, revealed: false },
+        { artistId: 7 },
+        { artistId: 9 },
+        { artistId: 4 },
+        { artistId: null },
       ]},
       { day: 2, date: '2026-08-15', artists: [
-        { artistId: 21, revealed: true },
+        { artistId: 21 },
       ]},
     ],
   },
@@ -243,8 +243,8 @@ export const festivalsDb: FestivalRecord[] = [
     hashtags: ['성균관대축제', '대동제'],
     lineup: [
       { day: 1, date: '2026-09-04', artists: [
-        { artistId: 3, revealed: true },
-        { artistId: 7, revealed: true },
+        { artistId: 3 },
+        { artistId: 7 },
       ]},
     ],
   },
@@ -270,8 +270,8 @@ export const festivalsDb: FestivalRecord[] = [
     hashtags: ['고려대축제', '입실렌티'],
     lineup: [
       { day: 1, date: '2026-05-25', artists: [
-        { artistId: 5, revealed: true },
-        { artistId: 12, revealed: true },
+        { artistId: 5 },
+        { artistId: 12 },
       ]},
     ],
   },
