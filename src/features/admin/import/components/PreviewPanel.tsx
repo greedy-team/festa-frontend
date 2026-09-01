@@ -60,6 +60,14 @@ export function PreviewPanel({
   errorMessage,
 }: Props) {
   const { summary } = preview;
+  // 라인업 행에는 축제 이름이 없다 — 같은 미리보기의 축제 섹션에서 잇는다.
+  // 검수 화면의 q는 축제 이름만 검색하므로(import_key는 검색 대상이 아니다)
+  // 링크는 이름으로 만들어야 커밋 후에 실제로 찾아진다.
+  const nameByImportKey = new Map(
+    preview.rows
+      .filter((row) => row.section === "FESTIVALS" && row.importKey && row.values?.name)
+      .map((row) => [row.importKey as string, row.values.name as string]),
+  );
 
   return (
     <section className="flex flex-col gap-4">
@@ -90,6 +98,14 @@ export function PreviewPanel({
             ))}
           </ul>
         </div>
+      ) : null}
+
+      {summary.invalid > 0 ? (
+        <p className="text-label-regular text-muted-soft">
+          INVALID 행은 커밋에 포함되지 않습니다. 축제 행이 INVALID면 「축제 등록」에서
+          임포트 키를 채워 직접 만들고, 라인업 행만 INVALID면 커밋 뒤 그 축제의 라인업
+          편집에서 채웁니다.
+        </p>
       ) : null}
 
       <div className="overflow-x-auto rounded-card border border-border bg-surface">
@@ -166,18 +182,32 @@ export function PreviewPanel({
                       )}
                     </td>
                     <td className="p-3 text-right">
-                      {row.action === "INVALID" && row.importKey ? (
+                      {/* 새 탭 — 미리보기는 업로드 응답을 든 컴포넌트 상태가 전부라
+                          (재조회 API 없음) 같은 탭으로 가면 돌아올 수 없다. */}
+                      {row.action !== "INVALID" ? null : row.section === "LINEUPS" &&
+                        row.importKey &&
+                        nameByImportKey.has(row.importKey) ? (
+                        // 축제는 커밋되고 이 행만 빠진다 — 커밋 후 이름으로 찾아 라인업을 채운다.
                         <Link
-                          href={`${ADMIN_ROUTES.festivals}?q=${encodeURIComponent(row.importKey)}`}
-                          // 새 탭 — 미리보기는 업로드 응답을 든 컴포넌트 상태가 전부라
-                          // (재조회 API 없음) 같은 탭으로 가면 돌아올 수 없다.
+                          href={`${ADMIN_ROUTES.festivals}?q=${encodeURIComponent(nameByImportKey.get(row.importKey) as string)}`}
                           target="_blank"
                           rel="noreferrer noopener"
                           className="text-label-regular text-primary underline"
                         >
-                          검수에서 찾기 ↗
+                          커밋 후 검수에서 찾기 ↗
                         </Link>
-                      ) : null}
+                      ) : (
+                        // 축제 행 자체가 INVALID다 — 커밋에 안 들어가므로 찾을 것이 없고,
+                        // 등록 폼에서 임포트 키를 채워 직접 만드는 것이 맞는 동선이다 (DEC-0118).
+                        <Link
+                          href={ADMIN_ROUTES.festivals}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="text-label-regular text-primary underline"
+                        >
+                          등록으로 만들기 ↗
+                        </Link>
+                      )}
                     </td>
                   </tr>
                 </Fragment>
