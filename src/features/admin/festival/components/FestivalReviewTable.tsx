@@ -12,6 +12,7 @@ type Props = {
   onUnpublish: (id: number) => void;
   onEdit: (id: number) => void;
   onDelete: (festival: AdminFestival) => void;
+  onLineup: (festival: AdminFestival) => void;
   isPublishing?: boolean;
   isUnpublishing?: boolean;
 };
@@ -25,6 +26,7 @@ export function FestivalReviewTable({
   onUnpublish,
   onEdit,
   onDelete,
+  onLineup,
   isPublishing = false,
   isUnpublishing = false,
 }: Props) {
@@ -150,6 +152,13 @@ export function FestivalReviewTable({
                       className="cursor-pointer text-caption-strong text-primary"
                     >
                       고치기
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onLineup(festival)}
+                      className="cursor-pointer text-caption-strong text-primary"
+                    >
+                      라인업
                     </button>
                     <button
                       type="button"

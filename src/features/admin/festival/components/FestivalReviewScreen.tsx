@@ -6,6 +6,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { FestivalFormDialog } from "@/features/admin/festival/components/FestivalFormDialog";
+import { LineupEditorDialog } from "@/features/admin/lineup/components/LineupEditorDialog";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { SortDropdown } from "@/components/ui/SortDropdown";
@@ -53,6 +54,7 @@ export function FestivalReviewScreen() {
     | { kind: "create" }
     | { kind: "edit"; festivalId: number }
     | { kind: "delete"; festival: AdminFestival }
+    | { kind: "lineup"; festival: AdminFestival }
     | null
   >(null);
 
@@ -197,6 +199,10 @@ export function FestivalReviewScreen() {
             setErrorMessage(null);
             setModal({ kind: "delete", festival });
           }}
+          onLineup={(festival) => {
+            setErrorMessage(null);
+            setModal({ kind: "lineup", festival });
+          }}
           isPublishing={publish.isPending}
           isUnpublishing={unpublish.isPending}
         />
@@ -220,6 +226,10 @@ export function FestivalReviewScreen() {
           onSubmit={handleSubmit}
           onClose={closeModal}
         />
+      ) : null}
+
+      {modal?.kind === "lineup" ? (
+        <LineupEditorDialog festival={modal.festival} onClose={closeModal} />
       ) : null}
 
       {modal?.kind === "delete" ? (

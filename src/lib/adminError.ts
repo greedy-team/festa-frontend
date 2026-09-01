@@ -64,6 +64,11 @@ export const ADMIN_ERROR_CODE = {
   FESTIVAL_PUBLISHED_COORDINATES_REQUIRED: "FESTIVAL_PUBLISHED_COORDINATES_REQUIRED",
   FESTIVAL_ALREADY_PUBLISHED: "FESTIVAL_ALREADY_PUBLISHED",
   FESTIVAL_HAS_LINEUPS: "FESTIVAL_HAS_LINEUPS",
+  LINEUP_INVALID_DAY: "LINEUP_INVALID_DAY",
+  LINEUP_INVALID_DISPLAY_ORDER: "LINEUP_INVALID_DISPLAY_ORDER",
+  LINEUP_DAY_OUT_OF_RANGE: "LINEUP_DAY_OUT_OF_RANGE",
+  LINEUP_DUPLICATE_SLOT: "LINEUP_DUPLICATE_SLOT",
+  LINEUP_NOT_FOUND: "LINEUP_NOT_FOUND",
 } as const;
 
 const MESSAGES: Record<string, string> = {
@@ -120,6 +125,14 @@ const MESSAGES: Record<string, string> = {
     "발행 중인 축제는 삭제할 수 없습니다. 먼저 발행을 해제해 주세요.",
   [ADMIN_ERROR_CODE.FESTIVAL_HAS_LINEUPS]:
     "라인업이 남아 있는 축제는 삭제할 수 없습니다. 라인업을 먼저 지워 주세요.",
+  [ADMIN_ERROR_CODE.LINEUP_INVALID_DAY]: "일차는 1 이상이어야 합니다.",
+  [ADMIN_ERROR_CODE.LINEUP_INVALID_DISPLAY_ORDER]: "정렬 순서는 1 이상이어야 합니다.",
+  [ADMIN_ERROR_CODE.LINEUP_DAY_OUT_OF_RANGE]:
+    "일차가 축제 기간을 벗어났습니다. 축제 기간을 확인해 주세요.",
+  [ADMIN_ERROR_CODE.LINEUP_DUPLICATE_SLOT]:
+    "같은 일차의 같은 정렬 순서가 이미 있습니다.",
+  [ADMIN_ERROR_CODE.LINEUP_NOT_FOUND]:
+    "해당 라인업을 찾을 수 없습니다. 새로고침 후 다시 시도해 주세요.",
 };
 
 /**
