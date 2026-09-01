@@ -126,7 +126,7 @@ export default async function SearchPage({ searchParams }: Props) {
           <h2 className="text-block-title text-ink">학교</h2>
           <div className="mt-4 flex flex-col gap-3">
             {data.hosts.map((host) => (
-              <SchoolResultRow key={host.id} host={host} />
+              <SchoolResultRow key={host.hostId} host={host} />
             ))}
           </div>
         </section>

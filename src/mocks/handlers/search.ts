@@ -34,7 +34,7 @@ function toHostResult(h: (typeof hostsDb)[number]) {
   const hostFestivals = festivalsDb.filter((f) => f.hostId === h.id);
   const latest = hostFestivals.slice().sort((x, y) => y.startDate.localeCompare(x.startDate))[0];
   return {
-    id: h.id,
+    hostId: h.id,
     name: h.name,
     logoUrl: h.logoUrl,
     festivalCount: hostFestivals.length,

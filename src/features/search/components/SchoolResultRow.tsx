@@ -9,15 +9,15 @@ type Props = {
 };
 
 export function SchoolResultRow({ host }: Props) {
-  const { id, name, logoUrl, festivalCount, latestFestivalYearMonth } = host;
+  const { hostId, name, logoUrl, festivalCount, latestFestivalYearMonth } = host;
 
   return (
     <Link
-      href={`/hosts/${id}`}
+      href={`/hosts/${hostId}`}
       className="flex items-center gap-4 rounded-row border border-border bg-surface px-6 py-4"
     >
       <div
-        className={`relative size-[56px] shrink-0 overflow-hidden rounded-pill ${gridTint(id)}`}
+        className={`relative size-[56px] shrink-0 overflow-hidden rounded-pill ${gridTint(hostId)}`}
       >
         <PosterImage
           src={logoUrl}
