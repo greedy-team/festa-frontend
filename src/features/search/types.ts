@@ -19,7 +19,7 @@ export type HostResult = {
 export type FestivalResult = {
   festivalId: number;
   name: string;
-  host: { hostId: number; name: string; logoUrl: string | null };
+  host: { id: number; name: string; logoUrl: string | null };
   startDate: string;
   endDate: string;
   posterUrl: string | null;

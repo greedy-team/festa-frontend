@@ -13,7 +13,7 @@ function toFestivalResult(f: (typeof festivalsDb)[number]) {
   return {
     festivalId: f.id,
     name: f.name,
-    host: { hostId: host.id, name: host.name, logoUrl: host.logoUrl },
+    host: { id: host.id, name: host.name, logoUrl: host.logoUrl },
     startDate: f.startDate,
     endDate: f.endDate,
     posterUrl: f.posterUrl,
