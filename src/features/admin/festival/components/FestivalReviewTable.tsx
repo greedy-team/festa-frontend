@@ -1,17 +1,17 @@
 "use client";
 
-import { publishBlocker } from "@/features/admin/festival/api";
 import { PUBLISH_BLOCKER, type AdminFestival } from "@/features/admin/festival/types";
-import { discoveryLabel } from "@/lib/adminEnums";
+import { discoveryLabel, publishBlockerLabel } from "@/lib/adminEnums";
 import { dateRange } from "@/lib/festivalDate";
 import { safeHttpUrl } from "@/lib/safeUrl";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
 type Props = {
   items: AdminFestival[];
-  selected: Set<number>;
-  onToggle: (id: number) => void;
+  onPublish: (id: number) => void;
   onUnpublish: (id: number) => void;
+  isPublishing?: boolean;
+  isUnpublishing?: boolean;
 };
 
 // 기간 표기는 lib/festivalDate.ts의 dateRange()를 쓴다 — 공개 화면이 이미 쓰는 함수다.
@@ -19,9 +19,10 @@ type Props = {
 
 export function FestivalReviewTable({
   items,
-  selected,
-  onToggle,
+  onPublish,
   onUnpublish,
+  isPublishing = false,
+  isUnpublishing = false,
 }: Props) {
   return (
     // 넓은 표는 자기 컨테이너 안에서 스크롤한다 — 페이지가 가로로 밀리면 안 된다.
@@ -29,7 +30,6 @@ export function FestivalReviewTable({
       <table className="w-full min-w-[900px] border-collapse">
         <thead>
           <tr className="border-b border-divider text-left text-label-regular text-muted-soft">
-            <th className="w-[48px] p-4" />
             <th className="p-4">축제</th>
             <th className="p-4">주최</th>
             <th className="p-4">기간</th>
@@ -41,20 +41,13 @@ export function FestivalReviewTable({
         </thead>
         <tbody>
           {items.map((festival) => {
-            const blocker = publishBlocker(festival);
             const safeSourceUrl = festival.sourceUrl ? safeHttpUrl(festival.sourceUrl) : null;
+            const isPublished = festival.publishedAt !== null;
+            // 서버 스키마에 required 지정이 없어 필드가 비어 올 수 있다 — null 가드.
+            const blockers = festival.blockers ?? [];
+            const hasBlockers = blockers.length > 0;
             return (
               <tr key={festival.festivalId} className="border-b border-divider last:border-0">
-                <td className="p-4">
-                  <input
-                    type="checkbox"
-                    aria-label={`${festival.name} 선택`}
-                    checked={selected.has(festival.festivalId)}
-                    disabled={festival.published}
-                    onChange={() => onToggle(festival.festivalId)}
-                    className="size-[18px] cursor-pointer accent-primary disabled:cursor-not-allowed"
-                  />
-                </td>
                 <td className="p-4">
                   <p className="text-caption-strong text-ink">{festival.name}</p>
                   {festival.sourceUrl ? (
@@ -80,11 +73,6 @@ export function FestivalReviewTable({
                   )}
                 </td>
                 <td className="p-4 text-caption text-body-text">
-                  {/* publishBlocker를 거치지 않고 hostId를 직접 본다 — publishBlocker는
-                      사유를 하나만(LINEUP_EMPTY 우선) 반환하므로, 라인업 0팀이면서
-                      주최도 미연결인 행은 그 경유로 판정하면 HOST_NOT_LINKED가 가려져
-                      주최명이 잘못 뜬다. 이 열은 "발행 가능한가"를 답하므로 그 경우도
-                      미연결로 보여준다. */}
                   {festival.hostId === null ? (
                     <span className="text-muted-soft">미연결</span>
                   ) : (
@@ -95,36 +83,57 @@ export function FestivalReviewTable({
                   {dateRange(festival.startDate, festival.endDate)}
                 </td>
                 <td className="p-4">
-                  {blocker === PUBLISH_BLOCKER.LINEUP_EMPTY ? (
+                  {blockers.includes(PUBLISH_BLOCKER.LINEUP_EMPTY) ? (
                     <StatusBadge tone="danger">0팀</StatusBadge>
                   ) : (
                     <span className="text-caption text-body-text">{festival.lineupCount}팀</span>
                   )}
                 </td>
                 <td className="p-4">
-                  <StatusBadge>{discoveryLabel(festival.discovery)}</StatusBadge>
+                  {festival.discovery ? (
+                    <StatusBadge>{discoveryLabel(festival.discovery)}</StatusBadge>
+                  ) : (
+                    <span className="text-caption text-muted-soft">—</span>
+                  )}
                 </td>
                 <td className="p-4">
-                  {festival.published ? (
+                  {isPublished ? (
                     <StatusBadge tone="success">발행됨</StatusBadge>
                   ) : (
                     <StatusBadge tone="warning">미발행</StatusBadge>
                   )}
                 </td>
                 <td className="p-4 text-right">
-                  {festival.published ? (
+                  {isPublished ? (
                     <button
                       type="button"
+                      disabled={isUnpublishing}
                       onClick={() => {
                         if (window.confirm(`${festival.name}의 발행을 해제할까요?`)) {
                           onUnpublish(festival.festivalId);
                         }
                       }}
-                      className="cursor-pointer text-caption-strong text-danger-ink"
+                      className="cursor-pointer text-caption-strong text-danger-ink disabled:cursor-not-allowed disabled:text-muted-soft"
                     >
                       해제
                     </button>
-                  ) : null}
+                  ) : (
+                    <div className="flex flex-col items-end gap-1">
+                      <button
+                        type="button"
+                        disabled={hasBlockers || isPublishing}
+                        onClick={() => onPublish(festival.festivalId)}
+                        className="cursor-pointer text-caption-strong text-primary disabled:cursor-not-allowed disabled:text-muted-soft"
+                      >
+                        발행
+                      </button>
+                      {hasBlockers ? (
+                        <span className="text-label-regular text-muted-soft">
+                          {blockers.map((reason) => publishBlockerLabel(reason)).join(" · ")}
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
                 </td>
               </tr>
             );

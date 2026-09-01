@@ -2,7 +2,8 @@
 
 import type { PublishBlockerReason } from "@/features/admin/festival/types";
 
-/** 축제를 어떻게 찾았는가. DOC-0007 기준 3종. */
+/** 축제를 어떻게 찾았는가. DOC-0007 기준 3종 — 필터 드롭다운 선택지로만 쓴다.
+ * 응답값(AdminFestival.discovery)은 이 3종에 갇히지 않는다. */
 export type Discovery = "SITEMAP" | "MANUAL" | "SEARCH";
 
 export const DISCOVERY_LABELS: Record<Discovery, string> = {
@@ -28,11 +29,12 @@ export function discoveryLabel(discovery: Discovery | string): string {
 export const PUBLISH_BLOCKER_LABELS: Record<PublishBlockerReason, string> = {
   LINEUP_EMPTY: "라인업 없음",
   HOST_NOT_LINKED: "주최 미연결",
+  COORDINATES_MISSING: "좌표 없음",
 };
 
-// PublishFailure.reason은 string으로 고정돼 있다 — 서버가 프론트가 모르는 사유를 보낼 수
-// 있어서다. discoveryLabel과 같은 폴백(사전에 없으면 원본을 그대로 보여준다)이 여기서는
-// 선택이 아니라 필수다.
+// 서버가 blockers[]에 프론트가 모르는 사유를 보낼 수도 있으므로, publishBlockerLabel은
+// PublishBlockerReason보다 넓은 string을 받는다. discoveryLabel과 같은 폴백(사전에
+// 없으면 원본을 그대로 보여준다)이 여기서는 선택이 아니라 필수다.
 export function publishBlockerLabel(reason: string): string {
   return PUBLISH_BLOCKER_LABELS[reason as PublishBlockerReason] || reason;
 }
