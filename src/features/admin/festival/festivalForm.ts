@@ -36,7 +36,9 @@ export function toDatetimeLocal(iso: string | null): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  // 초까지 담는다 — 분에서 끊으면 「손 안 댄 폼 저장」이 서버 값의 초를 지운다.
+  // 전체 되보내기 계약이라 그 절단이 실제 쓰기로 이어진다 (입력은 step=1과 쌍).
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 }
 
 export function toInstantIso(local: string): string {

@@ -12,10 +12,11 @@ import type { ArtistFormValues, ArtistListParams } from "@/features/admin/artist
 
 const KEY = "admin-artists";
 
-export function useAdminArtists(params: ArtistListParams) {
+export function useAdminArtists(params: ArtistListParams, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: [KEY, params],
     queryFn: () => getArtists(params),
+    enabled: options?.enabled ?? true,
   });
 }
 

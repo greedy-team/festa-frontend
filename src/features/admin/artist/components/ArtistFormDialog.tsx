@@ -72,7 +72,8 @@ export function ArtistFormDialog({
     dialogRef.current?.showModal();
   }, []);
 
-  const isEdit = artist !== null;
+  // 단건 조회가 아직이면 artist가 null이어도 수정 모드다 — 제목이 「등록」으로 새지 않게.
+  const isEdit = artist !== null || isLoading;
 
   return (
     <dialog

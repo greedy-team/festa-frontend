@@ -87,7 +87,8 @@ export function HostFormDialog({
       className="m-auto w-[min(560px,calc(100vw-32px))] rounded-card border border-border bg-surface p-6 backdrop:bg-black/40"
     >
       <h2 className="text-caption-strong text-ink">
-        {host === null ? "주최 등록" : "주최 수정"}
+        {/* 단건 조회가 아직이면 host가 null이어도 수정 모드다 */}
+        {host === null && !isLoading ? "주최 등록" : "주최 수정"}
       </h2>
 
       {isLoading ? (

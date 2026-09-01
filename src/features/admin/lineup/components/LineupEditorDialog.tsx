@@ -44,7 +44,12 @@ export function LineupEditorDialog({ festival, onClose }: Props) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // 아티스트는 이름으로 찾아 id로 보낸다 (DEC-0141: 연관은 id로).
-  const artistSearch = useAdminArtists({ q: artistQuery, page: 0, size: 10 });
+  // 빈 검색어로는 요청을 보내지 않는다 — 안 그러면 다이얼로그가 열릴 때마다
+  // 전체 첫 페이지를 무의미하게 당겨온다.
+  const artistSearch = useAdminArtists(
+    { q: artistQuery, page: 0, size: 10 },
+    { enabled: artistQuery !== "" },
+  );
   const searchItems = artistQuery === "" ? [] : (artistSearch.data?.items ?? []);
 
   // 정렬(day → displayOrder)은 서버 계약이다 — 프론트가 다시 정렬하지 않는다.

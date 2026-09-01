@@ -69,7 +69,8 @@ export function FestivalFormDialog({
     dialogRef.current?.showModal();
   }, []);
 
-  const isEdit = festival !== null;
+  // 단건 조회가 아직이면 festival이 null이어도 수정 모드다 — 제목이 「등록」으로 새지 않게.
+  const isEdit = festival !== null || isLoading;
   const isPublished = festival?.publishedAt != null;
   const coordError = coordinateError(values.latitude, values.longitude, isPublished);
 
@@ -242,6 +243,7 @@ export function FestivalFormDialog({
               <span className="text-label-regular text-muted">티켓 오픈 시각</span>
               <input
                 type="datetime-local"
+                step={1}
                 value={values.ticketOpenAt}
                 onChange={(e) => patch({ ticketOpenAt: e.target.value })}
                 className={INPUT_CLASS}

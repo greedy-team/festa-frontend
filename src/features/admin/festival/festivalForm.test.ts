@@ -31,6 +31,11 @@ describe("Instant ↔ datetime-local 변환", () => {
     expect(toInstantIso(toDatetimeLocal(iso))).toBe(iso);
   });
 
+  it("초를 보존한다 — 분에서 끊으면 손 안 댄 폼 저장이 서버 값의 초를 지운다", () => {
+    const iso = "2026-05-20T09:30:45.000Z";
+    expect(toInstantIso(toDatetimeLocal(iso))).toBe(iso);
+  });
+
   it("null과 깨진 값은 빈 문자열이다", () => {
     expect(toDatetimeLocal(null)).toBe("");
     expect(toDatetimeLocal("not-a-date")).toBe("");
