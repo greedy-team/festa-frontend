@@ -1,6 +1,11 @@
 // DEC-0081: 열거값은 영문 상수로 내려오고 표시 문구는 프론트가 갖는다.
 
-import type { PublishBlockerReason } from "@/features/admin/festival/types";
+import type {
+  ExternalVisitorPolicy,
+  PublishBlockerReason,
+  TicketType,
+  VerificationMethod,
+} from "@/features/admin/festival/types";
 
 /** 축제를 어떻게 찾았는가. DOC-0007 기준 3종 — 필터 드롭다운 선택지로만 쓴다.
  * 응답값(AdminFestival.discovery)은 이 3종에 갇히지 않는다. */
@@ -38,3 +43,23 @@ export const PUBLISH_BLOCKER_LABELS: Record<PublishBlockerReason, string> = {
 export function publishBlockerLabel(reason: string): string {
   return PUBLISH_BLOCKER_LABELS[reason as PublishBlockerReason] || reason;
 }
+
+// 축제 폼의 enum 3종. Record로 좁혀 값이 늘면 컴파일 에러로 잡는다 (위와 같은 이유).
+export const EXTERNAL_VISITOR_LABELS: Record<ExternalVisitorPolicy, string> = {
+  ALLOWED: "허용",
+  CONDITIONAL: "조건부",
+  DENIED: "불가",
+};
+
+export const VERIFICATION_LABELS: Record<VerificationMethod, string> = {
+  NONE: "없음",
+  STUDENT_ID: "학생증",
+  PRE_BOOKING: "사전 예약",
+  INVITATION: "초청",
+  OTHER: "기타",
+};
+
+export const TICKET_TYPE_LABELS: Record<TicketType, string> = {
+  FREE: "무료",
+  PAID: "유료",
+};

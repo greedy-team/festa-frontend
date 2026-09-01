@@ -50,6 +50,67 @@ export const PUBLISH_BLOCKER = {
 export type PublishBlockerReason =
   (typeof PUBLISH_BLOCKER)[keyof typeof PUBLISH_BLOCKER];
 
+// DEC-0081: 열거값은 영문 상수로 내려오고 표시 문구는 프론트가 갖는다 (adminEnums.ts).
+export type ExternalVisitorPolicy = "ALLOWED" | "CONDITIONAL" | "DENIED";
+export type VerificationMethod = "NONE" | "STUDENT_ID" | "PRE_BOOKING" | "INVITATION" | "OTHER";
+export type TicketType = "FREE" | "PAID";
+
+/**
+ * GET /admin/festivals/{id} — api-docs.json `FestivalResponse` 22필드.
+ * 검수 목록의 `AdminFestival`(FestivalReviewItem)과 다른 스키마다 — 목록에는
+ * discovery·sourceUrl·importedAt이 있고, 상세에는 폼이 채울 본문 필드가 있다.
+ */
+export type AdminFestivalDetail = {
+  festivalId: number;
+  hostId: number | null;
+  hostName: string | null;
+  importKey: string | null;
+  name: string;
+  startDate: string;
+  endDate: string;
+  posterUrl: string | null;
+  description: string | null;
+  venueName: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  externalVisitor: ExternalVisitorPolicy | null;
+  verification: VerificationMethod | null;
+  ticketType: TicketType | null;
+  ticketOpenAt: string | null;
+  admissionNote: string | null;
+  instagramUrl: string | null;
+  publishedAt: string | null;
+  lineupCount: number;
+  blockers: PublishBlockerReason[];
+};
+
+/**
+ * 폼이 들고 있는 값 — 전부 문자열이다. HTML 입력이 내는 값이 문자열이고,
+ * DEC-0141에 따라 전체를 되보내므로 optional 필드가 없다. 요청으로 바뀔 때의
+ * 타입별 규칙은 festivalForm.ts의 toFestivalRequestBody가 전담한다.
+ */
+export type FestivalFormValues = {
+  /** PATCH에서도 필수다 — 미연결 축제는 수정하려면 주최부터 골라야 한다 */
+  hostId: string;
+  importKey: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  posterUrl: string;
+  description: string;
+  venueName: string;
+  address: string;
+  latitude: string;
+  longitude: string;
+  externalVisitor: ExternalVisitorPolicy | "";
+  verification: VerificationMethod | "";
+  ticketType: TicketType | "";
+  ticketOpenAt: string;
+  admissionNote: string;
+  instagramUrl: string;
+};
+
 /** POST/DELETE /admin/festivals/{id}/publish 공통 응답 모양 */
 export type FestivalPublishResponse = {
   festivalId: number;

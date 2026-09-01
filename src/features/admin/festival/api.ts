@@ -6,9 +6,12 @@ import { adminFetch } from "@/lib/adminFetch";
 import type { PageResponse } from "@/types/api";
 import type {
   AdminFestival,
+  AdminFestivalDetail,
+  FestivalFormValues,
   FestivalPublishResponse,
   FestivalReviewParams,
 } from "@/features/admin/festival/types";
+import { toFestivalRequestBody } from "@/features/admin/festival/festivalForm";
 
 /**
  * GET /admin/festivals
@@ -45,4 +48,43 @@ export async function unpublishFestival(
   return adminFetch<FestivalPublishResponse>(`/admin/festivals/${festivalId}/publish`, {
     method: "DELETE",
   });
+}
+
+/** GET /admin/festivals/{id} — 수정 폼을 채우는 값 (DEC-0140) */
+export async function getFestival(festivalId: number): Promise<AdminFestivalDetail> {
+  return adminFetch<AdminFestivalDetail>(`/admin/festivals/${festivalId}`);
+}
+
+export async function createFestival(
+  values: FestivalFormValues,
+): Promise<AdminFestivalDetail> {
+  return adminFetch<AdminFestivalDetail>("/admin/festivals", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(toFestivalRequestBody(values)),
+  });
+}
+
+/**
+ * PATCH /admin/festivals/{id} — Swagger가 「전체 교체다」로 못박은 그것이다.
+ * DEC-0141에 따라 값을 골라 담지 않고 폼 상태 전체를 보낸다.
+ */
+export async function updateFestival(
+  festivalId: number,
+  values: FestivalFormValues,
+): Promise<AdminFestivalDetail> {
+  return adminFetch<AdminFestivalDetail>(`/admin/festivals/${festivalId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(toFestivalRequestBody(values)),
+  });
+}
+
+/**
+ * DELETE /admin/festivals/{id} — 204.
+ * 발행 중이면 FESTIVAL_ALREADY_PUBLISHED, 라인업이 남아 있으면 FESTIVAL_HAS_LINEUPS.
+ * 가드 순서는 발행 검사가 먼저다 — 화면 문구도 그 순서를 따른다.
+ */
+export async function deleteFestival(festivalId: number): Promise<void> {
+  await adminFetch<void>(`/admin/festivals/${festivalId}`, { method: "DELETE" });
 }

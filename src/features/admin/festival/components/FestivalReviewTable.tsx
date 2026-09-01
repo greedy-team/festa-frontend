@@ -10,6 +10,8 @@ type Props = {
   items: AdminFestival[];
   onPublish: (id: number) => void;
   onUnpublish: (id: number) => void;
+  onEdit: (id: number) => void;
+  onDelete: (festival: AdminFestival) => void;
   isPublishing?: boolean;
   isUnpublishing?: boolean;
 };
@@ -21,6 +23,8 @@ export function FestivalReviewTable({
   items,
   onPublish,
   onUnpublish,
+  onEdit,
+  onDelete,
   isPublishing = false,
   isUnpublishing = false,
 }: Props) {
@@ -36,6 +40,7 @@ export function FestivalReviewTable({
             <th className="p-4">라인업</th>
             <th className="p-4">출처</th>
             <th className="p-4">상태</th>
+            <th className="p-4" />
             <th className="p-4" />
           </tr>
         </thead>
@@ -134,6 +139,26 @@ export function FestivalReviewTable({
                       ) : null}
                     </div>
                   )}
+                </td>
+                <td className="p-4 text-right">
+                  {/* 검수에서 INVALID를 본 운영자가 곧바로 손으로 채우는 동선 —
+                      발행이 막힌 행일수록 이 링크가 그 행의 실질 액션이다 */}
+                  <div className="flex justify-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(festival.festivalId)}
+                      className="cursor-pointer text-caption-strong text-primary"
+                    >
+                      고치기
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(festival)}
+                      className="cursor-pointer text-caption-strong text-danger-ink"
+                    >
+                      삭제
+                    </button>
+                  </div>
                 </td>
               </tr>
             );
