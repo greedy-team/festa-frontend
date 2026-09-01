@@ -93,14 +93,14 @@ export function PreviewPanel({
       ) : null}
 
       <div className="overflow-x-auto rounded-card border border-border bg-surface">
-        <table className="w-full min-w-[860px] border-collapse">
+        <table className="w-full border-collapse">
           <thead>
             <tr className="border-b border-divider text-left text-label-regular text-muted-soft">
               <th className="p-3" />
-              <th className="p-3">행</th>
+              <th className="hidden p-3 md:table-cell">행</th>
               <th className="p-3">대상</th>
               <th className="p-3">동작</th>
-              <th className="p-3">문제</th>
+              <th className="hidden p-3 md:table-cell">문제</th>
               <th className="p-3" />
             </tr>
           </thead>
@@ -127,8 +127,19 @@ export function PreviewPanel({
                         onChange={() => onToggle(row)}
                       />
                     </td>
-                    <td className="p-3 text-label-regular text-muted">{row.line}</td>
-                    <td className="p-3 text-caption-regular text-ink">{rowName(row)}</td>
+                    <td className="hidden p-3 text-label-regular text-muted md:table-cell">
+                      {row.line}
+                    </td>
+                    <td className="p-3">
+                      <p className="text-caption-regular text-ink">{rowName(row)}</p>
+                      {/* 모바일에선 문제 열이 접히므로 코드만 여기로 — INVALID 분류가
+                          모바일에서도 가능해야 「검수에서 찾기」 동선이 산다 */}
+                      {problems.length > 0 ? (
+                        <p className="text-label-regular text-danger-ink md:hidden">
+                          {problems.map((problem) => problem.code).join(" · ")}
+                        </p>
+                      ) : null}
+                    </td>
                     <td className="p-3">
                       <StatusBadge tone={ACTION_TONE[row.action]}>{row.action}</StatusBadge>
                       {row.skipReason ? (
@@ -137,7 +148,7 @@ export function PreviewPanel({
                         </span>
                       ) : null}
                     </td>
-                    <td className="p-3">
+                    <td className="hidden p-3 md:table-cell">
                       {problems.length === 0 ? (
                         <span className="text-label-regular text-muted-soft">—</span>
                       ) : (

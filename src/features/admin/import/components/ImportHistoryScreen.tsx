@@ -105,14 +105,14 @@ export function ImportHistoryScreen() {
         <p className="text-label-regular text-muted">임포트 이력이 없습니다.</p>
       ) : (
         <div className="overflow-x-auto rounded-card border border-border bg-surface">
-          <table className="w-full min-w-[860px] border-collapse">
+          <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-divider text-left text-label-regular text-muted-soft">
                 <th className="p-4">업로드</th>
                 <th className="p-4">타입</th>
-                <th className="p-4">파일</th>
+                <th className="hidden p-4 md:table-cell">파일</th>
                 <th className="p-4">상태</th>
-                <th className="p-4">결과</th>
+                <th className="hidden p-4 md:table-cell">결과</th>
               </tr>
             </thead>
             <tbody>
@@ -127,7 +127,7 @@ export function ImportHistoryScreen() {
                   <td className="p-4 text-caption-regular text-ink">
                     {TYPE_LABELS[item.type]}
                   </td>
-                  <td className="p-4 text-label-regular text-muted">
+                  <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                     {item.fileNames.join(", ") || "—"}
                   </td>
                   <td className="p-4">
@@ -135,7 +135,7 @@ export function ImportHistoryScreen() {
                       {STATUS_LABELS[item.status]}
                     </StatusBadge>
                   </td>
-                  <td className="p-4 text-label-regular text-muted">
+                  <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                     {item.result === null
                       ? "—"
                       : (["festivals", "lineups", "artists"] as const)

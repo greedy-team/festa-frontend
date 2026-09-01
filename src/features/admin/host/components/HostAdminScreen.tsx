@@ -117,14 +117,14 @@ export function HostAdminScreen() {
         <p className="text-label-regular text-muted">등록된 주최가 없습니다.</p>
       ) : (
         <div className="overflow-x-auto rounded-card border border-border bg-surface">
-          <table className="w-full min-w-[820px] border-collapse">
+          <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-divider text-left text-label-regular text-muted-soft">
                 <th className="p-4">이름</th>
-                <th className="p-4">짧은 이름</th>
-                <th className="p-4">지역</th>
-                <th className="p-4">축제</th>
-                <th className="p-4">공식 사이트</th>
+                <th className="hidden p-4 md:table-cell">짧은 이름</th>
+                <th className="hidden p-4 md:table-cell">지역</th>
+                <th className="hidden p-4 md:table-cell">축제</th>
+                <th className="hidden p-4 md:table-cell">공식 사이트</th>
                 <th className="p-4" />
               </tr>
             </thead>
@@ -133,15 +133,20 @@ export function HostAdminScreen() {
                 const homepage = host.homepageUrl ? safeHttpUrl(host.homepageUrl) : null;
                 return (
                   <tr key={host.hostId} className="border-b border-divider last:border-0">
-                    <td className="p-4 text-caption-strong text-ink">{host.name}</td>
-                    <td className="p-4 text-label-regular text-muted">
+                    <td className="p-4">
+                      <p className="text-caption-strong text-ink">{host.name}</p>
+                      <p className="text-label-regular text-muted md:hidden">
+                        {host.region || "지역 미입력"} · 축제 {host.festivalCount}개
+                      </p>
+                    </td>
+                    <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                       {host.shortName || "—"}
                     </td>
-                    <td className="p-4 text-label-regular text-muted">{host.region || "—"}</td>
-                    <td className="p-4 text-label-regular text-muted">
+                    <td className="hidden p-4 text-label-regular text-muted md:table-cell">{host.region || "—"}</td>
+                    <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                       {host.festivalCount}개
                     </td>
-                    <td className="p-4 text-label-regular text-muted">
+                    <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                       {homepage ? (
                         <a
                           href={homepage}

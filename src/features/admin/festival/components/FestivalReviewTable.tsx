@@ -33,14 +33,14 @@ export function FestivalReviewTable({
   return (
     // 넓은 표는 자기 컨테이너 안에서 스크롤한다 — 페이지가 가로로 밀리면 안 된다.
     <div className="overflow-x-auto rounded-card border border-border bg-surface">
-      <table className="w-full min-w-[900px] border-collapse">
+      <table className="w-full border-collapse">
         <thead>
           <tr className="border-b border-divider text-left text-label-regular text-muted-soft">
             <th className="p-4">축제</th>
-            <th className="p-4">주최</th>
-            <th className="p-4">기간</th>
-            <th className="p-4">라인업</th>
-            <th className="p-4">출처</th>
+            <th className="hidden p-4 md:table-cell">주최</th>
+            <th className="hidden p-4 md:table-cell">기간</th>
+            <th className="hidden p-4 md:table-cell">라인업</th>
+            <th className="hidden p-4 md:table-cell">출처</th>
             <th className="p-4">상태</th>
             <th className="p-4" />
             <th className="p-4" />
@@ -78,25 +78,29 @@ export function FestivalReviewTable({
                   ) : (
                     <span className="text-label-regular text-muted-soft">출처 없음</span>
                   )}
+                  {/* 모바일에서 접힌 열의 핵심만 서브라인으로 */}
+                  <p className="text-label-regular text-muted md:hidden">
+                    {dateRange(festival.startDate, festival.endDate)} · {festival.lineupCount}팀
+                  </p>
                 </td>
-                <td className="p-4 text-caption text-body-text">
+                <td className="hidden p-4 text-caption text-body-text md:table-cell">
                   {festival.hostId === null ? (
                     <span className="text-muted-soft">미연결</span>
                   ) : (
                     (festival.hostName ?? "—")
                   )}
                 </td>
-                <td className="p-4 text-caption text-body-text">
+                <td className="hidden p-4 text-caption text-body-text md:table-cell">
                   {dateRange(festival.startDate, festival.endDate)}
                 </td>
-                <td className="p-4">
+                <td className="hidden p-4 md:table-cell">
                   {blockers.includes(PUBLISH_BLOCKER.LINEUP_EMPTY) ? (
                     <StatusBadge tone="danger">0팀</StatusBadge>
                   ) : (
                     <span className="text-caption text-body-text">{festival.lineupCount}팀</span>
                   )}
                 </td>
-                <td className="p-4">
+                <td className="hidden p-4 md:table-cell">
                   {festival.discovery ? (
                     <StatusBadge>{discoveryLabel(festival.discovery)}</StatusBadge>
                   ) : (
@@ -145,7 +149,7 @@ export function FestivalReviewTable({
                 <td className="p-4 text-right">
                   {/* 검수에서 INVALID를 본 운영자가 곧바로 손으로 채우는 동선 —
                       발행이 막힌 행일수록 이 링크가 그 행의 실질 액션이다 */}
-                  <div className="flex justify-end gap-3">
+                  <div className="flex flex-col items-end gap-2 md:flex-row md:justify-end md:gap-3">
                     <button
                       type="button"
                       onClick={() => onEdit(festival.festivalId)}

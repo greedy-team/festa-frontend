@@ -165,35 +165,42 @@ export function ArtistAdminScreen() {
         <p className="text-label-regular text-muted">조건에 맞는 아티스트가 없습니다.</p>
       ) : (
         <div className="overflow-x-auto rounded-card border border-border bg-surface">
-          <table className="w-full min-w-[860px] border-collapse">
+          <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-divider text-left text-label-regular text-muted-soft">
                 <th className="p-4">이름</th>
-                <th className="p-4">별칭</th>
-                <th className="p-4">장르</th>
-                <th className="p-4">출연</th>
-                <th className="p-4">검수</th>
+                <th className="hidden p-4 md:table-cell">별칭</th>
+                <th className="hidden p-4 md:table-cell">장르</th>
+                <th className="hidden p-4 md:table-cell">출연</th>
+                <th className="hidden p-4 md:table-cell">검수</th>
                 <th className="p-4" />
               </tr>
             </thead>
             <tbody>
               {items.map((artist) => (
                 <tr key={artist.artistId} className="border-b border-divider last:border-0">
-                  <td className="p-4 text-caption-strong text-ink">{artist.name}</td>
-                  <td className="p-4 text-label-regular text-muted">
+                  <td className="p-4">
+                    <p className="text-caption-strong text-ink">{artist.name}</p>
+                    {/* 모바일에서 접힌 열의 핵심만 서브라인으로 */}
+                    <p className="text-label-regular text-muted md:hidden">
+                      {genreLabel(artist.genre)} · 출연 {artist.appearanceCount}회
+                      {artist.needsReview ? " · 검수 필요" : ""}
+                    </p>
+                  </td>
+                  <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                     {(artist.otherNames ?? []).join(", ") || "—"}
                   </td>
-                  <td className="p-4 text-label-regular text-muted">
+                  <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                     {genreLabel(artist.genre)}
                   </td>
-                  <td className="p-4 text-label-regular text-muted">
+                  <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                     {artist.appearanceCount}회
                   </td>
-                  <td className="p-4 text-label-regular text-muted">
+                  <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                     {artist.needsReview ? "필요" : "—"}
                   </td>
                   <td className="p-4">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex flex-col items-stretch gap-2 md:flex-row md:justify-end">
                       <Button
                         type="button"
                         variant="secondary"
