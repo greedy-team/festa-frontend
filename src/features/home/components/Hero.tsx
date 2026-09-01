@@ -35,9 +35,10 @@ const QUICK_LINKS = [
 ] as const;
 
 // 다가오는 축제가 0건일 때 히어로 배경. null이면 지금처럼 bg-hero-1 단색만
-// 보인다. public/ 아래 이미지 경로(예: "/hero/offseason.jpg")를 넣으면 그
-// 사진이 배경으로 깔리고 흰 타이포 가독성을 위한 스크림이 얹힌다. 이미지
-// 파일은 아직 없다 — 받아줄 자리만 만들어 둔 것이다(#150).
+// 보인다. 사진을 쓰려면 파일을 `public/hero/offseason.jpg`로 저장하고 이 값을
+// "/hero/offseason.jpg"로 바꾼다 — 사진이 배경으로 깔리고 흰 타이포 가독성을
+// 위한 스크림이 얹힌다. 이미지 파일은 아직 없다 — 받아줄 자리만 만들어 둔
+// 것이다(#150).
 const EMPTY_HERO_BACKGROUND_SRC: string | null = null;
 
 // 슬롯 수(1~4)별 폭을 리터럴 클래스로 미리 다 적어둔다 — 템플릿 문자열로
