@@ -50,7 +50,7 @@ export function ConfirmDialog({
       <div className="mt-4 text-label-regular text-muted">{children}</div>
       <div className="mt-6 flex justify-end gap-2">
         <Button type="button" variant="secondary" onClick={onCancel} disabled={isPending}>
-          취소
+          닫기
         </Button>
         <Button type="button" onClick={onConfirm} disabled={isPending}>
           {isPending ? "처리 중…" : confirmLabel}

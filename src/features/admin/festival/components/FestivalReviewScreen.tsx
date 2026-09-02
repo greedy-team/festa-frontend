@@ -221,6 +221,7 @@ export function FestivalReviewScreen() {
         <FestivalFormDialog
           festival={modal.kind === "edit" ? (detail.data ?? null) : null}
           isLoading={modal.kind === "edit" && detail.isLoading}
+          isError={modal.kind === "edit" && detail.isError}
           isPending={create.isPending || update.isPending}
           errorMessage={errorMessage}
           onSubmit={handleSubmit}

@@ -11,6 +11,8 @@ type Props = {
   /** null이면 등록, 값이 있으면 수정 */
   artist: AdminArtist | null;
   isLoading?: boolean;
+  /** 단건 조회 실패 — 폼을 내지 않는다 */
+  isError?: boolean;
   isPending?: boolean;
   errorMessage?: string | null;
   onSubmit: (values: ArtistFormValues) => void;
@@ -47,6 +49,7 @@ function toValues(artist: AdminArtist | null): ArtistFormValues {
 export function ArtistFormDialog({
   artist,
   isLoading = false,
+  isError = false,
   isPending = false,
   errorMessage = null,
   onSubmit,
@@ -73,7 +76,7 @@ export function ArtistFormDialog({
   }, []);
 
   // 단건 조회가 아직이면 artist가 null이어도 수정 모드다 — 제목이 「등록」으로 새지 않게.
-  const isEdit = artist !== null || isLoading;
+  const isEdit = artist !== null || isLoading || isError;
 
   return (
     <dialog
@@ -88,7 +91,20 @@ export function ArtistFormDialog({
         {isEdit ? "아티스트 수정" : "아티스트 등록"}
       </h2>
 
-      {isLoading ? (
+      {isError ? (
+        // 단건 조회 실패. 폼을 빈 값으로 그리면 저장이 전체 교체(DEC-0141)라 레코드를
+        // 비워버린다 — 폼 자체를 내지 않고 닫기만 남긴다.
+        <>
+          <p role="alert" className="mt-6 text-label-regular text-danger">
+            아티스트 정보를 불러오지 못했습니다. 닫고 다시 시도해 주세요.
+          </p>
+          <div className="mt-6 flex justify-end">
+            <Button type="button" variant="secondary" onClick={onClose}>
+              닫기
+            </Button>
+          </div>
+        </>
+      ) : isLoading ? (
         <p className="mt-6 text-label-regular text-muted">불러오는 중…</p>
       ) : (
         <form
@@ -173,7 +189,7 @@ export function ArtistFormDialog({
 
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>
-              취소
+              닫기
             </Button>
             <Button type="submit" disabled={isPending}>
               {isPending ? "저장 중…" : "저장"}

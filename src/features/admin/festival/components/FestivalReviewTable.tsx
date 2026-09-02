@@ -55,9 +55,17 @@ const DEFAULT_WIDTHS: Partial<Record<ColumnKey, number>> = {
 
 const MIN_COLUMN_WIDTH = 64;
 
-/** safeHttpUrl을 통과한 값만 받으므로 new URL은 던지지 않는다 */
+/**
+ * safeHttpUrl은 스킴(`^https?://`)만 보고 파싱 가능 여부는 보지 않는다 — `"http://"`
+ * 같은 크롤러 값이 통과해 여기 오면 new URL이 던진다. 행 렌더 안이라 그대로 두면 행
+ * 하나가 표 전체를 무너뜨리므로 원본 문자열로 폴백한다.
+ */
 function hostnameOf(url: string): string {
-  return new URL(url).hostname;
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
 }
 
 export function FestivalReviewTable({

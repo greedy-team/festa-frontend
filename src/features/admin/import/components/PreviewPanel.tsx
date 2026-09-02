@@ -38,10 +38,13 @@ const ACTION_TONE = {
   INVALID: "danger",
 } as const;
 
-/** 행의 대표 이름 — CSV 컬럼이 타입마다 달라 잘 알려진 키를 차례로 시도한다 */
+/**
+ * 행의 대표 이름. values의 키는 CSV 헤더 그대로다(백엔드 ImportSection) —
+ * festivals·artists는 `name`, lineups는 `artist_canonical`.
+ */
 function rowName(row: ImportPreviewRow): string {
   const v = row.values ?? {};
-  return v.name ?? v.artist_canonical ?? v.festival_name ?? row.importKey ?? `${row.line}행`;
+  return v.name ?? v.artist_canonical ?? row.importKey ?? `${row.line}행`;
 }
 
 /**
@@ -195,6 +198,16 @@ export function PreviewPanel({
                           className="text-label-regular text-primary underline"
                         >
                           커밋 후 검수에서 찾기 ↗
+                        </Link>
+                      ) : row.section === "ARTISTS" ? (
+                        // 아티스트 행이 INVALID — 아티스트 화면에서 직접 등록한다.
+                        <Link
+                          href={ADMIN_ROUTES.artists}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="text-label-regular text-primary underline"
+                        >
+                          아티스트에서 등록 ↗
                         </Link>
                       ) : (
                         // 축제 행 자체가 INVALID다 — 커밋에 안 들어가므로 찾을 것이 없고,

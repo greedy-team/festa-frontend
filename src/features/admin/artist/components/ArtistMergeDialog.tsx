@@ -145,12 +145,20 @@ export function ArtistMergeDialog({
 
       <div className="mt-6 flex justify-end gap-2">
         <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>
-          취소
+          닫기
         </Button>
         <Button
           type="button"
           disabled={isPending || selected.length === 0}
-          onClick={() => onSubmit({ targetId: target.artistId, sourceIds, keepAliases })}
+          // 화면에 보이는 후보에서 파생한다 — 후보 재조회로 목록이 줄면 sourceIds state에
+          // 유령 id가 남을 수 있고, 되돌릴 수 없는 병합에 그 id가 실리면 안 된다.
+          onClick={() =>
+            onSubmit({
+              targetId: target.artistId,
+              sourceIds: selected.map((c) => c.artistId),
+              keepAliases,
+            })
+          }
         >
           {isPending ? "병합 중…" : `${selected.length}건 병합`}
         </Button>

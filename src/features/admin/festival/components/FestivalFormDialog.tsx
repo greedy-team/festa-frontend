@@ -25,6 +25,8 @@ type Props = {
   /** null이면 등록, 값이 있으면 수정 */
   festival: AdminFestivalDetail | null;
   isLoading?: boolean;
+  /** 단건 조회 실패 — 폼을 내지 않는다 */
+  isError?: boolean;
   isPending?: boolean;
   errorMessage?: string | null;
   onSubmit: (values: FestivalFormValues) => void;
@@ -47,6 +49,7 @@ const INPUT_CLASS =
 export function FestivalFormDialog({
   festival,
   isLoading = false,
+  isError = false,
   isPending = false,
   errorMessage = null,
   onSubmit,
@@ -58,6 +61,15 @@ export function FestivalFormDialog({
 
   // ponytail: size 50(서버 상한)의 첫 페이지만 — 주최가 50을 넘으면 페이지 순회가 필요하다
   const hosts = useAdminHosts({ page: 0, size: 50 });
+  // 현재 주최가 첫 페이지에 없으면 select가 빈 값으로 보여 운영자가 엉뚱한 주최로
+  // 다시 고를 수 있다 — 단건 조회의 hostId·hostName으로 옵션을 하나 채워 넣는다.
+  const hostOptions = (() => {
+    const items = hosts.data?.items ?? [];
+    if (festival?.hostId != null && !items.some((h) => h.hostId === festival.hostId)) {
+      return [{ hostId: festival.hostId, name: festival.hostName ?? `#${festival.hostId}` }, ...items];
+    }
+    return items;
+  })();
 
   const values = draft ?? (festival ? toFestivalFormValues(festival) : EMPTY_FESTIVAL_FORM);
 
@@ -70,7 +82,7 @@ export function FestivalFormDialog({
   }, []);
 
   // 단건 조회가 아직이면 festival이 null이어도 수정 모드다 — 제목이 「등록」으로 새지 않게.
-  const isEdit = festival !== null || isLoading;
+  const isEdit = festival !== null || isLoading || isError;
   const isPublished = festival?.publishedAt != null;
   const coordError = coordinateError(values.latitude, values.longitude, isPublished);
 
@@ -90,7 +102,20 @@ export function FestivalFormDialog({
         </p>
       ) : null}
 
-      {isLoading ? (
+      {isError ? (
+        // 단건 조회 실패. 폼을 빈 값으로 그리면 저장이 전체 교체(DEC-0141)라 레코드를
+        // 비워버린다 — 폼 자체를 내지 않고 닫기만 남긴다.
+        <>
+          <p role="alert" className="mt-6 text-label-regular text-danger">
+            축제 정보를 불러오지 못했습니다. 닫고 다시 시도해 주세요.
+          </p>
+          <div className="mt-6 flex justify-end">
+            <Button type="button" variant="secondary" onClick={onClose}>
+              닫기
+            </Button>
+          </div>
+        </>
+      ) : isLoading ? (
         <p className="mt-6 text-label-regular text-muted">불러오는 중…</p>
       ) : (
         <form
@@ -116,7 +141,7 @@ export function FestivalFormDialog({
                 className={INPUT_CLASS}
               >
                 <option value="">선택해 주세요</option>
-                {(hosts.data?.items ?? []).map((host) => (
+                {hostOptions.map((host) => (
                   <option key={host.hostId} value={String(host.hostId)}>
                     {host.name}
                   </option>
@@ -328,8 +353,12 @@ export function FestivalFormDialog({
             재임포트가 덮어쓸 수 있습니다.
           </p>
 
-          {coordError && draft !== null ? (
-            <p className="text-label-regular text-danger">{coordError}</p>
+          {/* 서버 값 자체가 반쪽 좌표일 수 있다(미발행 축제는 서버가 안 막는다) —
+              폼을 열자마자 저장이 비활성이면 그 이유를 손대기 전에도 보여야 한다 */}
+          {coordError ? (
+            <p role="alert" className="text-label-regular text-danger">
+              {coordError}
+            </p>
           ) : localError ? (
             <p role="alert" className="text-label-regular text-danger">
               {localError}
@@ -344,7 +373,7 @@ export function FestivalFormDialog({
 
           <div className="mt-2 flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>
-              취소
+              닫기
             </Button>
             <Button type="submit" disabled={isPending || coordError !== null}>
               {isPending ? "저장 중…" : "저장"}
