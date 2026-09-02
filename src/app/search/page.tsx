@@ -18,6 +18,10 @@ const TYPE_OPTIONS: { value: SearchType | null; label: string }[] = [
 
 // counts.all은 세 도메인 매치 수의 합이라 타입 필터와 무관하다. 특정 타입으로
 // 좁히면 그 타입 count만 봐야 헤더 수치와 실제로 그려진 섹션이 어긋나지 않는다 (#145).
+//
+// 헤더 수치는 이 count, 빈 상태 판정(isEmpty)은 실제 렌더된 배열 길이 — 판정 기준이
+// 둘이지만 현재 계약에선 항상 같은 값이다. 백엔드가 선택 타입 count를 list.size()로
+// 내고 검색 쿼리 세 개 모두 LIMIT이 없어서다. 둘이 어긋나려면 백엔드 결함이 필요하다.
 const COUNT_KEY: Record<Exclude<SearchType, "ALL">, keyof SearchCounts> = {
   ARTIST: "artist",
   HOST: "host",
