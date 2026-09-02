@@ -125,13 +125,18 @@ export function Hero({ festivals }: Props) {
       <HeroSurface className="flex flex-col items-center justify-center gap-10 overflow-hidden bg-hero-1 px-6 pt-[72px] text-center">
         {EMPTY_HERO_BACKGROUND_SRC ? (
           <>
-            {/* 로드 실패 시 PosterImage가 스스로 사라져 bg-hero-1이 그대로 남는다 */}
+            {/* 로드 실패 시 PosterImage만 사라진다 — 형제인 스크림은 남아
+                bg-hero-1 위에 순검정 55%가 깔린 상태가 된다(글로우는 없음).
+                흰 타이포 가독성에는 유리해 그대로 둔다 */}
             <PosterImage
               src={EMPTY_HERO_BACKGROUND_SRC}
-              className="absolute inset-0 h-full w-full object-cover"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover"
             />
             {/* 사진 위 흰 타이포 가독성 — 순검정 55% 단일 단계(DESIGN.md) */}
-            <div aria-hidden className="absolute inset-0 bg-scrim-hero" />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-scrim-hero"
+            />
           </>
         ) : (
           /* 은은하게 떠다니는 글로우 — 축제가 없어도 화면이 멈춰 있지 않다는
