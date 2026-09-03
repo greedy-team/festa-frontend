@@ -2,10 +2,11 @@ import Link from "next/link";
 import { Search as SearchIcon } from "lucide-react";
 import { search } from "@/features/search/api";
 import type { SearchCounts, SearchType } from "@/features/search/types";
-import { ArtistResultCard } from "@/features/search/components/ArtistResultCard";
+import { ArtistResultRow } from "@/features/search/components/ArtistResultRow";
 import { SchoolResultRow } from "@/features/search/components/SchoolResultRow";
 import { FestivalResultRow } from "@/features/search/components/FestivalResultRow";
 import { Container } from "@/components/layout/Container";
+import { PageFadeIn } from "@/components/ui/PageFadeIn";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Chip } from "@/components/ui/Chip";
 
@@ -73,14 +74,16 @@ export default async function SearchPage({ searchParams }: Props) {
 
   if (!q) {
     return (
-      <Container className="mt-10 mb-16">
-        {/* 검색창은 있지만 페이지 제목이 시각적으로는 필요 없는 화면이라, 시맨틱
-            구조만 sr-only h1로 채운다 — h2 결과 섹션들이 짚을 상위 헤딩이 없으면
-            스크린리더 사용자가 페이지 시작점을 못 잡는다. */}
-        <h1 className="sr-only">검색</h1>
-        <SearchBar q="" />
-        <p className="mt-10 text-body text-muted">검색어를 입력해주세요.</p>
-      </Container>
+      <PageFadeIn>
+        <Container className="mt-10 mb-16">
+          {/* 검색창은 있지만 페이지 제목이 시각적으로는 필요 없는 화면이라, 시맨틱
+              구조만 sr-only h1로 채운다 — h2 결과 섹션들이 짚을 상위 헤딩이 없으면
+              스크린리더 사용자가 페이지 시작점을 못 잡는다. */}
+          <h1 className="sr-only">검색</h1>
+          <SearchBar q="" />
+          <p className="mt-10 text-body text-muted">검색어를 입력해주세요.</p>
+        </Container>
+      </PageFadeIn>
     );
   }
 
@@ -102,72 +105,76 @@ export default async function SearchPage({ searchParams }: Props) {
     !data.artists.length && !data.hosts.length && !data.festivals.length;
 
   return (
-    <Container className="mt-10 mb-16">
-      <h1 className="sr-only">검색</h1>
-      <SearchBar q={q} />
+    // nav나 다른 화면의 링크로 들어오는 화면이라, 뚝 뜨지 않고 진입 시
+    // 부드럽게 나타나게 한다(다른 사용자 화면과 같은 PageFadeIn).
+    <PageFadeIn>
+      <Container className="mt-10 mb-16">
+        <h1 className="sr-only">검색</h1>
+        <SearchBar q={q} />
 
-      <p className="mt-8 text-body text-muted">
-        “{q}” 검색 결과 {resultCount}건
-      </p>
+        <p className="mt-8 text-body text-muted">
+          “{q}” 검색 결과 {resultCount}건
+        </p>
 
-      <div className="mt-6 flex items-center gap-2">
-        {TYPE_OPTIONS.map((option) => {
-          const value: SearchType = option.value ?? "ALL";
-          const active = value === type;
-          return (
-            <Link
-              key={value}
-              href={typeHref(q, option.value)}
-              aria-current={active ? "true" : undefined}
-            >
-              <Chip active={active}>{option.label}</Chip>
-            </Link>
-          );
-        })}
-      </div>
+        <div className="mt-6 flex items-center gap-2">
+          {TYPE_OPTIONS.map((option) => {
+            const value: SearchType = option.value ?? "ALL";
+            const active = value === type;
+            return (
+              <Link
+                key={value}
+                href={typeHref(q, option.value)}
+                aria-current={active ? "true" : undefined}
+              >
+                <Chip active={active}>{option.label}</Chip>
+              </Link>
+            );
+          })}
+        </div>
 
-      {data.artists.length ? (
-        <section className="mt-10">
-          <h2 className="text-block-title text-ink">아티스트</h2>
-          <div className="mt-4 flex flex-col gap-4">
-            {data.artists.map((artist) => (
-              <ArtistResultCard key={artist.artistId} artist={artist} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {data.artists.length ? (
+          <section className="mt-10">
+            <h2 className="text-block-title text-ink">아티스트</h2>
+            <div className="mt-4 flex flex-col gap-3">
+              {data.artists.map((artist) => (
+                <ArtistResultRow key={artist.artistId} artist={artist} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      {data.hosts.length ? (
-        <section className="mt-10">
-          <h2 className="text-block-title text-ink">학교</h2>
-          <div className="mt-4 flex flex-col gap-3">
-            {data.hosts.map((host) => (
-              <SchoolResultRow key={host.hostId} host={host} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {data.hosts.length ? (
+          <section className="mt-10">
+            <h2 className="text-block-title text-ink">학교</h2>
+            <div className="mt-4 flex flex-col gap-3">
+              {data.hosts.map((host) => (
+                <SchoolResultRow key={host.hostId} host={host} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      {data.festivals.length ? (
-        <section className="mt-10">
-          <h2 className="text-block-title text-ink">축제</h2>
-          <div className="mt-4 flex flex-col gap-3">
-            {data.festivals.map((festival) => (
-              <FestivalResultRow
-                key={festival.festivalId}
-                festival={festival}
-                query={q}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {data.festivals.length ? (
+          <section className="mt-10">
+            <h2 className="text-block-title text-ink">축제</h2>
+            <div className="mt-4 flex flex-col gap-3">
+              {data.festivals.map((festival) => (
+                <FestivalResultRow
+                  key={festival.festivalId}
+                  festival={festival}
+                  query={q}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      {isEmpty ? (
-        <p className="mt-10 text-body text-muted">검색 결과가 없습니다.</p>
-      ) : null}
+        {isEmpty ? (
+          <p className="mt-10 text-body text-muted">검색 결과가 없습니다.</p>
+        ) : null}
 
-      <AdSlot variant="banner" className="mt-16" />
-    </Container>
+        <AdSlot variant="banner" className="mt-16" />
+      </Container>
+    </PageFadeIn>
   );
 }
