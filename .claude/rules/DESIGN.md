@@ -768,7 +768,7 @@ D-day는 서버가 이미 공연일(축제 시작일이 아니라) 기준으로 
 - **Primary** (`{colors.primary}` — #4F46E5): 유일한 액션 색. primary 버튼, 활성 nav 메뉴 + 인디케이터, **nav 프로필 아바타 채움**, 링크 텍스트, D-day 뱃지, 수치 강조.
 - **Primary Soft** (`{colors.primary-soft}` — #EEF2FF): D-day/DAY 뱃지 배경, Bottom CTA Banner 배경.
 - **Secondary** (`{colors.secondary}` — #7C6CFF): 팔레트에만 존재. 사용처 미정의.
-- **Accent** (`{colors.accent}` — #FF79C8): 검색 결과 행의 매칭 도트(4×4) 전용.
+- **Accent** (`{colors.accent}` — #FF79C8): 팔레트에만 존재. 현재 사용처 없음 (검색 결과 행의 매칭 도트가 유일한 사용처였으나 #153에서 제거).
 
 ### Surface
 - **Surface** (`{colors.surface}` — #FFFFFF): 카드·패널·nav·footer·바텀시트·히어로 컨트롤(화살표·도트), **그리고 홈 프레임 배경**.
@@ -1016,7 +1016,7 @@ D-day는 서버가 이미 공연일(축제 시작일이 아니라) 기준으로 
 
 **`result-row`** (1280×148) — 100×100 썸네일 r12, 제목 20/600, 라벨/값 2열 그리드 3세트 (라벨 14/400 `{colors.muted-soft}` / 값 14/500 `{colors.ink}`), 우측 `자세히 보기 →`.
 
-**`search-result-row`** (1280×120) — 80×88 포스터 r12, 축제명 20/700, 메타 14/400, 4px `{colors.accent}` 도트 + 매칭 하이라이트 13/500 인디고. 우측 상태 뱃지 → D-day → `›`.
+**`search-result-row`** (1280×120) — 80×88 포스터 r12, 축제명 20/700, 메타 14/400. 우측 상태 뱃지 → D-day → `›`. (시안의 매칭 하이라이트 줄은 구현에서 뺐다 — #153)
 
 **`past-lineup-row`** (1280×56) — 연도 16/700 인디고 + 아티스트 나열 14/400 + `›`, r16.
 
@@ -1122,7 +1122,7 @@ D-day는 서버가 이미 공연일(축제 시작일이 아니라) 기준으로 
 - **Figma Local Styles / Variables 가 비어 있다.** 색·타입이 스타일로 등록되어 있지 않아 전부 하드코딩이다 (`get_styles` → 전부 빈 배열). 토큰화가 첫 번째 정비 대상.
 - **폰트가 Pretendard 로 명시되어 있으나 실제 렌더 패밀리는 Inter 다.** Figma에 Pretendard 미설치. 구현 시 Pretendard 로드 필요 — 한글 자간·행간이 달라진다.
 - **광고 슬롯의 정책이 없다.** 680×420 1구좌만 정의되어 있고, 다른 화면의 광고 위치·크기·빈도가 미정의다.
-- **`{colors.secondary}` / `{colors.accent}` 의 사용 규칙이 없다.** 실제 사용처가 4px 도트 하나뿐이다.
+- **`{colors.secondary}` / `{colors.accent}` 의 사용 규칙이 없다.** 실제 사용처가 없다 (accent는 #153에서 마지막 사용처였던 검색 매칭 도트가 빠졌다).
 - **semantic 색이 success 한 계열뿐이다.** warning / error / info, 폼 검증 상태 미정의. (Admin 화면에는 amber/pink 상태 필이 이미 쓰이고 있으나 시스템 대상 밖이다.)
 - **hover 외의 인터랙션 상태가 없다.** focus ring, disabled, loading, empty state 미정의. 히어로 캐러셀의 전환 방식(슬라이드/페이드)·자동재생 주기도 미정의.
 - **아이콘 시스템이 없다.** 모든 아이콘이 radius 4 사각형 플레이스홀더다.
