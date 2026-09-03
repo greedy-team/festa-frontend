@@ -30,6 +30,8 @@ export type HostDetail = {
   name: string;
   shortName: string;
   region: string;
+  /** 계약에는 있으나 화면에 그리지 않는다 — 값이 실제로 없고(DEC-0093) 빈 자리를
+      색 블록으로 채우지 않는다(DEC-0130). 관리자 등록 화면의 입력 항목은 살아 있다 */
   logoUrl: string | null;
   bannerUrl: string | null;
   homepageUrl: string | null;
