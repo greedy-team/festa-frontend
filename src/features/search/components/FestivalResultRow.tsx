@@ -19,7 +19,7 @@ export function FestivalResultRow({ festival }: Props) {
   return (
     <Link
       href={`/festivals/${festivalId}`}
-      className="flex items-center gap-4 rounded-row border border-border bg-surface px-6 py-4"
+      className="flex items-center gap-3 rounded-row border border-border bg-surface px-4 py-4 sm:gap-4 sm:px-6"
     >
       <div
         className={`relative h-[88px] w-[80px] shrink-0 overflow-hidden rounded-md ${gridTint(festivalId)}`}

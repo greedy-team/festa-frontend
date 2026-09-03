@@ -39,7 +39,7 @@ function SearchBar({ q }: { q: string }) {
   return (
     <form
       action="/search"
-      className="flex h-[64px] items-center gap-3 rounded-card border border-border bg-surface px-6 focus-within:ring-2 focus-within:ring-primary"
+      className="flex h-[64px] items-center gap-3 rounded-card border border-border bg-surface px-4 focus-within:ring-2 focus-within:ring-primary sm:px-6"
     >
       <SearchIcon size={20} className="shrink-0 text-muted-soft" aria-hidden />
       <input
@@ -52,7 +52,7 @@ function SearchBar({ q }: { q: string }) {
       />
       <button
         type="submit"
-        className="flex h-[44px] shrink-0 items-center justify-center rounded-md bg-primary px-6 text-button text-on-primary"
+        className="flex h-[44px] shrink-0 items-center justify-center rounded-md bg-primary px-4 text-button text-on-primary sm:px-6"
       >
         검색
       </button>
@@ -116,7 +116,8 @@ export default async function SearchPage({ searchParams }: Props) {
           “{q}” 검색 결과 {resultCount}건
         </p>
 
-        <div className="mt-6 flex items-center gap-2">
+        {/* 칩 4개가 좁은 화면(~360px)에서 한 줄에 안 들어간다 — 넘치면 접는다 */}
+        <div className="mt-6 flex flex-wrap items-center gap-2">
           {TYPE_OPTIONS.map((option) => {
             const value: SearchType = option.value ?? "ALL";
             const active = value === type;

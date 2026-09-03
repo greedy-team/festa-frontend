@@ -14,7 +14,7 @@ export function SchoolResultRow({ host }: Props) {
   return (
     <Link
       href={`/hosts/${hostId}`}
-      className="flex items-center gap-4 rounded-row border border-border bg-surface px-6 py-4"
+      className="flex items-center gap-4 rounded-row border border-border bg-surface px-4 py-4 sm:px-6"
     >
       <div
         className={`relative size-[56px] shrink-0 overflow-hidden rounded-pill ${gridTint(hostId)}`}

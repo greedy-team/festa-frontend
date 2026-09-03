@@ -21,7 +21,7 @@ export function ArtistResultRow({ artist }: Props) {
   return (
     <Link
       href={`/artists/${artistId}`}
-      className="flex items-center gap-4 rounded-row border border-border bg-surface px-6 py-4"
+      className="flex items-center gap-4 rounded-row border border-border bg-surface px-4 py-4 sm:px-6"
     >
       <div className="min-w-0 flex-1">
         <h3 className="truncate text-subtitle text-ink">{name}</h3>
