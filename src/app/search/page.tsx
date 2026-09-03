@@ -2,10 +2,11 @@ import Link from "next/link";
 import { Search as SearchIcon } from "lucide-react";
 import { search } from "@/features/search/api";
 import type { SearchCounts, SearchType } from "@/features/search/types";
-import { ArtistResultCard } from "@/features/search/components/ArtistResultCard";
+import { ArtistResultRow } from "@/features/search/components/ArtistResultRow";
 import { SchoolResultRow } from "@/features/search/components/SchoolResultRow";
 import { FestivalResultRow } from "@/features/search/components/FestivalResultRow";
 import { Container } from "@/components/layout/Container";
+import { PageFadeIn } from "@/components/ui/PageFadeIn";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Chip } from "@/components/ui/Chip";
 
@@ -38,7 +39,7 @@ function SearchBar({ q }: { q: string }) {
   return (
     <form
       action="/search"
-      className="flex h-[64px] items-center gap-3 rounded-card border border-border bg-surface px-6 focus-within:ring-2 focus-within:ring-primary"
+      className="flex h-[64px] items-center gap-3 rounded-card border border-border bg-surface px-4 focus-within:ring-2 focus-within:ring-primary sm:px-6"
     >
       <SearchIcon size={20} className="shrink-0 text-muted-soft" aria-hidden />
       <input
@@ -51,7 +52,7 @@ function SearchBar({ q }: { q: string }) {
       />
       <button
         type="submit"
-        className="flex h-[44px] shrink-0 items-center justify-center rounded-md bg-primary px-6 text-button text-on-primary"
+        className="flex h-[44px] shrink-0 items-center justify-center rounded-md bg-primary px-4 text-button text-on-primary sm:px-6"
       >
         검색
       </button>
@@ -73,14 +74,16 @@ export default async function SearchPage({ searchParams }: Props) {
 
   if (!q) {
     return (
-      <Container className="mt-10 mb-16">
-        {/* 검색창은 있지만 페이지 제목이 시각적으로는 필요 없는 화면이라, 시맨틱
-            구조만 sr-only h1로 채운다 — h2 결과 섹션들이 짚을 상위 헤딩이 없으면
-            스크린리더 사용자가 페이지 시작점을 못 잡는다. */}
-        <h1 className="sr-only">검색</h1>
-        <SearchBar q="" />
-        <p className="mt-10 text-body text-muted">검색어를 입력해주세요.</p>
-      </Container>
+      <PageFadeIn>
+        <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
+          {/* 검색창은 있지만 페이지 제목이 시각적으로는 필요 없는 화면이라, 시맨틱
+              구조만 sr-only h1로 채운다 — h2 결과 섹션들이 짚을 상위 헤딩이 없으면
+              스크린리더 사용자가 페이지 시작점을 못 잡는다. */}
+          <h1 className="sr-only">검색</h1>
+          <SearchBar q="" />
+          <p className="mt-10 text-body text-muted">검색어를 입력해주세요.</p>
+        </Container>
+      </PageFadeIn>
     );
   }
 
@@ -88,7 +91,7 @@ export default async function SearchPage({ searchParams }: Props) {
   if (!res.ok) {
     console.error("GET /search 실패", res.status, res.message);
     return (
-      <Container className="mt-10 mb-16">
+      <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
         <h1 className="sr-only">검색</h1>
         <SearchBar q={q} />
         <p className="mt-10 text-body text-muted">검색 결과를 불러오지 못했습니다.</p>
@@ -102,72 +105,86 @@ export default async function SearchPage({ searchParams }: Props) {
     !data.artists.length && !data.hosts.length && !data.festivals.length;
 
   return (
-    <Container className="mt-10 mb-16">
-      <h1 className="sr-only">검색</h1>
-      <SearchBar q={q} />
+    // nav나 다른 화면의 링크로 들어오는 화면이라, 뚝 뜨지 않고 진입 시
+    // 부드럽게 나타나게 한다(다른 사용자 화면과 같은 PageFadeIn).
+    //
+    // 폭 상한 1200: 이 화면은 카드 그리드가 없고 세 섹션 전부 전폭 리스트 행이라
+    // 읽기용 텍스트 화면 쪽이다(DEC-0131 — 카드 그리드는 유동, 읽기용은 캡).
+    // 큰 모니터에서 행 텍스트와 우측 화살표가 1000px 넘게 벌어졌다. 실측상 행
+    // 텍스트가 요구하는 폭은 250px뿐이라 가독성으로는 1100~1280이 다 충분한데,
+    // 아티스트 목록·상세가 이미 쓰는 1200을 그대로 쓴다 — 값을 새로 만들면
+    // 읽기용 화면 폭이 두 개가 된다.
+    //
+    // 아티스트 화면은 성공 return에만 캡을 걸었지만 여기선 세 return 모두에 건다.
+    // 셋 다 같은 SearchBar를 그려서, 결과 화면에만 걸면 검색 전후로 검색창 폭이 튄다.
+    <PageFadeIn>
+      <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
+        <h1 className="sr-only">검색</h1>
+        <SearchBar q={q} />
 
-      <p className="mt-8 text-body text-muted">
-        “{q}” 검색 결과 {resultCount}건
-      </p>
+        <p className="mt-8 text-body text-muted">
+          “{q}” 검색 결과 {resultCount}건
+        </p>
 
-      <div className="mt-6 flex items-center gap-2">
-        {TYPE_OPTIONS.map((option) => {
-          const value: SearchType = option.value ?? "ALL";
-          const active = value === type;
-          return (
-            <Link
-              key={value}
-              href={typeHref(q, option.value)}
-              aria-current={active ? "true" : undefined}
-            >
-              <Chip active={active}>{option.label}</Chip>
-            </Link>
-          );
-        })}
-      </div>
+        {/* 칩 4개가 좁은 화면(~360px)에서 한 줄에 안 들어간다 — 넘치면 접는다 */}
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          {TYPE_OPTIONS.map((option) => {
+            const value: SearchType = option.value ?? "ALL";
+            const active = value === type;
+            return (
+              <Link
+                key={value}
+                href={typeHref(q, option.value)}
+                aria-current={active ? "true" : undefined}
+              >
+                <Chip active={active}>{option.label}</Chip>
+              </Link>
+            );
+          })}
+        </div>
 
-      {data.artists.length ? (
-        <section className="mt-10">
-          <h2 className="text-block-title text-ink">아티스트</h2>
-          <div className="mt-4 flex flex-col gap-4">
-            {data.artists.map((artist) => (
-              <ArtistResultCard key={artist.artistId} artist={artist} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {data.artists.length ? (
+          <section className="mt-10">
+            <h2 className="text-block-title text-ink">아티스트</h2>
+            <div className="mt-4 flex flex-col gap-3">
+              {data.artists.map((artist) => (
+                <ArtistResultRow key={artist.artistId} artist={artist} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      {data.hosts.length ? (
-        <section className="mt-10">
-          <h2 className="text-block-title text-ink">학교</h2>
-          <div className="mt-4 flex flex-col gap-3">
-            {data.hosts.map((host) => (
-              <SchoolResultRow key={host.hostId} host={host} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {data.hosts.length ? (
+          <section className="mt-10">
+            <h2 className="text-block-title text-ink">학교</h2>
+            <div className="mt-4 flex flex-col gap-3">
+              {data.hosts.map((host) => (
+                <SchoolResultRow key={host.hostId} host={host} />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      {data.festivals.length ? (
-        <section className="mt-10">
-          <h2 className="text-block-title text-ink">축제</h2>
-          <div className="mt-4 flex flex-col gap-3">
-            {data.festivals.map((festival) => (
-              <FestivalResultRow
-                key={festival.festivalId}
-                festival={festival}
-                query={q}
-              />
-            ))}
-          </div>
-        </section>
-      ) : null}
+        {data.festivals.length ? (
+          <section className="mt-10">
+            <h2 className="text-block-title text-ink">축제</h2>
+            <div className="mt-4 flex flex-col gap-3">
+              {data.festivals.map((festival) => (
+                <FestivalResultRow
+                  key={festival.festivalId}
+                  festival={festival}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
-      {isEmpty ? (
-        <p className="mt-10 text-body text-muted">검색 결과가 없습니다.</p>
-      ) : null}
+        {isEmpty ? (
+          <p className="mt-10 text-body text-muted">검색 결과가 없습니다.</p>
+        ) : null}
 
-      <AdSlot variant="banner" className="mt-16" />
-    </Container>
+        <AdSlot variant="banner" className="mt-16" />
+      </Container>
+    </PageFadeIn>
   );
 }
