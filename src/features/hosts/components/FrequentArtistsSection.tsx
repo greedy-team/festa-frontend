@@ -1,7 +1,5 @@
 import Link from "next/link";
 import type { FrequentArtist } from "@/features/hosts/types";
-import { gridTint } from "@/lib/posterTint";
-import { PosterImage } from "@/components/ui/PosterImage";
 import { Badge } from "@/components/ui/Badge";
 
 type Props = {
@@ -27,14 +25,9 @@ export function FrequentArtistsSection({ artists }: Props) {
             <span className="text-meta-medium text-muted-soft">
               {String(i + 1).padStart(2, "0")}
             </span>
-            <div
-              className={`size-[64px] overflow-hidden rounded-pill ${gridTint(artist.artistId)}`}
-            >
-              <PosterImage
-                src={artist.imageUrl}
-                className="h-full w-full object-cover"
-              />
-            </div>
+            {/* 아바타 자리 없음 — 실사진은 초상권 때문에 쓰지 않고(DEC-0063),
+                빈 자리를 색 블록으로 채우지도 않는다(DEC-0130). 순위·이름·출연
+                횟수만 남는다 */}
             <h3 className="text-entity-name text-ink">{artist.name}</h3>
             <Badge>{artist.appearanceCount}회 출연</Badge>
           </Link>
