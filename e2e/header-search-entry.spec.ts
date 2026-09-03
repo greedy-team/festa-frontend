@@ -35,7 +35,9 @@ test.describe("640~1023px — 검색 아이콘", () => {
     await page.getByRole("link", { name: "검색", exact: true }).click();
 
     await expect(page).toHaveURL(/\/search/);
-    await expect(page.getByLabel("검색어")).toBeVisible();
+    // 헤더 검색 폼 입력도 같은 "검색어" 라벨을 쓴다(이 폭에선 래퍼가 hidden이라
+    // 안 보이지만 DOM에는 있다) — main으로 좁혀 페이지 입력만 고른다.
+    await expect(page.getByRole("main").getByLabel("검색어")).toBeVisible();
   });
 });
 

@@ -31,10 +31,14 @@ export function NavSearchForm({
           : "bg-surface-field focus-within:ring-2 focus-within:ring-primary"
       } ${className}`}
     >
+      {/* placeholder는 접근 가능한 이름이 아니다. 이 폼은 1024px 미만에서
+          유일한 검색 진입로가 되므로(#155) 라벨을 명시한다 — /search 페이지
+          입력과 같은 "검색어"를 써서 화면 간 호칭을 통일한다. */}
       <input
         type="search"
         name="q"
         placeholder="검색"
+        aria-label="검색어"
         className={`w-full bg-transparent text-caption transition-colors duration-300 focus:outline-none ${
           onDark
             ? "text-on-media placeholder:text-on-media/60"
