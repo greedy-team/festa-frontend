@@ -4,42 +4,51 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { CalendarDays, ChevronDown, ChevronRight, Music2, Search } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import type { UpcomingFestival } from "@/features/home/types";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
 import { HeroSurface } from "@/components/layout/HeroSurface";
 import { PosterImage } from "@/components/ui/PosterImage";
 
-// 다가오는 축제가 0건일 때(방학 등) 보여줄 바로가기 3개 — 실제 목적지 화면이
-// 있는 라우트만 넣는다. 분실물은 아직 목적지 화면이 없어(LostPanel.tsx 주석
-// 참고) 제외했다.
-const QUICK_LINKS = [
+// 다가오는 축제가 0건일 때 히어로 배경. null이면 아래 MESH_BLOBS가 그려진다.
+// 사진을 쓰려면 파일을 `public/hero/offseason.jpg`로 저장하고 이 값을
+// "/hero/offseason.jpg"로 바꾼다 — 사진이 배경으로 깔리고 흰 타이포 가독성을
+// 위한 스크림이 얹힌다(그때는 메시를 그리지 않는다). 이미지 파일은 아직 없다 —
+// 받아줄 자리만 만들어 둔 것이다(#150).
+const EMPTY_HERO_BACKGROUND_SRC: string | null = null;
+
+// 사진이 없을 때의 배경. 이 화면은 히어로 패널 네 장이 있어야 할 자리가 통째로
+// 비어 있는 상태다 — 그래서 그 패널들이 쓰는 틴트를 그대로 크게 번지게 해서
+// "포스터가 흐려진 자리"로 읽히게 한다. 브랜드 색으로 전용하는 게 아니라
+// 이미지 대역 플레이스홀더라는 성격을 유지한 표현이다(DESIGN.md Poster Tints).
+//
+// mix-blend-screen인 이유: 틴트도 바탕(hero-1)도 어두워서 그냥 얹으면 서로
+// 묻혀 거의 안 보인다. screen은 어두운 색끼리도 밝은 쪽으로 합성해서 색이
+// 실제로 드러난다.
+//
+// duration을 셋 다 다르게 준 이유: 같으면 세 덩어리가 한 몸처럼 붙어 움직여서
+// 배경 전체가 흔들리는 것처럼 보인다. delay는 음수라 첫 프레임부터 서로 다른
+// 위상에서 시작한다(0에서 같이 출발하면 처음 몇 초가 겹친다).
+const MESH_BLOBS = [
   {
-    href: "/festivals",
-    icon: CalendarDays,
-    title: "축제 라인업",
-    desc: "다가오는 축제와 최근 등록된 축제를 확인하세요",
+    color: "var(--color-hero-2)",
+    position: "-left-[20%] -top-[15%] size-[85vmax]",
+    duration: "22s",
+    delay: "0s",
   },
   {
-    href: "/artists",
-    icon: Music2,
-    title: "아티스트",
-    desc: "출연 아티스트와 소속 정보를 찾아보세요",
+    color: "var(--color-hero-4)",
+    position: "-right-[25%] top-0 size-[75vmax]",
+    duration: "18s",
+    delay: "-7s",
   },
   {
-    href: "/search",
-    icon: Search,
-    title: "통합 검색",
-    desc: "축제·아티스트를 한 번에 검색하세요",
+    color: "var(--color-hero-3)",
+    position: "-bottom-[30%] left-[15%] size-[80vmax]",
+    duration: "26s",
+    delay: "-13s",
   },
 ] as const;
-
-// 다가오는 축제가 0건일 때 히어로 배경. null이면 지금처럼 bg-hero-1 단색만
-// 보인다. 사진을 쓰려면 파일을 `public/hero/offseason.jpg`로 저장하고 이 값을
-// "/hero/offseason.jpg"로 바꾼다 — 사진이 배경으로 깔리고 흰 타이포 가독성을
-// 위한 스크림이 얹힌다. 이미지 파일은 아직 없다 — 받아줄 자리만 만들어 둔
-// 것이다(#150).
-const EMPTY_HERO_BACKGROUND_SRC: string | null = null;
 
 // 슬롯 수(1~4)별 폭을 리터럴 클래스로 미리 다 적어둔다 — 템플릿 문자열로
 // 만들면 Tailwind가 빌드 시점에 클래스를 못 찾아서 스타일이 안 먹는다.
@@ -116,17 +125,19 @@ export function Hero({ festivals }: Props) {
   }, [emblaApi]);
 
   // 다가오는 축제가 하나도 없는 시즌(방학 등)도 실제로 있다 — 빈 문구 대신
-  // 실제 패널과 같은 톤(다크 틴트 + 흰 타이포)으로 서비스를 소개하고
-  // 다른 콘텐츠로 이어준다. 특정 축제 색이 아니라 서비스 자체를 나타내는
+  // 실제 패널과 같은 톤(다크 틴트 + 흰 타이포)으로 왜 비어 있는지를 설명하고
+  // 다음 행동 하나로 이어준다. 특정 축제 색이 아니라 서비스 자체를 나타내는
   // 자리라 hero-1을 고정으로 쓴다(축제 id 해시 대상이 없다).
   if (festivals.length === 0) {
     return (
       // pt-[72px]: 헤더가 위에 겹치므로 그만큼 내려서 가운데를 맞춘다
-      <HeroSurface className="flex flex-col items-center justify-center gap-10 overflow-hidden bg-hero-1 px-6 pt-[72px] text-center">
+      // isolate: mix-blend-screen이 섞일 대상을 이 섹션 안으로 가둔다. 없으면
+      // 합성 경계가 더 위(body)로 올라가 헤더 등 바깥 요소까지 끌어들인다
+      <HeroSurface className="isolate flex flex-col items-center justify-center overflow-hidden bg-hero-1 px-6 pt-[72px] text-center">
         {EMPTY_HERO_BACKGROUND_SRC ? (
           <>
             {/* 로드 실패 시 PosterImage만 사라진다 — 형제인 스크림은 남아
-                bg-hero-1 위에 순검정 55%가 깔린 상태가 된다(글로우는 없음).
+                bg-hero-1 위에 순검정 55%가 깔린 상태가 된다(메시는 없음).
                 흰 타이포 가독성에는 유리해 그대로 둔다 */}
             <PosterImage
               src={EMPTY_HERO_BACKGROUND_SRC}
@@ -139,57 +150,58 @@ export function Hero({ festivals }: Props) {
             />
           </>
         ) : (
-          /* 은은하게 떠다니는 글로우 — 축제가 없어도 화면이 멈춰 있지 않다는
-             인상을 준다. prefers-reduced-motion이면 정지 상태로 남는다 */
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -left-1/4 top-1/4 size-[600px] rounded-pill bg-white/10 blur-3xl animate-hero-drift motion-reduce:animate-none"
-          />
+          /* 감싸는 div 없이 형제로 편다 — 사이에 래퍼를 하나 끼우면 그게 합성
+             경계가 돼서 blend가 바탕(hero-1)이 아니라 그 빈 래퍼와 섞인다.
+             화면 밖으로 나가는 부분은 위의 overflow-hidden이 자른다 */
+          MESH_BLOBS.map(({ color, position, duration, delay }) => (
+            <div
+              key={color}
+              aria-hidden
+              className={`pointer-events-none absolute animate-hero-drift mix-blend-screen motion-reduce:animate-none ${position}`}
+              style={{
+                background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
+                animationDuration: duration,
+                animationDelay: delay,
+              }}
+            />
+          ))
         )}
 
-        <div className="relative z-10 flex flex-col items-center gap-4">
+        {/* max-w만 두지 않고 w-full을 같이 둔다 — 부모가 items-center인 flex 열
+            이라 자식은 폭을 안 주면 내용 폭(max-content)으로 잡히고, 그러면 부모
+            보다 넓어질 수 있다(coding-principles "폭을 고정하지 않는다" 항목).
+            부모(HeroSurface)가 확정 폭이라 여기서 100%는 기준이 있다 */}
+        <div className="relative z-10 flex w-full max-w-[640px] flex-col items-center gap-5">
           <p className="animate-fade-up text-caption-strong text-on-media/75 motion-reduce:animate-none">
             FESTA
           </p>
           <h1
-            className="max-w-[720px] animate-fade-up text-balance text-hero text-on-media motion-reduce:animate-none"
+            // break-keep(word-break: keep-all): 없으면 좁은 화면에서 "축제 사 /
+            // 이의"처럼 어절 중간이 끊긴다. 한글은 어절 단위로 넘겨야 읽힌다
+            className="animate-fade-up text-balance break-keep text-hero text-on-media motion-reduce:animate-none"
             style={{ animationDelay: "100ms" }}
           >
-            전국 대학 축제 라인업을 한눈에
+            지금은 축제 사이의 계절이에요
           </h1>
           <p
-            className="max-w-[480px] animate-fade-up text-body text-on-media/85 motion-reduce:animate-none"
+            className="animate-fade-up text-pretty break-keep text-body text-on-media/85 motion-reduce:animate-none"
             style={{ animationDelay: "200ms" }}
           >
-            다가오는 축제가 없는 지금, 이런 걸 먼저 둘러보세요.
+            대학 축제는 보통 5월과 9월에 열려요. 그때까지 지난 축제와 아티스트를
+            둘러볼 수 있어요.
           </p>
-        </div>
-
-        <div
-          className="relative z-10 grid w-full max-w-[900px] animate-fade-up grid-cols-1 gap-4 text-left motion-reduce:animate-none sm:grid-cols-3"
-          style={{ animationDelay: "300ms" }}
-        >
-          {QUICK_LINKS.map(({ href, icon: Icon, title, desc }) => (
-            <Link
-              key={href}
-              href={href}
-              className="group flex flex-col gap-3 rounded-card border border-white/20 bg-white/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-white/15 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-            >
-              <span className="flex size-[44px] items-center justify-center rounded-pill bg-white/20 text-on-media">
-                <Icon size={20} aria-hidden />
-              </span>
-              <span className="text-subtitle text-on-media">{title}</span>
-              <span className="text-caption-strong text-on-media/75">{desc}</span>
-              <span className="mt-auto inline-flex items-center gap-1 text-caption-strong text-on-media/85">
-                바로가기
-                <ChevronRight
-                  size={14}
-                  className="transition-transform duration-300 group-hover:translate-x-1"
-                  aria-hidden
-                />
-              </span>
-            </Link>
-          ))}
+          {/* Button.tsx는 <button> 전용이고 변형도 전부 밝은 배경 기준이라 이
+              자리에 쓸 수 없다. 한 번 쓰는 자리라 secondary-ink와 같은 값(흰
+              채움 + ink, h48 r12)을 인라인으로 둔다. 포커스 링은 흰 버튼 위에
+              흰 링이 안 보이므로 offset으로 어두운 바탕 쪽에 그린다 — 히어로에
+              인디고를 넣지 않는다는 규칙(DESIGN.md) 때문에 기본 링을 못 쓴다 */}
+          <Link
+            href="/festivals"
+            className="mt-3 inline-flex h-[48px] animate-fade-up items-center rounded-md bg-surface px-6 text-button text-ink transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-media motion-reduce:animate-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            style={{ animationDelay: "300ms" }}
+          >
+            축제 둘러보기 →
+          </Link>
         </div>
 
         <ScrollHint />
