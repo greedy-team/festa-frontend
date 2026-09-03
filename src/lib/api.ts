@@ -5,7 +5,7 @@ import { MOCKING_ENABLED } from "@/lib/mocking";
 // /api 아래로 옮겨갔다. 여기 한 곳만 고치면 fetchJson을 쓰는 공개 화면과, 이
 // 상수를 그대로 가져다 쓰는 features/admin/auth/api.ts에도 같이 반영된다.
 export const API_BASE =
-  `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.festa.kr"}/api`;
+  `${process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.every-festa.com"}/api`;
 
 /**
  * 요청 결과. 성공과 실패를 한 값에 담아 호출부가 분기하게 한다.

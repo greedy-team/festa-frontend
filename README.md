@@ -19,7 +19,7 @@ bun dev
 
 ```bash
 NEXT_PUBLIC_API_MOCKING=true
-NEXT_PUBLIC_API_BASE_URL=https://api.festa.kr
+NEXT_PUBLIC_API_BASE_URL=https://api.every-festa.com
 ```
 
 없어도 화면은 뜹니다 — 데이터가 빈 상태로 그려집니다.
