@@ -5,7 +5,9 @@ test("통합 검색에서 검색어를 입력하면 결과 화면으로 이동�
 
   // 버튼을 누르는 대신 Enter로 제출한다 — nav에도 같은 "검색" 라벨의 버튼이
   // 있어서 getByRole("button", { name: "검색" })이 두 개를 잡아버린다.
-  const searchField = page.getByLabel("검색어");
+  // 라벨도 마찬가지다 — 헤더 검색 폼 입력이 같은 "검색어"를 쓰므로(#155)
+  // main 랜드마크로 좁혀 페이지 입력만 고른다.
+  const searchField = page.getByRole("main").getByLabel("검색어");
   await searchField.fill("아");
   await searchField.press("Enter");
 

@@ -1,8 +1,6 @@
 import type { LineupDay } from "@/features/festivals/types";
-import { gridTint } from "@/lib/posterTint";
 import { dateWithWeekday } from "@/lib/festivalDate";
 import { Badge } from "@/components/ui/Badge";
-import { PosterImage } from "@/components/ui/PosterImage";
 
 type Props = {
   day: LineupDay;
@@ -27,35 +25,26 @@ export function DayCard({ day, onMore }: Props) {
         </span>
       </div>
 
-      {/* DESIGN.md day-card 스펙 — 64px 아바타 3개가 가로로 나란히, 이름은 그 아래 */}
-      <div className="mt-4 flex gap-3">
+      {/* 아바타 자리를 두지 않고 이름만 세로로 쌓는다. 아티스트 실사진은 초상권
+          때문에 쓰지 않고(DEC-0063), 그렇다고 빈 자리를 색 블록으로 채우지도
+          않는다(DEC-0130) — 남는 것은 이름이고, 그 이름이 카드의 내용이다.
+          DESIGN.md의 day-card 스펙(64px 아바타 3개)은 이 결정들보다 먼저 그려진
+          것이라 따르지 않는다. */}
+      {/* 이름이 카드의 유일한 내용이 됐으니 크기도 그에 맞춘다 — "카드 안
+          엔티티명은 17/700 고정"(DESIGN.md)이 그대로 적용되는 자리다. 아바타가
+          있던 때의 14px 메타 크기로 두면 큰 카드 안에서 읽히지 않는다. */}
+      <ul className="mt-4 flex flex-col gap-3">
         {visible.map((artist, i) => (
-          <div
+          <li
             key={artist.id ?? `secret-${i}`}
-            className="flex min-w-0 flex-1 flex-col items-center gap-2"
+            className={`truncate text-entity-name ${
+              artist.id !== null ? "text-ink" : "text-muted-soft"
+            }`}
           >
-            <div
-              className={`relative size-[64px] shrink-0 overflow-hidden rounded-pill ${
-                artist.id !== null ? gridTint(artist.id) : "bg-divider"
-              }`}
-            >
-              {artist.id !== null ? (
-                <PosterImage
-                  src={artist.imageUrl}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              ) : null}
-            </div>
-            <span
-              className={`w-full truncate text-center text-meta-medium ${
-                artist.id !== null ? "text-ink" : "text-muted-soft"
-              }`}
-            >
-              {artist.id !== null ? artist.name : "공개 예정"}
-            </span>
-          </div>
+            {artist.id !== null ? artist.name : "공개 예정"}
+          </li>
         ))}
-      </div>
+      </ul>
 
       {hasMore ? (
         <button

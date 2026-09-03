@@ -56,12 +56,13 @@ export const hostsHandlers = [
       ).length;
       if (count > 0) appearanceCount.set(artistId, count);
     }
+    // 배열 순서가 곧 순위다 (DEC-0108) — 출연 횟수 내림차순, 동점은 artistId 오름차순
     const frequentArtists = [...appearanceCount.entries()]
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1] || a[0] - b[0])
       .slice(0, 3)
-      .map(([artistId, count], i) => {
+      .map(([artistId, count]) => {
         const artist = artistsDb.find((a) => a.id === artistId)!;
-        return { rank: i + 1, artistId: artist.id, name: artist.name, imageUrl: artist.imageUrl, appearanceCount: count };
+        return { artistId: artist.id, name: artist.name, imageUrl: artist.imageUrl, appearanceCount: count };
       });
 
     return HttpResponse.json({

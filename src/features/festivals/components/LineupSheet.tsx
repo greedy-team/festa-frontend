@@ -3,11 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import type { LineupDay } from "@/features/festivals/types";
-import { gridTint } from "@/lib/posterTint";
 import { dateWithWeekday } from "@/lib/festivalDate";
 import { genreLabel } from "@/lib/artistGenre";
 import { Chip } from "@/components/ui/Chip";
-import { PosterImage } from "@/components/ui/PosterImage";
 
 type Props = {
   lineup: LineupDay[];
@@ -86,20 +84,14 @@ export function LineupSheet({ lineup, initialDay, onClose }: Props) {
                     <span className="w-6 shrink-0 text-meta-medium text-muted-soft">
                       {i + 1}
                     </span>
-                    <div
-                      className={`relative size-[36px] shrink-0 overflow-hidden rounded-pill ${
-                        artist.id !== null ? gridTint(artist.id) : "bg-divider"
-                      }`}
-                    >
-                      {artist.id !== null ? (
-                        <PosterImage
-                          src={artist.imageUrl}
-                          className="absolute inset-0 h-full w-full object-cover"
-                        />
-                      ) : null}
-                    </div>
+                    {/* 아바타 자리 없음 — 실사진은 초상권 때문에 쓰지 않고
+                        (DEC-0063), 빈 자리를 색 블록으로 채우지도 않는다
+                        (DEC-0130). 행은 번호·이름·장르로만 이뤄진다 */}
+                    {/* 아바타가 빠지면서 행에 남은 것이 이름뿐이라 한 단계
+                        키운다. day-card(17/700)보다 한 단계 낮은 것은 여기가
+                        목록이고 행이 길게 이어지기 때문이다 */}
                     <span
-                      className={`flex-1 text-caption-strong ${
+                      className={`flex-1 text-body ${
                         artist.id !== null ? "text-ink" : "text-muted-soft"
                       }`}
                     >
