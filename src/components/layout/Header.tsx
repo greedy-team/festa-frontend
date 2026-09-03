@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { Container } from "./Container";
 import { NavSearchForm } from "./NavSearchForm";
 import { useHeroVisibility } from "./HeroVisibilityContext";
@@ -117,6 +117,19 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-6">
+          {/* 640~1023px 구간 전용 검색 진입로. 이 구간은 검색 폼이 접혀 있는데
+              (hidden lg:block) 햄버거도 없어서(sm:hidden) 드롭다운에 검색을 넣는
+              방식으로는 덮이지 않는다 — 아이콘 하나로 /search에 보낸다 (#155).
+              44px는 모바일 터치 타깃 하한이다(DESIGN.md Touch Targets). */}
+          <Link
+            href="/search"
+            aria-label="검색"
+            className={`hidden size-[44px] items-center justify-center transition-colors duration-300 sm:flex lg:hidden ${
+              solid ? "text-ink" : "text-on-media"
+            }`}
+          >
+            <Search size={24} aria-hidden />
+          </Link>
           {/* 640px 미만에서는 네비 자체가 숨어 있으니(hidden sm:flex),
               그 자리를 대신할 햄버거 버튼을 연다. */}
           <button
@@ -145,6 +158,13 @@ export function Header() {
       {isMenuOpen ? (
         <div className="absolute inset-x-0 top-full z-20 border-b border-border bg-surface sm:hidden">
           <Container>
+            {/* 640px 미만에서 유일한 검색 진입로 (#155). 아이콘으로 /search에
+                보내는 대신 입력을 그대로 놓는다 — 열려 있는 패널이라 자리가 있고,
+                GET 폼이라 JS 없이도 제출된다. 제출하면 라우트가 바뀌어
+                useRouteResetState가 드롭다운을 닫는다. */}
+            <div className="pt-3">
+              <NavSearchForm fullWidth />
+            </div>
             <nav className="flex flex-col py-2">
               {/* 드롭다운은 항상 흰 패널 위라 solid 분기가 없다 */}
               <NavLinks
