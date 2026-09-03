@@ -162,7 +162,6 @@ export default async function SearchPage({ searchParams }: Props) {
                 <FestivalResultRow
                   key={festival.festivalId}
                   festival={festival}
-                  query={q}
                 />
               ))}
             </div>
