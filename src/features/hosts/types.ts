@@ -16,8 +16,8 @@ export type HostFestivalHistoryItem = {
   endDate: string;
 };
 
+/** 순위 필드는 두지 않는다 — 배열 순서가 곧 순위다 (DEC-0108) */
 export type FrequentArtist = {
-  rank: number;
   artistId: number;
   name: string;
   imageUrl: string | null;
