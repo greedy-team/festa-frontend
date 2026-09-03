@@ -75,7 +75,7 @@ export default async function SearchPage({ searchParams }: Props) {
   if (!q) {
     return (
       <PageFadeIn>
-        <Container className="mt-10 mb-16">
+        <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
           {/* 검색창은 있지만 페이지 제목이 시각적으로는 필요 없는 화면이라, 시맨틱
               구조만 sr-only h1로 채운다 — h2 결과 섹션들이 짚을 상위 헤딩이 없으면
               스크린리더 사용자가 페이지 시작점을 못 잡는다. */}
@@ -91,7 +91,7 @@ export default async function SearchPage({ searchParams }: Props) {
   if (!res.ok) {
     console.error("GET /search 실패", res.status, res.message);
     return (
-      <Container className="mt-10 mb-16">
+      <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
         <h1 className="sr-only">검색</h1>
         <SearchBar q={q} />
         <p className="mt-10 text-body text-muted">검색 결과를 불러오지 못했습니다.</p>
@@ -107,8 +107,18 @@ export default async function SearchPage({ searchParams }: Props) {
   return (
     // nav나 다른 화면의 링크로 들어오는 화면이라, 뚝 뜨지 않고 진입 시
     // 부드럽게 나타나게 한다(다른 사용자 화면과 같은 PageFadeIn).
+    //
+    // 폭 상한 1200: 이 화면은 카드 그리드가 없고 세 섹션 전부 전폭 리스트 행이라
+    // 읽기용 텍스트 화면 쪽이다(DEC-0131 — 카드 그리드는 유동, 읽기용은 캡).
+    // 큰 모니터에서 행 텍스트와 우측 화살표가 1000px 넘게 벌어졌다. 실측상 행
+    // 텍스트가 요구하는 폭은 250px뿐이라 가독성으로는 1100~1280이 다 충분한데,
+    // 아티스트 목록·상세가 이미 쓰는 1200을 그대로 쓴다 — 값을 새로 만들면
+    // 읽기용 화면 폭이 두 개가 된다.
+    //
+    // 아티스트 화면은 성공 return에만 캡을 걸었지만 여기선 세 return 모두에 건다.
+    // 셋 다 같은 SearchBar를 그려서, 결과 화면에만 걸면 검색 전후로 검색창 폭이 튄다.
     <PageFadeIn>
-      <Container className="mt-10 mb-16">
+      <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
         <h1 className="sr-only">검색</h1>
         <SearchBar q={q} />
 
