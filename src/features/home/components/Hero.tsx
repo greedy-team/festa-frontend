@@ -11,8 +11,7 @@ import { HeroSurface } from "@/components/layout/HeroSurface";
 import { PosterImage } from "@/components/ui/PosterImage";
 
 // 다가오는 축제가 0건일 때(방학 등) 보여줄 바로가기 3개 — 실제 목적지 화면이
-// 있는 라우트만 넣는다. 분실물은 아직 목적지 화면이 없어(LostPanel.tsx 주석
-// 참고) 제외했다.
+// 있는 라우트만 넣는다. 분실물은 MVP 밖이라(DEC-0061) 목적지 화면이 없어 제외했다.
 const QUICK_LINKS = [
   {
     href: "/festivals",
