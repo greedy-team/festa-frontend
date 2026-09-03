@@ -40,8 +40,12 @@ export function FestivalHero({ festival }: Props) {
       {/* 상세 화면 카드 스크림 3단 중 가장 진한 단계 — 텍스트가 항상 위에 있어야 한다 */}
       <div className="absolute inset-0 bg-scrim-35" />
 
-      {/* 시안(08-2) 우상단 아이콘 — 주최의 인스타그램·공식 사이트 링크. 없으면 그리지 않는다 */}
-      <div className="absolute right-6 top-6 z-10 flex items-center gap-2">
+      {/* 시안(08-2) 우상단 아이콘 — 주최의 인스타그램·공식 사이트 링크. 없으면 그리지 않는다.
+          z-20인 이유: 아래 본문 블록이 flex-1로 카드 전체를 덮는데 그쪽도 z-10이라,
+          같은 값이면 DOM에서 뒤에 있는 본문이 히트 테스트를 이겨 이 링크가 눌리지
+          않는다(본문 첫 줄인 뱃지 행이 가로폭을 다 차지해 이 자리를 먹는다).
+          ISS-0070에서 홈 히어로 링크가 도트 래퍼에 가려졌던 것과 같은 유형이다. */}
+      <div className="absolute right-6 top-6 z-20 flex items-center gap-2">
         {safeInstagramUrl ? (
           <a
             href={safeInstagramUrl}
