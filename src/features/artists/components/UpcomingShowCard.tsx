@@ -35,11 +35,11 @@ export function UpcomingShowCard({ show }: Props) {
 
       {/* D-day가 공연일(performanceDate) 기준이라, 옆 날짜도 축제 전체 기간이
           아니라 실제 공연일을 보여준다 */}
-      <span className="mt-3 truncate text-label-regular text-muted">
+      <span className="mt-3 truncate text-caption text-muted">
         DAY {day} · {fullDate(performanceDate)}
       </span>
       <h3 className="mt-1 truncate text-entity-name text-ink">{name}</h3>
-      <span className="mt-1 truncate text-label-regular text-muted-soft">
+      <span className="mt-1 truncate text-caption text-muted">
         {hostName} · {venueName}
       </span>
     </Link>
