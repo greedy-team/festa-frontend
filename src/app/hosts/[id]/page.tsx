@@ -37,7 +37,7 @@ export default async function HostDetailPage({ params }: Props) {
     // 섹션들은 스크롤로 들어올 때 한 번 더 페이드인된다(축제 상세와 동일).
     <PageFadeIn>
       <Container className="mt-10 mb-16">
-        <nav className="flex items-center gap-1 text-meta text-muted-soft">
+        <nav className="flex items-center gap-1 text-caption text-muted">
           <Link href="/">홈</Link>
           <span>›</span>
           <span>학교</span>

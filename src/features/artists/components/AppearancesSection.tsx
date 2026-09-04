@@ -24,7 +24,7 @@ export function AppearancesSection({ artistId, items, total }: Props) {
     <section>
       <div className="flex items-center justify-between">
         <h2 className="text-block-title text-ink">출연 이력</h2>
-        <span className="text-caption-strong text-muted-soft">전체 {total}건</span>
+        <span className="text-caption-strong text-muted">전체 {total}건</span>
       </div>
 
       {items.length ? (
@@ -36,13 +36,13 @@ export function AppearancesSection({ artistId, items, total }: Props) {
                 className="absolute left-[3px] top-1.5 size-[7px] -translate-x-1/2 rounded-pill bg-primary ring-4 ring-surface"
                 aria-hidden
               />
-              <p className="text-label-regular text-muted-soft">
+              <p className="text-caption text-muted">
                 {appearance.startDate.slice(0, 4)}
               </p>
               <h3 className="mt-0.5 text-entity-name text-ink">{appearance.name}</h3>
               {/* 학교·기간을 각각 한 줄씩 두면 둘 다 같은 옅은 회색이라 구분 없이
                   늘어져 보인다 — 같은 성격(부가 정보)이니 한 줄로 묶는다 */}
-              <p className="mt-0.5 text-label-regular text-muted">
+              <p className="mt-0.5 text-caption text-muted">
                 {appearance.hostName} · {dateRange(appearance.startDate, appearance.endDate)}
               </p>
             </div>

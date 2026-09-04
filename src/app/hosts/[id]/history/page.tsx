@@ -85,7 +85,7 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
     // (축제·아티스트 목록 화면과 같은 PageFadeIn)
     <PageFadeIn>
       <Container className="mt-10 mb-16">
-        <nav className="flex items-center gap-1 text-meta text-muted-soft">
+        <nav className="flex items-center gap-1 text-caption text-muted">
           <Link href="/">홈</Link>
           <span>›</span>
           <span>학교</span>
@@ -112,7 +112,7 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
 
         <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <span className="text-meta text-muted">연도</span>
+            <span className="text-caption text-muted">연도</span>
             <div className="flex items-center gap-2">
               <Link href={makeHref({ year: null })}>
                 <Chip active={!year}>전체</Chip>

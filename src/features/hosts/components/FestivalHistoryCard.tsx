@@ -33,11 +33,11 @@ export function FestivalHistoryCard({ festival }: Props) {
         />
       </div>
 
-      <span className="mt-4 truncate text-label-regular text-muted">
+      <span className="mt-4 truncate text-caption text-muted">
         {festivalSeason(startDate)}
       </span>
       <h3 className="mt-1 truncate text-entity-name text-ink">{name}</h3>
-      <span className="mt-2 text-label-regular text-muted-soft">
+      <span className="mt-2 text-caption text-muted">
         {dateRange(startDate, endDate)}
       </span>
     </Link>
