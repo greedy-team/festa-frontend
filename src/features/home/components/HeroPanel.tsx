@@ -22,7 +22,9 @@ export function HeroPanel({ festival }: Props) {
       // 전체에 겹쳐 있어 DESIGN.md("히어로 안에 인디고를 넣지 않는다")에 따라
       // 흰색으로 예외를 둔다. 패널끼리 여백 없이 맞닿아 있어(DESIGN.md) 기본
       // outline-offset(2px)을 그대로 쓰면 옆 패널을 침범해 안쪽으로 당긴다.
-      className={`relative block h-full w-full overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-on-media ${heroTint(festivalId)}`}
+      // 슬라이드 폭이 소수점이면 이동 중 흰 바탕이 비칠 수 있어, 그림만 1px 겹친다.
+      // 바깥 슬라이드 폭은 유지하므로 캐러셀의 이동 거리에는 영향을 주지 않는다.
+      className={`relative block h-full w-[calc(100%+1px)] overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-on-media ${heroTint(festivalId)}`}
     >
       <PosterImage
         src={posterUrl}
