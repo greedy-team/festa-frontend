@@ -44,10 +44,14 @@ describe("formatDateTime", () => {
     expect(formatDateTime("")).toBe("—");
   });
 
-  it("정상 ISO 문자열은 —가 아닌 무언가로 포맷된다", () => {
-    const formatted = formatDateTime("2026-09-05T12:34:56Z");
+  it("정상 ISO 문자열은 사람이 읽는 형태로 바뀐다 — 원본을 그대로 내보내지 않는다", () => {
+    const iso = "2026-09-05T12:34:56Z";
+    const formatted = formatDateTime(iso);
 
     expect(formatted).not.toBe("—");
-    expect(formatted.length).toBeGreaterThan(0);
+    // 원본을 그대로 돌려줘도 통과하던 자리다. 로케일·타임존이 달라도 안 바뀌는 것만
+    // 고정한다 — 연도는 UTC±14 어디서도 2026이고 ko-KR은 그레고리력이다.
+    expect(formatted).not.toBe(iso);
+    expect(formatted).toContain("2026");
   });
 });
