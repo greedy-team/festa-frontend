@@ -16,8 +16,13 @@ export const todayStr = () => new Date().toLocaleDateString('sv-SE'); // 로컬 
  * 실제로 예정 공연 E2E가 그 때문에 검증 대상을 못 찾고 스킵되고 있었다(#174).
  * "항상 예정이어야 하는" 자리에만 이걸 쓴다 — 나머지는 고정값이 대조하기 편하다.
  */
-export const daysFromToday = (n: number) =>
-  new Date(Date.parse(todayStr()) + n * 86_400_000).toLocaleDateString('sv-SE');
+export const daysFromToday = (n: number) => {
+  // Date.parse('YYYY-MM-DD')는 UTC 자정이라 로컬로 다시 찍으면 서쪽 타임존에서 하루 밀린다
+  // (이 파일 상단이 없앤 바로 그 불일치). 로컬 Date에 setDate로 더해 같은 기준을 지킨다.
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toLocaleDateString('sv-SE');
+};
 
 export function daysUntil(dateStr: string) {
   return Math.round((Date.parse(dateStr) - Date.parse(todayStr())) / 86_400_000);

@@ -38,6 +38,8 @@ test("라인업의 공개된 아티스트 행을 누르면 그 아티스트 상�
 
   // 행 텍스트는 "이름 + 장르"라 상세 h1(이름만)과 같지 않다. href로 대조한다.
   const href = await artistRow.getAttribute("href");
+  // null이면 아래 RegExp에 "null"이 박혀 엉뚱한 메시지로 실패한다 — 모양까지 여기서 못박는다.
+  expect(href, "아티스트 행의 href가 /artists/<id> 꼴이 아니다").toMatch(/^\/artists\/\d+$/);
   const rowText = (await artistRow.innerText()).trim();
 
   await artistRow.click();
