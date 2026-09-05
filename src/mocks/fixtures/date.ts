@@ -9,6 +9,16 @@
 
 export const todayStr = () => new Date().toLocaleDateString('sv-SE'); // 로컬 'YYYY-MM-DD'
 
+/**
+ * 오늘로부터 n일 뒤(음수면 앞)의 'YYYY-MM-DD'.
+ *
+ * 목 데이터의 날짜는 대부분 고정 문자열이라 시간이 지나면 "미래"였던 축제가 과거가 된다.
+ * 실제로 예정 공연 E2E가 그 때문에 검증 대상을 못 찾고 스킵되고 있었다(#174).
+ * "항상 예정이어야 하는" 자리에만 이걸 쓴다 — 나머지는 고정값이 대조하기 편하다.
+ */
+export const daysFromToday = (n: number) =>
+  new Date(Date.parse(todayStr()) + n * 86_400_000).toLocaleDateString('sv-SE');
+
 export function daysUntil(dateStr: string) {
   return Math.round((Date.parse(dateStr) - Date.parse(todayStr())) / 86_400_000);
 }
