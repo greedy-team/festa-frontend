@@ -41,8 +41,8 @@ export function FadeInSection({ children, className = "" }: Props) {
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
-        state === "hidden" ? "translate-y-6 opacity-0" : "translate-y-0 opacity-100"
+      className={`transition-all duration-[var(--reveal-duration,700ms)] ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
+        state === "hidden" ? "translate-y-[var(--reveal-distance,24px)] opacity-0" : "translate-y-0 opacity-100"
       } ${className}`}
     >
       {children}

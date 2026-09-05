@@ -96,7 +96,7 @@ export function wallNameClass(index: number): string {
 // 스크롤 힌트다. 누르면 바로 다음 섹션으로 내려간다. 바깥 래퍼가 inset-x-0라
 // 전체 폭을 차지하는데, pointer-events-none을 안 주면 그 빈 영역이 밑에 깔린
 // 패널 링크의 클릭을 가로챈다(#68에서 도트가 똑같은 이유로 겪은 문제).
-function ScrollHint() {
+function ScrollHint({ hidden = false }: { hidden?: boolean }) {
   const sectionRef = useRef<HTMLElement>(null);
 
   return (
@@ -104,12 +104,18 @@ function ScrollHint() {
       ref={(node) => {
         sectionRef.current = node?.closest("section") ?? null;
       }}
-      className="pointer-events-none absolute inset-x-0 bottom-9 flex justify-center"
+      inert={hidden}
+      aria-hidden={hidden}
+      className={`pointer-events-none absolute inset-x-0 bottom-9 flex justify-center transition-opacity duration-150 motion-reduce:transition-none ${hidden ? "opacity-0" : "opacity-100"}`}
     >
       <button
         type="button"
         onClick={() =>
-          sectionRef.current?.nextElementSibling?.scrollIntoView({ behavior: "smooth" })
+          sectionRef.current?.nextElementSibling?.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "instant"
+              : "smooth",
+          })
         }
         aria-label="아래로 스크롤"
         className="pointer-events-auto animate-bounce rounded-pill bg-surface p-2 text-ink motion-reduce:animate-none"
@@ -133,6 +139,8 @@ type Props = {
 
 export function Hero({ festivals, artists }: Props) {
   const hasCarousel = festivals.length > 1;
+  const wallRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
 
   // 옵션·플러그인 배열을 매 렌더 새로 만들면 리액트 래퍼가 "옵션이 바뀌었다"고
   // 보고 매번 재초기화한다 — 그러면 오토플레이 타이머가 한 번도 안 끝나고
@@ -150,6 +158,34 @@ export function Hero({ festivals, artists }: Props) {
   useEffect(() => {
     emblaApi?.plugins().autoplay?.play();
   }, [emblaApi]);
+
+  useEffect(() => {
+    const wall = wallRef.current;
+    const section = wall?.closest("section");
+    if (!wall || !section) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      // 움직이는 배경이 아니라 고정된 섹션으로 재야 배율이 측정값에 되먹임되지 않는다.
+      const { top, height } = section.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, -top / (height * 0.6)));
+      wall.style.setProperty("--wall-scale", String(1.06 - progress * 0.12));
+      wall.style.setProperty("--wall-y", `${progress * 80}px`);
+      wall.style.setProperty("--wall-opacity", String(1 - progress * 0.65));
+      setScrolled(top < -8);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [festivals.length, artists]);
 
   // 다가오는 축제가 하나도 없는 시즌(방학 등)도 실제로 있다 — 빈 문구 대신
   // 실제 패널과 같은 톤(다크 틴트 + 흰 타이포)으로 왜 비어 있는지를 설명하고
@@ -174,8 +210,9 @@ export function Hero({ festivals, artists }: Props) {
             {/* content-evenly: 50개로는 h-dvh를 못 채워서 content-center면 가운데
                 덩어리로 뭉치고 위아래가 빈다. 줄 간격을 화면 높이에 맞춰 편다 */}
             <div
+              ref={wallRef}
               aria-hidden
-              className="pointer-events-none absolute inset-0 flex flex-wrap content-evenly justify-center gap-x-7 px-10"
+              className="pointer-events-none absolute inset-0 flex flex-wrap content-evenly justify-center gap-x-7 px-10 [overflow-anchor:none] motion-safe:scale-[var(--wall-scale,1.06)] motion-safe:translate-y-[var(--wall-y,0px)] motion-safe:opacity-[var(--wall-opacity,1)]"
             >
               {artists.names.map((name, i) => (
                 <span key={i} className={`whitespace-nowrap ${wallNameClass(i)}`}>
@@ -248,7 +285,7 @@ export function Hero({ festivals, artists }: Props) {
           </Link>
         </div>
 
-        <ScrollHint />
+        <ScrollHint hidden={scrolled} />
       </HeroSurface>
     );
   }

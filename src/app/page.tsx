@@ -65,7 +65,7 @@ export default async function Home() {
 
       {/* 히어로가 화면을 꽉 채우고 나서 내려오는 첫 섹션이라, 뚝 끊기지 않고
           부드럽게 나타나게 한다(스크롤재킹 없이 가벼운 느낌만). */}
-      <FadeInSection>
+      <FadeInSection className="scroll-mt-24 [--reveal-distance:16px] [--reveal-duration:350ms]">
         {/* 히어로 바로 다음이라 다른 섹션 간격(mt-16)보다 위쪽 여백을 더 준다 */}
         <Container className="mt-20">
           {/* /festivals 목록 화면이 생겼다 (같은 PR의 축제 목록 조립 커밋) */}
