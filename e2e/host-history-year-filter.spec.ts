@@ -9,12 +9,16 @@ test("축제 이력에서 연도로 좁히면 주소와 목록이 함께 바뀐�
   await page.locator('a[href^="/hosts/"]').first().click();
   await expect(page).toHaveURL(/\/hosts\/\d+$/);
 
+  // 주최 상세가 그려질 때까지 기다린 뒤에 센다 — count()는 자동 대기가 없다.
+  await expect(page.locator("h1")).toBeVisible();
+
   const seeAll = page.getByRole("link", { name: /전체 \d+개/ });
   if ((await seeAll.count()) === 0) {
     throw new Error("축제 이력 전체보기 링크가 없다 — 이력이 0건인 주최에 들어왔다");
   }
   await seeAll.click();
   await expect(page).toHaveURL(/\/hosts\/\d+\/history$/);
+  await expect(page.getByRole("heading", { name: "축제 이력" })).toBeVisible();
 
   const yearChip = page.locator('a[href*="year="]').first();
   if ((await yearChip.count()) === 0) {
@@ -26,7 +30,11 @@ test("축제 이력에서 연도로 좁히면 주소와 목록이 함께 바뀐�
   await expect(page).toHaveURL(new RegExp(`[?&]year=${year}`));
 
   // 좁힌 결과는 있거나 없거나 둘 중 하나이고, 에러 화면이면 안 된다.
-  const cards = await page.locator('a[href^="/festivals/"]').count();
+  const festivalCards = page.locator('a[href^="/festivals/"]');
+  const emptyMessage = page.getByText("해당 연도의 축제 이력이 없습니다");
+  await expect(festivalCards.first().or(emptyMessage).first()).toBeVisible();
+
+  const cards = await festivalCards.count();
   if (cards === 0) {
     await expect(page.getByText("해당 연도의 축제 이력이 없습니다")).toBeVisible();
   }

@@ -57,6 +57,12 @@ test("공개 예정(시크릿 게스트) 행은 링크가 아니다", async ({ p
 
   for (const href of hrefs) {
     await page.goto(href);
+
+    // count()는 자동 대기가 없다. 렌더 전에 부르면 0이 나와 "이 축제엔 없다"로 오해하고
+    // 그냥 넘어간다 — CI(워커 1개, 느림)에서 실제로 그래서 전부 건너뛰고 실패했다.
+    // 라인업 섹션이 그려질 때까지 먼저 기다린다(day 카드가 있든 빈 문구든 이 제목은 늘 있다).
+    await expect(page.getByRole("heading", { name: "라인업" })).toBeVisible();
+
     const secret = page.getByText("공개 예정", { exact: true });
     if ((await secret.count()) === 0) continue;
 

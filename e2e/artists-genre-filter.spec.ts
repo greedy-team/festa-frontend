@@ -26,7 +26,11 @@ test("장르 칩으로 좁히면 주소와 결과가 함께 바뀐다", async ({
 
   // 좁힌 결과가 0건이면 빈 상태 문구가, 아니면 목록이 있어야 한다. 어느 쪽이든
   // 에러 화면으로 빠지면 안 된다.
-  const rowsAfter = await page.locator('a[href^="/artists/"]').count();
+  // 결과가 자리잡을 때까지 기다린다 — 목록이든 빈 상태든 하나는 반드시 그려진다.
+  const emptyMessage = page.getByText(/해당하는 아티스트가 없습니다/);
+  await expect(rows.first().or(emptyMessage).first()).toBeVisible();
+
+  const rowsAfter = await rows.count();
   if (rowsAfter === 0) {
     await expect(page.getByText(/해당하는 아티스트가 없습니다/)).toBeVisible();
   } else {
