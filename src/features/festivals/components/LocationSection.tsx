@@ -5,12 +5,19 @@ type Props = {
   location: Location;
 };
 
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY;
+
 export function LocationSection({ location }: Props) {
   const { venueName, address, latitude, longitude } = location;
-  // #48(구글 맵 키·결제)이 좌표 기준 길찾기로 확정해뒀다 — place id는 안 쓴다.
-  const directionsHref =
-    latitude != null && longitude != null
-      ? `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
+  const hasCoordinates = latitude != null && longitude != null;
+  // DEC-0072: 길찾기도 지도도 좌표 하나만 쓴다 — place id는 두지 않는다.
+  const directionsHref = hasCoordinates
+    ? `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
+    : null;
+  // DEC-0035: 렌더 전용이라 JS SDK 없이 Embed API iframe으로 충분하다.
+  const mapSrc =
+    hasCoordinates && MAPS_KEY
+      ? `https://www.google.com/maps/embed/v1/place?key=${MAPS_KEY}&q=${latitude},${longitude}`
       : null;
 
   return (
@@ -22,10 +29,19 @@ export function LocationSection({ location }: Props) {
           <p className="text-body text-ink">{venueName}</p>
           {address ? <p className="mt-1 text-caption text-muted">{address}</p> : null}
 
-          {/* 구글 맵 API 키·결제 설정이 아직 없어 폴백 박스로 둔다 (#48) */}
-          <div className="mt-4 flex h-[240px] items-center justify-center rounded-md bg-surface-field text-caption text-muted-soft">
-            지도 준비 중입니다
-          </div>
+          {mapSrc ? (
+            <iframe
+              title={`${venueName} 위치 지도`}
+              src={mapSrc}
+              loading="lazy"
+              className="mt-4 h-[240px] w-full rounded-md border-0"
+            />
+          ) : (
+            // 좌표가 없거나 키가 없는 환경(키 없이 도는 로컬)에서만 남는 자리다.
+            <div className="mt-4 flex h-[240px] items-center justify-center rounded-md bg-surface-field text-caption text-muted-soft">
+              지도 준비 중입니다
+            </div>
+          )}
 
           {directionsHref ? (
             <a
