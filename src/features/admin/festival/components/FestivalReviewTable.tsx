@@ -60,7 +60,7 @@ const MIN_COLUMN_WIDTH = 64;
  * 같은 크롤러 값이 통과해 여기 오면 new URL이 던진다. 행 렌더 안이라 그대로 두면 행
  * 하나가 표 전체를 무너뜨리므로 원본 문자열로 폴백한다.
  */
-function hostnameOf(url: string): string {
+export function hostnameOf(url: string): string {
   try {
     return new URL(url).hostname;
   } catch {

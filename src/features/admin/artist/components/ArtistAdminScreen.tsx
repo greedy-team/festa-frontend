@@ -45,11 +45,11 @@ const SORT_OPTIONS: { value: ArtistSort; label: string }[] = [
 
 const VALID_GENRES = Object.keys(GENRE_LABELS) as ArtistGenre[];
 
-function parseGenre(raw: string | null): ArtistGenre | undefined {
+export function parseGenre(raw: string | null): ArtistGenre | undefined {
   return VALID_GENRES.find((g) => g === raw);
 }
 
-function parseSort(raw: string | null): ArtistSort {
+export function parseSort(raw: string | null): ArtistSort {
   return SORT_OPTIONS.find((o) => o.value === raw)?.value ?? ARTIST_SORT.CREATED_DESC;
 }
 

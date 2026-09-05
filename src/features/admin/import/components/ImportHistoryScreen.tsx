@@ -27,15 +27,15 @@ const STATUS_LABELS: Record<ImportStatus, string> = {
 
 const STATUS_TONE = { PENDING: "warning", COMMITTED: "success", EXPIRED: "neutral" } as const;
 
-function parseType(raw: string | null): ImportType | undefined {
+export function parseType(raw: string | null): ImportType | undefined {
   return (Object.keys(TYPE_LABELS) as ImportType[]).find((t) => t === raw);
 }
 
-function parseStatus(raw: string | null): ImportStatus | undefined {
+export function parseStatus(raw: string | null): ImportStatus | undefined {
   return (Object.keys(STATUS_LABELS) as ImportStatus[]).find((s) => s === raw);
 }
 
-function formatDateTime(iso: string | null): string {
+export function formatDateTime(iso: string | null): string {
   if (!iso) return "—";
   const d = new Date(iso);
   return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString("ko-KR");
