@@ -16,7 +16,9 @@ src/mocks/
     hosts.ts       # 5.1 (1개)
     search.ts      # 7.1~7.2 (2개)
     adminAuth.ts    # POST /admin/auth/login (1개)
-    index.ts        # 위 5개를 합침
+    adminFestivals.ts # GET /admin/festivals, POST|DELETE /admin/festivals/{id}/publish (3개)
+                     # — 데이터는 db.ts가 아니라 fixtures/adminFestivals.ts(실서버 캡처)
+    index.ts        # 위 6개를 합침
   browser.ts        # Client Component fetch용 워커
   server.ts         # Server Component / Node 런타임용. 로컬 next start에서만 실제로 쓰인다
                      # — Vercel 서버리스에서는 인터셉션이 안 걸려서(#75) 서버 사이드는
@@ -27,9 +29,10 @@ instrumentation.ts   # server.ts를 로컬 next start에서 켜는 훅. 서버 �
 ```
 
 lost-items는 P1로 보류돼서 핸들러 없음. 나중에 착수하면 `handlers/lostItems.ts`를 만들고
-`handlers/index.ts`에 추가하면 됨. 관리자 화면 중 로그인만 이 MSW 구조를 쓰고, 그 이후
-화면(축제 심사 등)은 `features/admin/festival/api.ts`가 네트워크 없이 로컬 픽스처를
-직접 조작하는 별도 방식이라 여기 핸들러가 없다.
+`handlers/index.ts`에 추가하면 됨. 관리자 화면은 로그인과 축제 검수(목록·발행·해제)만
+핸들러가 있다 — 아티스트·주최·라인업·임포트 화면은 목 모드에서 응답할 핸들러가 없어
+실서버로 요청이 나간다(`MockProvider`의 `onUnhandledRequest: 'bypass'`, MOCKING_STRATEGY.md
+2026-09-05 항목).
 
 ## 설치
 
