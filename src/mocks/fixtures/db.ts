@@ -9,6 +9,7 @@
  * - 여기 있는 것만 수정하면 festivals/artists/hosts/search 응답이 전부 같이 갱신된다.
  */
 
+import { daysFromToday } from './date';
 export type HostRecord = {
   id: number;
   name: string;
@@ -367,8 +368,10 @@ export const festivalsDb: FestivalRecord[] = [
     id: 55,
     name: '녹지원 축제 2026',
     hostId: 11,
-    startDate: '2026-09-08',
-    endDate: '2026-09-10',
+    // 항상 미래여야 하는 유일한 축제 — 예정 공연 E2E의 검증 대상이다(#174).
+    // 고정 날짜로 두면 그 날이 지나는 순간 예정 공연이 0건이 되어 스펙이 스킵된다.
+    startDate: daysFromToday(10),
+    endDate: daysFromToday(12),
     posterUrl: null,
     venueName: '건국대 노천극장',
     address: '서울 광진구 능동로 120',
@@ -383,7 +386,18 @@ export const festivalsDb: FestivalRecord[] = [
     },
     description: '건국대학교 가을 축제.',
     hashtags: ['건국대축제', '녹지원'],
-    lineup: [],
+    // 미래 축제 중 유일하게 라인업이 있다. 아티스트 상세의 "예정 공연"이 여기서 나온다.
+    // 시크릿 게스트(null)를 하루에 섞어 "공개 예정" 행이 링크가 아닌 것도 함께 검증한다.
+    lineup: [
+      { day: 1, date: daysFromToday(10), artists: [
+        { artistId: 4 },
+        { artistId: 5 },
+        { artistId: null },
+      ] },
+      { day: 2, date: daysFromToday(11), artists: [
+        { artistId: 12 },
+      ] },
+    ],
   },
   {
     id: 56,
