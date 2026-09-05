@@ -128,3 +128,23 @@ FESTA 프론트는 2인 체제로 진행 중이고, 화면 개발은 API 명세�
   등 코드의 인라인 주석과 `README.md`/`CODE_GUIDE.md`/`docs/mocking-strategy.md`는
   전체 설명을 반복하지 않고 여기로 링크만 건다. 실제 제거 작업 이력은 #125/PR #126에
   있다.
+
+**2026-09-05 확인 (#116)**
+
+- **admin 검수 목록·발행·해제 핸들러가 들어왔다 — 2.4의 「admin 제외」와 08-23의 「이후 화면은
+  별도 방식」은 더 이상 사실이 아니다.** #122가 관리자 콘솔을 실 API(`adminFetch`)로 전환하며
+  로컬 픽스처를 지웠고, 그 픽스처에 기대던 관리자 E2E(#116)가 깨졌다. 목 모드에서 관리자
+  검수 화면이 부르는 `GET /admin/festivals`·`POST|DELETE /admin/festivals/{id}/publish`를
+  `handlers/adminFestivals.ts`가 받는다. 화면이 안 쓰는 일괄 발행(`POST /admin/festivals/publish`)은
+  만들지 않았다.
+- **이 핸들러의 데이터는 2.2의 `db.ts` 파생이 아니라 실서버 응답 캡처다**
+  (`fixtures/adminFestivals.ts`, 2026-09-05 `GET /api/admin/festivals?page=0&size=50` 24건 verbatim).
+  2.2가 단일 소스를 고집한 이유는 사용자 화면 간 정합성(라인업 artistId ↔ 아티스트)인데, 관리자
+  검수 목록은 사용자 화면과 id를 공유하지 않아 그 이유가 적용되지 않는다. 대신 이 픽스처의 목적은
+  「서버가 실제로 내려준 모양」을 고정하는 것이라, 프론트가 db.ts에서 조립한 응답으로 대체하면
+  그 목적이 사라진다. 픽스처를 `AdminFestival[]`로 선언해 서버 응답과 프론트 타입의 대조를
+  컴파일에 맡긴다.
+- **핸들러가 없던 동안 관리자 요청은 프로덕션으로 새고 있었다.** `MockProvider`가
+  `onUnhandledRequest: 'bypass'`라 목 모드에서도 미등록 요청은 실서버로 나간다. #116 E2E에서
+  목 토큰으로 `api.every-festa.com`을 때려 401을 받고 로그인으로 튕기는 형태로 드러났다. 이번엔
+  핸들러를 채워 막았고, `bypass` 자체를 `error`로 바꿀지는 별도 판단으로 남긴다.
