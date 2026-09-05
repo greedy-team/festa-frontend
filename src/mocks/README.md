@@ -15,15 +15,21 @@ src/mocks/
     artists.ts     # 4.1~4.2 (2개)
     hosts.ts       # 5.1 (1개)
     search.ts      # 7.1~7.2 (2개)
-    index.ts        # 위 4개를 합침
+    adminAuth.ts    # POST /admin/auth/login (1개)
+    index.ts        # 위 5개를 합침
   browser.ts        # Client Component fetch용 워커
-  server.ts         # Server Component / Node 런타임용
+  server.ts         # Server Component / Node 런타임용. 로컬 next start에서만 실제로 쓰인다
+                     # — Vercel 서버리스에서는 인터셉션이 안 걸려서(#75) 서버 사이드는
+                     # 실제로 lib/api.ts의 fetchMockJson이 handler.run()을 직접 호출한다
   MockProvider.tsx   # 브라우저 워커를 앱에 연결하는 Client Component
-instrumentation.ts   # Next.js가 서버 시작 시 자동 호출 — async Server Component의 fetch를 여기서 가로챔
+instrumentation.ts   # server.ts를 로컬 next start에서 켜는 훅. 서버 사이드 모킹의 실제
+                     # 경로는 아니다(위 참고, CODE_GUIDE.md 2.5절에 상세)
 ```
 
 lost-items는 P1로 보류돼서 핸들러 없음. 나중에 착수하면 `handlers/lostItems.ts`를 만들고
-`handlers/index.ts`에 추가하면 됨.
+`handlers/index.ts`에 추가하면 됨. 관리자 화면 중 로그인만 이 MSW 구조를 쓰고, 그 이후
+화면(축제 심사 등)은 `features/admin/festival/api.ts`가 네트워크 없이 로컬 픽스처를
+직접 조작하는 별도 방식이라 여기 핸들러가 없다.
 
 ## 설치
 
@@ -66,10 +72,9 @@ pnpm exec msw init public/ --save
 - **`db.ts`가 유일한 데이터 소스**다. festivals/artists/hosts 핸들러가 각자 하드코딩하지 않고
   전부 여기서 파생시킨다. F-13 순환탐색(축제→아티스트→축제) E2E가 실제로 의미 있으려면
   라인업의 artistId가 진짜 존재하는 아티스트를 가리켜야 하는데, 이 구조가 그걸 보장한다.
-- **`hosts.type` 필드는 일단 포함**했다 (부록 변경사항엔 "제거 예정"이라 써 있지만 실제
-  필드표/응답 예시엔 남아있어서 스펙 원문 기준으로 넣음 — `hosts.ts` 주석 참고). 제거로
-  확정되면 `hosts.ts`의 `type: host.type,` 한 줄만 지우면 됨.
-- **`/auth/me`는 만들지 않았다** — 이번 버전은 로그인 기능 자체가 없는 것으로 확정.
+- **`hosts.type` 필드**: 결론(확정된 ERD에 없어 화면이 안 씀)과 제거 범위·이력은
+  `MOCKING_STRATEGY.md`의 "5. 갱신"이 정본이다 — 여기서 반복하지 않는다(#125/PR #126).
+- **`/auth/me`는 만들지 않았다** — 관리자 로그인(`POST /admin/auth/login`)은 있지만, 로그인 상태를 서버에 다시 물어보는 엔드포인트는 없다. 토큰 유효성은 `AdminGuard`가 클라이언트에 저장된 토큰 존재 여부로만 판단한다(`readToken()`).
 - **날짜 계산(`festivalStatus`, `dday`)은 `fixtures/date.ts`의 `todayStr()`/`daysUntil()`/
   `festivalStatus()`로 통일했다.** 문자열(YYYY-MM-DD) 비교라 UTC/로컬 파싱 불일치 버그는
   없지만, 여전히 실제 `new Date()` 기준이라 시간이 지나면 fixture의 상태(ONGOING/UPCOMING/
@@ -85,7 +90,7 @@ pnpm exec msw init public/ --save
   잘 하는지 확인하는 용도로만 쓸 것.
 - **HMR이 서버측 모킹을 푼다.** `instrumentation.ts`의 `register()`는 서버 부팅 시 한 번만
   실행된다. 파일을 고쳐 HMR이 돌면 그 패치가 풀려 서버 컴포넌트의 `fetch`가 실제 인터넷으로
-  나간다. `api.festa.kr`은 실재하는 도메인이라 DNS는 뚫리고 TLS에서 막히는데, 앱의
-  `fetchJson`이 그 실패를 삼키므로 **화면은 500이 아니라 조용히 빈 상태로 뜬다.** 로컬에서
-  데이터가 안 보이면 핸들러나 목 데이터를 의심하기 전에 `.next`를 지우고 dev 서버를
-  재시작해라.
+  나간다. Base URL이 실 API(`api.every-festa.com`)라 그 요청은 **성공한다** — 목 데이터를
+  볼 자리에 실 데이터가 조용히 섞여 뜬다. 반대로 백엔드가 죽어 있으면 앱의 `fetchJson`이
+  그 실패를 삼키므로 **화면은 500이 아니라 조용히 빈 상태로 뜬다.** 어느 쪽이든 핸들러나
+  목 데이터를 의심하기 전에 `.next`를 지우고 dev 서버를 재시작해라.

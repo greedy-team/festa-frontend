@@ -22,9 +22,10 @@ export function FestivalHistoryCard({ festival }: Props) {
   const { festivalId, name, startDate, endDate, posterUrl } = festival;
 
   return (
-    <Link href={`/festivals/${festivalId}`} className="flex flex-col">
+    <Link href={`/festivals/${festivalId}`} className="group flex flex-col">
+      {/* hover 시 살짝 커지는 것 — festival-card와 동일 (DESIGN.md {elevation.hover}) */}
       <div
-        className={`relative aspect-[236/320] w-full overflow-hidden rounded-media ${gridTint(festivalId)}`}
+        className={`relative aspect-[236/320] w-full overflow-hidden rounded-media transition-transform duration-300 group-hover:scale-105 group-hover:shadow-hover motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${gridTint(festivalId)}`}
       >
         <PosterImage
           src={posterUrl}
@@ -32,11 +33,11 @@ export function FestivalHistoryCard({ festival }: Props) {
         />
       </div>
 
-      <span className="mt-4 truncate text-label-regular text-muted">
+      <span className="mt-4 truncate text-caption text-muted">
         {festivalSeason(startDate)}
       </span>
       <h3 className="mt-1 truncate text-entity-name text-ink">{name}</h3>
-      <span className="mt-2 text-label-regular text-muted-soft">
+      <span className="mt-2 text-caption text-muted">
         {dateRange(startDate, endDate)}
       </span>
     </Link>

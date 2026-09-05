@@ -1,7 +1,6 @@
 import { getRecentFestivals, getUpcomingFestivals } from "@/features/home/api";
 import { Hero } from "@/features/home/components/Hero";
 import { RecentCard } from "@/features/home/components/RecentCard";
-import { LostPanel } from "@/features/home/components/LostPanel";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Container } from "@/components/layout/Container";
 import { HeroSurface } from "@/components/layout/HeroSurface";
@@ -60,13 +59,14 @@ export default async function Home() {
         </Container>
       </FadeInSection>
 
-      {/* 시안의 560:680 비율을 유지하면서 컨테이너 폭을 꽉 채운다 — 고정폭(560px+680px)으로
-          두면 컨테이너가 1280보다 넓을 때 위 카드 그리드 오른쪽 끝과 어긋난다. */}
-      {/* mt-20: 위 "최근 등록된 축제" 섹션과 같은 위쪽 여백. mb-16: 섹션 간격 64 —
-          Footer 앞에는 원래 섹션 간격을 그대로 둔다 */}
-      <Container className="mt-20 mb-16 grid grid-cols-1 gap-10 sm:grid-cols-[560fr_680fr]">
-        <LostPanel />
-        <AdSlot />
+      {/* 분실물 패널이 있던 자리다. 분실물은 MVP 밖이고(DEC-0061) 연동할 API도 없어
+          상시 빈 패널이 되므로, 비활성으로 남기지 않고 걷어냈다(DEC-0129) — 헤더·푸터·
+          히어로 빈 상태 바로가기와 같은 판정이다. 화면이 생기면 그 세 곳과 함께 되돌린다.
+          짝이 사라져 광고 슬롯도 패널형(680×420)을 유지할 근거가 없어, 다른 화면과 같은
+          배너형으로 맞춘다(페이지당 하나는 그대로, DEC-0087). */}
+      {/* mt-16/mb-16: 섹션 간격 64 — Footer 앞에도 같은 간격을 둔다 */}
+      <Container className="mt-16 mb-16">
+        <AdSlot variant="banner" />
       </Container>
     </>
   );

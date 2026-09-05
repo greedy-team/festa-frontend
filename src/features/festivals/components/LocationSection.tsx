@@ -19,7 +19,7 @@ export function LocationSection({ location }: Props) {
       {/* DEC-0087: 로그인 없는 개인화 영역 대신 광고 하나. 오시는 길과 좌우로 배치한다 */}
       <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-[3fr_2fr]">
         <div className="rounded-card border border-border bg-surface p-6">
-          <p className="text-caption-strong text-ink">{venueName}</p>
+          <p className="text-body text-ink">{venueName}</p>
           {address ? <p className="mt-1 text-caption text-muted">{address}</p> : null}
 
           {/* 구글 맵 API 키·결제 설정이 아직 없어 폴백 박스로 둔다 (#48) */}

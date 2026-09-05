@@ -4,6 +4,7 @@ import type { FestivalDetail } from "@/features/festivals/types";
 import { heroTint } from "@/lib/posterTint";
 import { dateRange, formatDday, festivalStatus } from "@/lib/festivalDate";
 import { ticketTypeLabel } from "@/lib/admission";
+import { safeHttpUrl } from "@/lib/safeUrl";
 import { PosterImage } from "@/components/ui/PosterImage";
 import { Badge } from "@/components/ui/Badge";
 
@@ -24,6 +25,9 @@ export function FestivalHero({ festival }: Props) {
     admission,
   } = festival;
   const status = festivalStatus(startDate, endDate);
+  // 관리자 등록 API가 URL 형식을 검사하지 않는다 (DEC-0107) — http(s)가 아니면 링크로 그리지 않는다
+  const safeInstagramUrl = host.instagramUrl ? safeHttpUrl(host.instagramUrl) : null;
+  const safeHomepageUrl = host.homepageUrl ? safeHttpUrl(host.homepageUrl) : null;
 
   return (
     <div
@@ -33,14 +37,19 @@ export function FestivalHero({ festival }: Props) {
         src={posterUrl}
         className="absolute inset-0 h-full w-full object-cover"
       />
-      {/* 상세 화면 카드 스크림 3단 중 가장 진한 단계 — 텍스트가 항상 위에 있어야 한다 */}
-      <div className="absolute inset-0 bg-scrim-35" />
+      {/* 홈 히어로와 같은 순검정 55% 스크림. ink 35%는 밝은 포스터(세종연회 라벤더)에서
+          흰 글자 대비가 2.5:1로 AA에 못 미쳤고, 검정 55%는 5.2:1이다 (#165) */}
+      <div className="absolute inset-0 bg-scrim-hero" />
 
-      {/* 시안(08-2) 우상단 아이콘 — 주최의 인스타그램·공식 사이트 링크. 없으면 그리지 않는다 */}
-      <div className="absolute right-6 top-6 z-10 flex items-center gap-2">
-        {host.instagramUrl ? (
+      {/* 시안(08-2) 우상단 아이콘 — 주최의 인스타그램·공식 사이트 링크. 없으면 그리지 않는다.
+          z-20인 이유: 아래 본문 블록이 flex-1로 카드 전체를 덮는데 그쪽도 z-10이라,
+          같은 값이면 DOM에서 뒤에 있는 본문이 히트 테스트를 이겨 이 링크가 눌리지
+          않는다(본문 첫 줄인 뱃지 행이 가로폭을 다 차지해 이 자리를 먹는다).
+          ISS-0070에서 홈 히어로 링크가 도트 래퍼에 가려졌던 것과 같은 유형이다. */}
+      <div className="absolute right-6 top-6 z-20 flex items-center gap-2">
+        {safeInstagramUrl ? (
           <a
-            href={host.instagramUrl}
+            href={safeInstagramUrl}
             target="_blank"
             rel="noreferrer"
             aria-label="주최 인스타그램"
@@ -49,9 +58,9 @@ export function FestivalHero({ festival }: Props) {
             <AtSign size={18} aria-hidden />
           </a>
         ) : null}
-        {host.homepageUrl ? (
+        {safeHomepageUrl ? (
           <a
-            href={host.homepageUrl}
+            href={safeHomepageUrl}
             target="_blank"
             rel="noreferrer"
             aria-label="주최 공식 사이트"
@@ -72,17 +81,18 @@ export function FestivalHero({ festival }: Props) {
         <div className="flex flex-col gap-4">
           <h1 className="text-hero text-on-media">{name}</h1>
 
-          <div className="flex flex-col gap-2 text-caption-strong text-on-media/85">
+          {/* 읽어야 하는 메타는 body(16)·흰 100% — 85%는 밝은 포스터에서 대비를 잃는다 (#165) */}
+          <div className="flex flex-col gap-2 text-body text-on-media">
             <p className="flex items-center gap-2">
-              <Calendar size={14} className="shrink-0" aria-hidden />
+              <Calendar size={16} className="shrink-0" aria-hidden />
               {dateRange(startDate, endDate)}
             </p>
             <p className="flex items-center gap-2">
-              <MapPin size={14} className="shrink-0" aria-hidden />
+              <MapPin size={16} className="shrink-0" aria-hidden />
               {location.venueName}
             </p>
             <p className="flex items-center gap-2">
-              <Ticket size={14} className="shrink-0" aria-hidden />
+              <Ticket size={16} className="shrink-0" aria-hidden />
               {ticketTypeLabel(admission.ticketType)}
             </p>
           </div>

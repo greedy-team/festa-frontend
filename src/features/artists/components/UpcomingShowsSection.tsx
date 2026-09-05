@@ -19,7 +19,7 @@ export function UpcomingShowsSection({ artistId, items, total }: Props) {
     <section>
       <div className="flex items-center justify-between">
         <h2 className="text-block-title text-ink">예정 공연</h2>
-        <span className="text-caption-strong text-muted-soft">전체 {total}건</span>
+        <span className="text-caption-strong text-muted">전체 {total}건</span>
       </div>
 
       {items.length ? (

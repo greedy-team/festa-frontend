@@ -7,12 +7,13 @@ import { daysUntil, festivalStatus } from '@/mocks/fixtures/date';
 const VALID_STATUS = ['UPCOMING', 'ONGOING', 'ENDED'];
 const VALID_SORT = ['LATEST', 'UPCOMING', 'POPULAR']; // 최종 스펙 파라미터 표엔 없지만 호출 예시엔 등장 — 팀 컨펌 전까지 유지
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
+// /api 접두사: 2026-08-23 백엔드 결정(DEC-0099), #127 참고.
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.every-festa.com'}/api`;
 
 function hostSummary(hostId: number) {
   const host = hostsDb.find((h) => h.id === hostId);
   if (!host) throw new Error(`fixture 오류: hostId=${hostId}에 해당하는 host 없음`);
-  return { id: host.id, name: host.name, type: host.type, logoUrl: host.logoUrl };
+  return { id: host.id, name: host.name, logoUrl: host.logoUrl };
 }
 
 function festivalListItem(f: FestivalRecord) {
@@ -135,7 +136,6 @@ export const festivalsHandlers = [
       name: f.name,
       host: {
         id: host.id,
-        type: host.type,
         name: host.name,
         logoUrl: host.logoUrl,
         instagramUrl: host.instagramUrl,
@@ -148,9 +148,11 @@ export const festivalsHandlers = [
       lineup: f.lineup.map((day) => ({
         day: day.day,
         date: day.date,
+        // order 필드는 없다 — DEC-0109: 배열 순서 자체가 계약이고, 순번 표기는 프론트가 인덱스로 만든다.
+        // 시크릿 게스트는 필드 전부 null — DEC-0116: revealed 파생 불리언을 응답에 두지 않는다.
         artists: day.artists.map((a) => {
-          if (!a.revealed) {
-            return { id: null, name: null, imageUrl: null, genre: null, order: a.order, revealed: false };
+          if (a.artistId === null) {
+            return { id: null, name: null, imageUrl: null, genre: null };
           }
           const artist = artistsDb.find((ar) => ar.id === a.artistId)!;
           return {
@@ -158,8 +160,6 @@ export const festivalsHandlers = [
             name: artist.name,
             imageUrl: artist.imageUrl,
             genre: artist.genre,
-            order: a.order,
-            revealed: true,
           };
         }),
       })),
@@ -189,7 +189,7 @@ export const festivalsHandlers = [
       startDate: f.startDate,
       endDate: f.endDate,
       dday,
-      host: { id: host.id, type: host.type, name: host.name, logoUrl: host.logoUrl },
+      host: { id: host.id, name: host.name, logoUrl: host.logoUrl },
       venueName: f.venueName,
       latitude: f.latitude,
       longitude: f.longitude,
@@ -200,10 +200,11 @@ export const festivalsHandlers = [
         ticketType: f.admission.ticketType,
         verification: f.admission.verification,
       },
+      // 시크릿 게스트는 필드 전부 null — DEC-0116: revealed 파생 불리언을 응답에 두지 않는다.
       lineup: flatLineup.map((a) => {
-        if (!a.revealed) return { id: null, name: null, imageUrl: null, revealed: false };
+        if (a.artistId === null) return { id: null, name: null, imageUrl: null };
         const artist = artistsDb.find((ar) => ar.id === a.artistId)!;
-        return { id: artist.id, name: artist.name, imageUrl: artist.imageUrl, revealed: true };
+        return { id: artist.id, name: artist.name, imageUrl: artist.imageUrl };
       }),
       lineupTotal: f.lineup.reduce((sum, d) => sum + d.artists.length, 0),
     });

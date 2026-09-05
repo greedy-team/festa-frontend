@@ -28,24 +28,26 @@ export type FestivalSort = "LATEST" | "UPCOMING";
  * 인스타그램·공식 사이트 링크에 필요한 필드가 추가로 있다 */
 export type FestivalHostSummary = {
   id: number;
-  type: string;
   name: string;
   logoUrl: string | null;
   instagramUrl: string | null;
   homepageUrl: string | null;
 };
 
-/** revealed로 id/name/imageUrl/genre 유무가 갈린다 — 판별 유니온이라 !(non-null assertion) 없이 좁혀진다 */
-export type LineupArtist = { order: number } & (
+/**
+ * id로 name/imageUrl/genre 유무가 갈린다 — 판별 유니온이라 !(non-null assertion) 없이 좁혀진다.
+ * id가 null이면 시크릿 게스트 — DEC-0116: 시크릿 게스트는 artist null로만 표현하고
+ * revealed 파생 불리언을 응답에 두지 않는다.
+ * order 필드는 없다 — DEC-0109: 배열 순서 자체가 계약이고, 순번 표기는 프론트가 인덱스로 만든다.
+ */
+export type LineupArtist =
   | {
-      revealed: true;
       id: number;
       name: string;
       imageUrl: string | null;
       genre: ArtistGenre | null;
     }
-  | { revealed: false; id: null; name: null; imageUrl: null; genre: null }
-);
+  | { id: null; name: null; imageUrl: null; genre: null };
 
 export type LineupDay = {
   day: number;
