@@ -42,7 +42,7 @@ const ACTION_TONE = {
  * 행의 대표 이름. values의 키는 CSV 헤더 그대로다(백엔드 ImportSection) —
  * festivals·artists는 `name`, lineups는 `artist_canonical`.
  */
-function rowName(row: ImportPreviewRow): string {
+export function rowName(row: ImportPreviewRow): string {
   const v = row.values ?? {};
   return v.name ?? v.artist_canonical ?? row.importKey ?? `${row.line}행`;
 }

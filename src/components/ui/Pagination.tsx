@@ -11,7 +11,7 @@ type Props = {
 };
 
 /** 현재 페이지 주변 최대 5개 번호만 보여준다 (17 Festival List 시안) */
-function pageWindow(current: number, total: number, size = 5): number[] {
+export function pageWindow(current: number, total: number, size = 5): number[] {
   if (total <= size) return Array.from({ length: total }, (_, i) => i + 1);
   const half = Math.floor(size / 2);
   const start = Math.min(Math.max(1, current - half), total - size + 1);

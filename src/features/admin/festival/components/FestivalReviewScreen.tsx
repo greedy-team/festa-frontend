@@ -28,7 +28,7 @@ import { ADMIN_GENERIC_ERROR_MESSAGE, AdminApiError, adminErrorMessage } from "@
 
 const PAGE_SIZE = 10;
 
-function parsePublished(raw: string | null): boolean | undefined {
+export function parsePublished(raw: string | null): boolean | undefined {
   if (raw === "true") return true;
   if (raw === "false") return false;
   return undefined;
@@ -36,7 +36,7 @@ function parsePublished(raw: string | null): boolean | undefined {
 
 const VALID_DISCOVERY = Object.keys(DISCOVERY_LABELS) as Discovery[];
 
-function parseDiscovery(raw: string | null): Discovery | undefined {
+export function parseDiscovery(raw: string | null): Discovery | undefined {
   return VALID_DISCOVERY.find((d) => d === raw);
 }
 
