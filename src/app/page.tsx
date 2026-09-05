@@ -1,4 +1,5 @@
 import { getRecentFestivals, getUpcomingFestivals } from "@/features/home/api";
+import { getArtists } from "@/features/artists/api";
 import { Hero } from "@/features/home/components/Hero";
 import { RecentCard } from "@/features/home/components/RecentCard";
 import { AdSlot } from "@/components/ui/AdSlot";
@@ -26,10 +27,34 @@ export default async function Home() {
   const upcoming = upcomingRes.ok ? upcomingRes.data : [];
   const recent = recentRes.ok ? recentRes.data : [];
 
+  // 다가오는 축제가 0건일 때만 아티스트를 부른다(DEC-0168). 위 Promise.all에
+  // 끼우면 축제가 있는 평상시에도 쓰지 않을 목록을 매번 받아온다. 여기서만
+  // 워터폴이 되지만, 그 지연은 축제가 0건인 화면에서만 생긴다.
+  // 정렬이 출연 많은 순인 이유: 벽에서 앞자리가 큰 글자를 받으므로 자주 온
+  // 아티스트가 크게 보인다 (지금은 축제가 1건이라 전원 1회로 같다).
+  const artistsRes =
+    upcomingRes.ok && upcoming.length === 0
+      ? await getArtists({ page: 0, size: 50, sort: "APPEARANCES" })
+      : null;
+
+  if (artistsRes && !artistsRes.ok) {
+    console.error("GET /artists 실패", artistsRes.status, artistsRes.message);
+  }
+
+  // 못 불러오면 undefined로 둔다 — Hero가 기존 메시 배경으로 되돌아간다.
+  // 실패를 빈 벽으로 그리면 "아티스트가 없는 서비스"로 보인다(LSN-0013).
+  const artists =
+    artistsRes?.ok && artistsRes.data.items.length > 0
+      ? {
+          names: artistsRes.data.items.map((artist) => artist.name),
+          total: artistsRes.data.totalElements,
+        }
+      : undefined;
+
   return (
     <>
       {upcomingRes.ok ? (
-        <Hero festivals={upcoming} />
+        <Hero festivals={upcoming} artists={artists} />
       ) : (
         // 히어로와 같은 자리·같은 크기·같은 어두운 톤 — 헤더가 홈에서는 첫 렌더부터
         // 투명(흰 글자)으로 그려지므로, 이 자리가 밝으면 헤더가 안 보인다 (SiteChrome.tsx).
