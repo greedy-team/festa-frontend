@@ -63,36 +63,39 @@ export default async function Home() {
         </HeroSurface>
       )}
 
-      {/* 히어로가 화면을 꽉 채우고 나서 내려오는 첫 섹션이라, 뚝 끊기지 않고
-          부드럽게 나타나게 한다(스크롤재킹 없이 가벼운 느낌만). */}
-      <FadeInSection className="scroll-mt-24 [--reveal-distance:16px] [--reveal-duration:350ms]">
-        {/* 히어로 바로 다음이라 다른 섹션 간격(mt-16)보다 위쪽 여백을 더 준다 */}
-        <Container className="mt-20">
-          {/* /festivals 목록 화면이 생겼다 (같은 PR의 축제 목록 조립 커밋) */}
-          <SectionHeaderRow title="최근 등록된 축제" href="/festivals" />
-          {recentRes.ok ? (
-            <div className="mt-5 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
-              {recent.map((festival) => (
-                <RecentCard key={festival.festivalId} festival={festival} />
-              ))}
-            </div>
-          ) : (
-            <p className="mt-5 text-body text-muted">
-              최근 등록된 축제를 불러오지 못했습니다.
-            </p>
-          )}
-        </Container>
-      </FadeInSection>
+      {/* 콘텐츠가 적어도 히어로를 지나 스크롤할 수 있게 한 화면 높이를 확보한다. */}
+      <div className="flex min-h-[calc(100dvh-72px)] scroll-mt-[72px] flex-col">
+        {/* 히어로가 화면을 꽉 채우고 나서 내려오는 첫 섹션이라, 뚝 끊기지 않고
+            부드럽게 나타나게 한다(스크롤재킹 없이 가벼운 느낌만). */}
+        <FadeInSection className="[--reveal-distance:16px] [--reveal-duration:350ms]">
+          {/* 히어로 바로 다음이라 다른 섹션 간격(mt-16)보다 위쪽 여백을 더 준다 */}
+          <Container className="mt-20">
+            {/* /festivals 목록 화면이 생겼다 (같은 PR의 축제 목록 조립 커밋) */}
+            <SectionHeaderRow title="최근 등록된 축제" href="/festivals" />
+            {recentRes.ok ? (
+              <div className="mt-5 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
+                {recent.map((festival) => (
+                  <RecentCard key={festival.festivalId} festival={festival} />
+                ))}
+              </div>
+            ) : (
+              <p className="mt-5 text-body text-muted">
+                최근 등록된 축제를 불러오지 못했습니다.
+              </p>
+            )}
+          </Container>
+        </FadeInSection>
 
-      {/* 분실물 패널이 있던 자리다. 분실물은 MVP 밖이고(DEC-0061) 연동할 API도 없어
-          상시 빈 패널이 되므로, 비활성으로 남기지 않고 걷어냈다(DEC-0129) — 헤더·푸터·
-          히어로 빈 상태 바로가기와 같은 판정이다. 화면이 생기면 그 세 곳과 함께 되돌린다.
-          짝이 사라져 광고 슬롯도 패널형(680×420)을 유지할 근거가 없어, 다른 화면과 같은
-          배너형으로 맞춘다(페이지당 하나는 그대로, DEC-0087). */}
-      {/* mt-16/mb-16: 섹션 간격 64 — Footer 앞에도 같은 간격을 둔다 */}
-      <Container className="mt-16 mb-16">
-        <AdSlot variant="banner" />
-      </Container>
+        {/* 분실물 패널이 있던 자리다. 분실물은 MVP 밖이고(DEC-0061) 연동할 API도 없어
+            상시 빈 패널이 되므로, 비활성으로 남기지 않고 걷어냈다(DEC-0129) — 헤더·푸터·
+            히어로 빈 상태 바로가기와 같은 판정이다. 화면이 생기면 그 세 곳과 함께 되돌린다.
+            짝이 사라져 광고 슬롯도 패널형(680×420)을 유지할 근거가 없어, 다른 화면과 같은
+            배너형으로 맞춘다(페이지당 하나는 그대로, DEC-0087). */}
+        {/* 콘텐츠가 적으면 광고를 하단에 두고, 많으면 최소 간격 64를 유지한다. */}
+        <Container className="mt-auto pt-16 pb-16">
+          <AdSlot variant="banner" />
+        </Container>
+      </div>
     </>
   );
 }

@@ -65,9 +65,9 @@ export type Verification =
 export type TicketType = "FREE" | "PAID";
 
 export type Admission = {
-  externalVisitor: ExternalVisitor;
-  verification: Verification;
-  ticketType: TicketType;
+  externalVisitor: ExternalVisitor | null;
+  verification: Verification | null;
+  ticketType: TicketType | null;
   ticketOpenAt: string | null;
   note: string | null;
 };
