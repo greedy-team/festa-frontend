@@ -106,7 +106,7 @@ function ScrollHint({ hidden = false }: { hidden?: boolean }) {
       }}
       inert={hidden}
       aria-hidden={hidden}
-      className={`pointer-events-none absolute inset-x-0 bottom-9 flex justify-center transition-opacity duration-150 motion-reduce:transition-none ${hidden ? "opacity-0" : "opacity-100"}`}
+      className={`pointer-events-none absolute inset-x-0 bottom-4 flex justify-center transition-opacity duration-150 motion-reduce:transition-none sm:bottom-9 ${hidden ? "opacity-0" : "opacity-100"}`}
     >
       <button
         type="button"
@@ -118,7 +118,7 @@ function ScrollHint({ hidden = false }: { hidden?: boolean }) {
           })
         }
         aria-label="아래로 스크롤"
-        className="pointer-events-auto animate-bounce rounded-pill bg-surface p-2 text-ink motion-reduce:animate-none"
+        className="pointer-events-auto animate-bounce rounded-pill bg-surface p-3 text-ink motion-reduce:animate-none sm:p-2"
       >
         <ChevronDown size={20} aria-hidden />
       </button>
@@ -153,12 +153,11 @@ export function Hero({ festivals, artists }: Props) {
   const [emblaPlugins] = useState(() =>
     hasCarousel ? [Autoplay({ delay: 5000, stopOnInteraction: false })] : [],
   );
-  const [emblaRef, emblaApi] = useEmblaCarousel(emblaOptions, emblaPlugins);
+  const [emblaRef] = useEmblaCarousel(emblaOptions, emblaPlugins);
 
-  useEffect(() => {
-    emblaApi?.plugins().autoplay?.play();
-  }, [emblaApi]);
-
+  // 오토플레이를 여기서 play()로 켜지 않는다 — 플러그인 기본값이 playOnInit: true라
+  // 자기 init에서 이미 시작한다. 밖에서 부르면 init보다 먼저 걸려 delay 배열이 아직
+  // 없는 채로 setTimer가 돌고 히어로 전체가 에러 경계로 떨어진다(축제 2건 이상일 때).
   useEffect(() => {
     const wall = wallRef.current;
     const section = wall?.closest("section");
