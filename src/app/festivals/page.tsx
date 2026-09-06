@@ -25,10 +25,14 @@ export default async function FestivalsPage({ searchParams }: Props) {
   const params = await searchParams;
   const page = parsePage(params.page);
   const sort: FestivalSort = params.sort === "UPCOMING" ? "UPCOMING" : "LATEST";
+  // "다가오는 순"(sort=UPCOMING)은 개최일 오름차순 정렬만 하고 지난 축제를 거르지 않는다
+  // (DEC-0115) — 오늘 이후 시작하는 축제만 남기는 건 status 필터의 몫이라 함께 보낸다.
+  // 이력 화면(/hosts/[id]/history)은 같은 sort를 "오래된순"으로 쓰므로 status를 붙이지 않는다.
+  const status = sort === "UPCOMING" ? "UPCOMING" : undefined;
   const artistId = params.artistId ? Number(params.artistId) : undefined;
   const q = params.q?.trim() || undefined;
 
-  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, artistId, q });
+  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, status, artistId, q });
 
   if (!res.ok) {
     console.error("GET /festivals 실패", res.status, res.message);
@@ -46,7 +50,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
   let currentPage = page;
   if (currentPage > res.data.totalPages && res.data.totalPages > 0) {
     currentPage = res.data.totalPages;
-    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, artistId, q });
+    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, status, artistId, q });
     if (!res.ok) {
       console.error("GET /festivals 실패", res.status, res.message);
       return (

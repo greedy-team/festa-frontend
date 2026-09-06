@@ -2,6 +2,7 @@ import { fetchJson, type ApiResult } from "@/lib/api";
 import type {
   PaginatedFestivals,
   FestivalSort,
+  FestivalStatus,
   FestivalDetail,
 } from "@/features/festivals/types";
 
@@ -10,6 +11,9 @@ type Params = {
   page?: number;
   size?: number;
   sort?: FestivalSort;
+  /** 진행 상태 필터. sort와는 다른 축이다 — sort는 순서만 정하고 status가 걸러낸다 (DEC-0115).
+   * 함께 보내면 둘 다 적용된다 */
+  status?: FestivalStatus;
   hostId?: number;
   year?: number;
   artistId?: number;
@@ -23,6 +27,7 @@ export async function getFestivals({
   page = 0,
   size = 10,
   sort = "LATEST",
+  status,
   hostId,
   year,
   artistId,
@@ -33,6 +38,7 @@ export async function getFestivals({
     size: String(size),
     sort,
   });
+  if (status) params.set("status", status);
   if (hostId) params.set("hostId", String(hostId));
   if (year) params.set("year", String(year));
   if (artistId) params.set("artistId", String(artistId));
