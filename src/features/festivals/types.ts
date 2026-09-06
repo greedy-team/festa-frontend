@@ -24,6 +24,10 @@ export type PaginatedFestivals = {
 
 export type FestivalSort = "LATEST" | "UPCOMING";
 
+/** GET /festivals의 status 필터 값. 판정 로직과 함께 festivalDate에 산다 — 여기서 다시
+ * 정의하지 않고 목록 파라미터 타입이 쓸 수 있게 다시 내보내기만 한다 */
+export type { FestivalStatus } from "@/lib/festivalDate";
+
 /** GET /festivals/{id} 응답 중 host 필드 — 목록 카드의 HostSummary와 달리 히어로의
  * 공식 사이트 링크(homepageUrl)에 필요한 필드가 더 있다.
  * instagramUrl(학교 공식 계정)도 응답에 오지만 이 화면에서는 쓰지 않는다 —

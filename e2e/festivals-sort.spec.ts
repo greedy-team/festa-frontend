@@ -17,6 +17,18 @@ test("축제 목록에서 정렬을 바꾸면 URL과 목록이 갱신된다", as
   await expect(page).not.toHaveURL(/page=/);
 });
 
+// sort=UPCOMING은 개최일 오름차순 정렬만 하고 지난 축제를 거르지 않는다(DEC-0115).
+// /festivals의 "다가오는 순"은 status=UPCOMING을 함께 보내 오늘 이후 축제만 남긴다(#194).
+test('"다가오는 순"은 지난 축제를 걸러낸다', async ({ page }) => {
+  await page.goto("/festivals?sort=UPCOMING");
+  await expect(page.locator("h3").first()).toBeVisible();
+
+  const names = await page.locator("h3").allInnerTexts();
+  // 픽스처에서 가장 오래된(확정 과거) 축제. status 필터가 붙기 전에는 이게 첫 카드였다.
+  expect(names).not.toContain("입실렌티 2026");
+  expect(names.length).toBeGreaterThan(0);
+});
+
 test("축제 카드를 누르면 해당 축제 상세로 이동한다", async ({ page }) => {
   await page.goto("/festivals");
 
