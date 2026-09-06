@@ -6,7 +6,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { ChevronDown } from "lucide-react";
 import type { UpcomingFestival } from "@/features/home/types";
-import { HeroPanel } from "@/features/home/components/HeroPanel";
+import { HeroPanel, type HeroSplitFrom } from "@/features/home/components/HeroPanel";
 import { HeroSurface } from "@/components/layout/HeroSurface";
 
 // 아티스트를 못 불러왔을 때의 배경. 이 화면은 히어로 패널 네 장이 있어야 할 자리가 통째로
@@ -64,6 +64,18 @@ export function slideBasisClass(count: number): string {
   return `shrink-0 ${BASIS_CLASS[slots]}`;
 }
 
+/**
+ * 패널 안 조판이 좌우 분할(텍스트 열 | 포스터)로 서기 시작하는 브레이크포인트.
+ * null이면 어느 폭에서도 세로 스택이다.
+ *
+ * 개수로만 정하는 이유는 slideBasisClass와 같다(LSN-0020). 1건은 패널이 전폭이라
+ * lg(1024)부터, 2건은 반폭이라 xl(1280, 패널 640)부터 옆에 열을 둘 자리가 난다.
+ * 3건부터는 lg에서도 패널이 341 이하라 좌우로 나눌 폭이 없다.
+ */
+export function heroSplitFrom(count: number): HeroSplitFrom {
+  return count <= 1 ? "lg" : count === 2 ? "xl" : null;
+}
+
 // 이름 벽의 크기·불투명도 단계. 슬롯 폭과 같은 이유로 리터럴 표다 — 템플릿
 // 문자열로 조합하면 Tailwind가 빌드 시점에 클래스를 못 찾는다.
 //
@@ -106,7 +118,7 @@ function ScrollHint({ hidden = false }: { hidden?: boolean }) {
       }}
       inert={hidden}
       aria-hidden={hidden}
-      className={`pointer-events-none absolute inset-x-0 bottom-9 flex justify-center transition-opacity duration-150 motion-reduce:transition-none ${hidden ? "opacity-0" : "opacity-100"}`}
+      className={`pointer-events-none absolute inset-x-0 bottom-4 flex justify-center transition-opacity duration-150 motion-reduce:transition-none sm:bottom-9 ${hidden ? "opacity-0" : "opacity-100"}`}
     >
       <button
         type="button"
@@ -118,7 +130,7 @@ function ScrollHint({ hidden = false }: { hidden?: boolean }) {
           })
         }
         aria-label="아래로 스크롤"
-        className="pointer-events-auto animate-bounce rounded-pill bg-surface p-2 text-ink motion-reduce:animate-none"
+        className="pointer-events-auto animate-bounce rounded-pill bg-surface p-3 text-ink motion-reduce:animate-none sm:p-2"
       >
         <ChevronDown size={20} aria-hidden />
       </button>
@@ -153,12 +165,11 @@ export function Hero({ festivals, artists }: Props) {
   const [emblaPlugins] = useState(() =>
     hasCarousel ? [Autoplay({ delay: 5000, stopOnInteraction: false })] : [],
   );
-  const [emblaRef, emblaApi] = useEmblaCarousel(emblaOptions, emblaPlugins);
+  const [emblaRef] = useEmblaCarousel(emblaOptions, emblaPlugins);
 
-  useEffect(() => {
-    emblaApi?.plugins().autoplay?.play();
-  }, [emblaApi]);
-
+  // 오토플레이를 여기서 play()로 켜지 않는다 — 플러그인 기본값이 playOnInit: true라
+  // 자기 init에서 이미 시작한다. 밖에서 부르면 init보다 먼저 걸려 delay 배열이 아직
+  // 없는 채로 setTimer가 돌고 히어로 전체가 에러 경계로 떨어진다(축제 2건 이상일 때).
   useEffect(() => {
     const wall = wallRef.current;
     const section = wall?.closest("section");
@@ -298,7 +309,7 @@ export function Hero({ festivals, artists }: Props) {
         <div className="flex h-full">
           {festivals.map((festival) => (
             <div key={festival.festivalId} className={slideBasisClass(festivals.length)}>
-              <HeroPanel festival={festival} />
+              <HeroPanel festival={festival} splitFrom={heroSplitFrom(festivals.length)} />
             </div>
           ))}
         </div>

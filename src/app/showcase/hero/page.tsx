@@ -4,7 +4,7 @@
 
 import { Container } from "@/components/layout/Container";
 import { HeroPanel } from "@/features/home/components/HeroPanel";
-import { slideBasisClass } from "@/features/home/components/Hero";
+import { heroSplitFrom, slideBasisClass } from "@/features/home/components/Hero";
 import { HeroArrow } from "@/components/ui/HeroArrow";
 import { HeroDots } from "@/components/ui/HeroDots";
 import {
@@ -41,17 +41,23 @@ export default function ShowcaseHeroPage() {
 
       <SpecimenSection title="패널 폭 — 축제 개수별">
         {/* 실제 Hero는 h-dvh(뷰포트 높이 전체)라 표본에 그대로 못 넣는다.
-            같은 slideBasisClass를 실제 화면 폭 데스크톱 기준(lg)으로
-            재현해서, 개수가 슬롯(4)보다 적을 때 빈 칸 없이 채워지는 걸
+            같은 slideBasisClass·heroSplitFrom을 실제 화면 폭 데스크톱 기준(lg)으로
+            재현해서, 개수가 슬롯(4)보다 적을 때 빈 칸 없이 채워지고 패널 안
+            조판이 개수에 따라 좌우 분할(1·2건) ↔ 세로 스택(3건 이상)으로 갈리는 걸
             보여준다. 높이는 위 "Panel" 표본과 똑같이 952px(시안의 히어로
             높이)로 맞춘다 — 다른 값을 쓰면 같은 컴포넌트인데 표본마다
             세로 길이가 달라 보인다. */}
-        {[1, 2, 3].map((n) => (
-          <Specimen key={n} name={`축제 ${n}개`} size={`lg 기준, 슬롯 4개 중 ${n}개 사용`} full>
+        {[1, 2, 3, 4].map((n) => (
+          <Specimen
+            key={n}
+            name={`축제 ${n}개 · ${heroSplitFrom(n) ? `${heroSplitFrom(n)}부터 좌우 분할` : "세로 스택"}`}
+            size={`lg 기준, 슬롯 4개 중 ${n}개 사용`}
+            full
+          >
             <div className="flex h-[952px] w-full">
               {SAMPLE_UPCOMING_LIST.slice(0, n).map((festival) => (
                 <div key={festival.festivalId} className={slideBasisClass(n)}>
-                  <HeroPanel festival={festival} />
+                  <HeroPanel festival={festival} splitFrom={heroSplitFrom(n)} />
                 </div>
               ))}
             </div>

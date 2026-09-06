@@ -23,7 +23,7 @@ export const SAMPLE_UPCOMING: UpcomingFestival = {
   host: SAMPLE_HOST,
 };
 
-/** 히어로가 축제 개수에 따라 패널 폭을 어떻게 채우는지 보여주는 표본용 — 1·2·3개로 잘라 쓴다 */
+/** 히어로가 축제 개수에 따라 패널 폭·조판을 어떻게 바꾸는지 보여주는 표본용 — 1~4개로 잘라 쓴다 */
 export const SAMPLE_UPCOMING_LIST: UpcomingFestival[] = [
   SAMPLE_UPCOMING,
   {
@@ -43,6 +43,15 @@ export const SAMPLE_UPCOMING_LIST: UpcomingFestival[] = [
     endDate: "2026-09-20",
     posterUrl: null,
     host: { id: 5, name: "성균관대학교 명륜 캠퍼스", logoUrl: null },
+  },
+  {
+    festivalId: 24,
+    name: "라치오스 2026",
+    venueName: "서울캠퍼스 대운동장",
+    startDate: "2026-09-25",
+    endDate: "2026-09-27",
+    posterUrl: null,
+    host: { id: 8, name: "한양대학교 서울 캠퍼스", logoUrl: null },
   },
 ];
 
