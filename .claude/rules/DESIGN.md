@@ -694,10 +694,11 @@ success 변형 — 예정·종료 색은 아직 정의되지 않아 배지를 �
 "미정"으로 떨어뜨린다. 항목명은 `{typography.caption-strong}` 14/500 `{colors.muted}`, 값은
 `{typography.body}` 16/500 `{colors.ink}` — 항목명이 값보다 흐리면 표로 읽히지 않는다(#165).
 
-**오시는 길** — 장소명(`{typography.body}` 16/500 `{colors.ink}`)·주소(`{typography.caption}`
-14/400 `{colors.muted}`) 텍스트 다음에 지도 자리를 둔다. 지도는 구글 맵 연동(#48, API
-키·결제 별도 작업) 전까지 `{colors.surface-field}` 폴백 박스로 대체한다. 길찾기는 place id가
-아니라 좌표(`latitude`/`longitude`)로 외부 지도 서비스에 넘긴다.
+**오시는 길** — 외곽 카드 없이 지도를 크게 두고, 그 아래에 장소명(`{typography.body}`
+16/500 `{colors.ink}`)·주소(`{typography.caption}` 14/400 `{colors.muted}`)와 텍스트형 길찾기
+링크를 둔다. 지도는 구글 맵 연동(#48, API 키·결제 별도 작업) 전까지
+`{colors.surface-field}` 폴백 박스로 대체한다. 길찾기는 place id가 아니라
+좌표(`latitude`/`longitude`)로 외부 지도 서비스에 넘긴다.
 
 **뺀 것** — 요약 시트(카드를 누르면 요약 없이 이 화면으로 직행하는 것으로 확정됐다. 위
 "히어로 클릭 인터랙션" 참고), 공지·교통편 안내, 분실물 연동, 과거 라인업(같은 축제명의 지난
