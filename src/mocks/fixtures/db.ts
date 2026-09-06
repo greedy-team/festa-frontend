@@ -45,6 +45,7 @@ export type FestivalRecord = {
   startDate: string; // YYYY-MM-DD
   endDate: string;
   posterUrl: string | null; // DEC-0036: 대표 이미지 한 장만 — 갤러리 없음
+  instagramUrl: string | null; // 축제 공식 인스타 계정. 학교 계정은 host.instagramUrl (#190)
   venueName: string;
   address: string | null;
   latitude: number | null;
@@ -197,6 +198,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-08-14',
     endDate: '2026-08-16',
     posterUrl: 'https://cdn.festa.kr/festivals/21/poster.jpg',
+    instagramUrl: 'https://instagram.com/akaraka_yonsei',
     venueName: '신촌캠퍼스 노천극장',
     address: '서울 서대문구 연세로 50',
     latitude: 37.5665,
@@ -229,6 +231,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-04',
     endDate: '2026-09-06',
     posterUrl: 'https://cdn.festa.kr/festivals/31/poster.jpg',
+    instagramUrl: null,
     venueName: '성균관대학교 인문사회과학 캠퍼스',
     address: '서울 종로구 성균관로 25-2',
     latitude: 37.5883,
@@ -256,6 +259,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-05-25',
     endDate: '2026-05-27',
     posterUrl: 'https://cdn.festa.kr/festivals/41/poster.jpg',
+    instagramUrl: 'https://instagram.com/ipselenti',
     venueName: '고려대학교 화정체육관',
     address: '서울 성북구 안암로 145',
     latitude: 37.5895,
@@ -283,6 +287,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-08-19',
     endDate: '2026-08-21',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '세종대 대양홀 앞 광장',
     address: '서울 광진구 능동로 209',
     latitude: 37.5503,
@@ -305,6 +310,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-08-24',
     endDate: '2026-08-26',
     posterUrl: null,
+    instagramUrl: 'https://instagram.com/lachios_official',
     venueName: '한양대 노천극장',
     address: '서울 성동구 왕십리로 222',
     latitude: 37.5573,
@@ -327,6 +333,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-08-28',
     endDate: '2026-08-30',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '중앙대 서울캠퍼스 운동장',
     address: '서울 동작구 흑석로 84',
     latitude: 37.5049,
@@ -349,6 +356,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-02',
     endDate: '2026-09-03',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '경희대 평화의전당',
     address: '서울 동대문구 경희대로 26',
     latitude: 37.5966,
@@ -373,6 +381,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: daysFromToday(10),
     endDate: daysFromToday(12),
     posterUrl: null,
+    instagramUrl: 'https://instagram.com/nokjiwon_festival',
     venueName: '건국대 노천극장',
     address: '서울 광진구 능동로 120',
     latitude: 37.5426,
@@ -406,6 +415,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-14',
     endDate: '2026-09-16',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '홍익대 대운동장',
     address: '서울 마포구 와우산로 94',
     latitude: 37.5511,
@@ -428,6 +438,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-21',
     endDate: '2026-09-23',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '숭실대 교내 일대',
     address: '서울 동작구 상도로 369',
     latitude: 37.4963,
@@ -450,6 +461,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-25',
     endDate: '2026-09-26',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '서울대 대운동장',
     address: '서울 관악구 관악로 1',
     latitude: 37.4601,
@@ -472,6 +484,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-29',
     endDate: '2026-10-01',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '성균관대 금잔디광장',
     address: '서울 종로구 성균관로 25-2',
     latitude: 37.5878,

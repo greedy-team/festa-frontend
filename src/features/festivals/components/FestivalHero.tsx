@@ -17,6 +17,7 @@ export function FestivalHero({ festival }: Props) {
     id,
     name,
     host,
+    instagramUrl,
     startDate,
     endDate,
     dday,
@@ -25,8 +26,9 @@ export function FestivalHero({ festival }: Props) {
     admission,
   } = festival;
   const status = festivalStatus(startDate, endDate);
+  // 인스타 링크는 축제 공식 계정을 쓴다 (#190) — 학교 계정(host.instagramUrl)은 이 화면에 노출하지 않는다.
   // 관리자 등록 API가 URL 형식을 검사하지 않는다 (DEC-0107) — http(s)가 아니면 링크로 그리지 않는다
-  const safeInstagramUrl = host.instagramUrl ? safeHttpUrl(host.instagramUrl) : null;
+  const safeInstagramUrl = instagramUrl ? safeHttpUrl(instagramUrl) : null;
   const safeHomepageUrl = host.homepageUrl ? safeHttpUrl(host.homepageUrl) : null;
 
   return (
@@ -41,7 +43,7 @@ export function FestivalHero({ festival }: Props) {
           흰 글자 대비가 2.5:1로 AA에 못 미쳤고, 검정 55%는 5.2:1이다 (#165) */}
       <div className="absolute inset-0 bg-scrim-hero" />
 
-      {/* 시안(08-2) 우상단 아이콘 — 주최의 인스타그램·공식 사이트 링크. 없으면 그리지 않는다.
+      {/* 시안(08-2) 우상단 아이콘 — 축제 인스타그램(#190) + 주최 공식 사이트 링크. 없으면 그리지 않는다.
           z-20인 이유: 아래 본문 블록이 flex-1로 카드 전체를 덮는데 그쪽도 z-10이라,
           같은 값이면 DOM에서 뒤에 있는 본문이 히트 테스트를 이겨 이 링크가 눌리지
           않는다(본문 첫 줄인 뱃지 행이 가로폭을 다 차지해 이 자리를 먹는다).
@@ -52,7 +54,7 @@ export function FestivalHero({ festival }: Props) {
             href={safeInstagramUrl}
             target="_blank"
             rel="noreferrer"
-            aria-label="주최 인스타그램"
+            aria-label="축제 인스타그램"
             className="flex size-[40px] items-center justify-center rounded-pill bg-white/20 text-on-media"
           >
             <AtSign size={18} aria-hidden />
