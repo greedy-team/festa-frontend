@@ -141,6 +141,8 @@ export const festivalsHandlers = [
         instagramUrl: host.instagramUrl,
         homepageUrl: host.homepageUrl,
       },
+      // 축제 공식 인스타 계정 — 히어로 우상단 링크가 쓴다. 학교 계정은 host.instagramUrl (#190)
+      instagramUrl: f.instagramUrl,
       startDate: f.startDate,
       endDate: f.endDate,
       dday,

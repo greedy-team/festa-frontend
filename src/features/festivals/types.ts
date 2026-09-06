@@ -25,7 +25,9 @@ export type PaginatedFestivals = {
 export type FestivalSort = "LATEST" | "UPCOMING";
 
 /** GET /festivals/{id} 응답 중 host 필드 — 목록 카드의 HostSummary와 달리 히어로의
- * 인스타그램·공식 사이트 링크에 필요한 필드가 추가로 있다 */
+ * 공식 사이트 링크(homepageUrl)에 필요한 필드가 더 있다.
+ * instagramUrl(학교 공식 계정)도 응답에 오지만 이 화면에서는 쓰지 않는다 —
+ * 히어로 인스타 링크는 축제 계정(FestivalDetail.instagramUrl)을 쓴다 (#190) */
 export type FestivalHostSummary = {
   id: number;
   name: string;
@@ -84,6 +86,9 @@ export type FestivalDetail = {
   id: number;
   name: string;
   host: FestivalHostSummary;
+  /** 축제 공식 인스타그램 계정 (festival.instagram_url). 히어로 우상단 링크가 쓴다.
+   * 학교 공식 계정은 host.instagramUrl에 따로 오지만 이 화면에서는 노출하지 않는다 (#190) */
+  instagramUrl: string | null;
   startDate: string;
   endDate: string;
   /** 서버가 계산한 값(숫자) — 다시 계산하지 않고 포맷만 한다 */
