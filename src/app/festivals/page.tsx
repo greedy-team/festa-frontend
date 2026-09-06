@@ -4,7 +4,7 @@ import type { FestivalSort } from "@/features/festivals/types";
 import { FestivalCard } from "@/features/festivals/components/FestivalCard";
 import { parsePage } from "@/lib/searchParams";
 import { Container } from "@/components/layout/Container";
-import { SearchPill } from "@/components/ui/SearchPill";
+import { FestivalSearchForm } from "@/features/festivals/components/FestivalSearchForm";
 import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
@@ -18,7 +18,7 @@ const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
 const PAGE_SIZE = 10;
 
 type Props = {
-  searchParams: Promise<{ page?: string; sort?: string; artistId?: string }>;
+  searchParams: Promise<{ page?: string; sort?: string; artistId?: string; q?: string }>;
 };
 
 export default async function FestivalsPage({ searchParams }: Props) {
@@ -26,8 +26,9 @@ export default async function FestivalsPage({ searchParams }: Props) {
   const page = parsePage(params.page);
   const sort: FestivalSort = params.sort === "UPCOMING" ? "UPCOMING" : "LATEST";
   const artistId = params.artistId ? Number(params.artistId) : undefined;
+  const q = params.q?.trim() || undefined;
 
-  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, artistId });
+  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, artistId, q });
 
   if (!res.ok) {
     console.error("GET /festivals 실패", res.status, res.message);
@@ -45,7 +46,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
   let currentPage = page;
   if (currentPage > res.data.totalPages && res.data.totalPages > 0) {
     currentPage = res.data.totalPages;
-    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, artistId });
+    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, artistId, q });
     if (!res.ok) {
       console.error("GET /festivals 실패", res.status, res.message);
       return (
@@ -82,7 +83,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
         </div>
 
         <div className="mt-10 flex items-center justify-end gap-3">
-          <SearchPill placeholder="학교 또는 축제 이름 검색" />
+          <FestivalSearchForm defaultValue={q} sort={sort} artistId={params.artistId} />
           <SortDropdown value={sort} options={SORT_OPTIONS} />
         </div>
 
@@ -93,7 +94,9 @@ export default async function FestivalsPage({ searchParams }: Props) {
             ))}
           </div>
         ) : (
-          <p className="mt-10 text-body text-muted">등록된 축제가 없습니다.</p>
+          <p className="mt-10 text-body text-muted">
+            {q ? `"${q}"에 해당하는 축제가 없습니다.` : "등록된 축제가 없습니다."}
+          </p>
         )}
 
         {data.totalPages > 1 ? (
