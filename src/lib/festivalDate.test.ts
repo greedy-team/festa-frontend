@@ -5,6 +5,7 @@ import {
   dateWithWeekday,
   festivalSeason,
   festivalStatus,
+  festivalYear,
   formatDday,
   fullDate,
 } from "./festivalDate";
@@ -49,6 +50,16 @@ describe("dateRange", () => {
 
   it("월이 걸쳐 있어도 각자의 월.일을 그대로 보여준다", () => {
     expect(dateRange("2026-08-30", "2026-09-02")).toBe("08.30 ~ 09.02");
+  });
+});
+
+describe("festivalYear", () => {
+  it("한 해 안에서 끝나면 연도 하나만 보여준다", () => {
+    expect(festivalYear("2026-05-07", "2026-05-09")).toBe("2026");
+  });
+
+  it("해를 걸치면 두 연도를 함께 보여준다", () => {
+    expect(festivalYear("2025-12-30", "2026-01-02")).toBe("2025 ~ 2026");
   });
 });
 

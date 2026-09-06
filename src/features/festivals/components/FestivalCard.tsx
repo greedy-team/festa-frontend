@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Festival } from "@/features/festivals/types";
 import { gridTint } from "@/lib/posterTint";
-import { dateRange } from "@/lib/festivalDate";
+import { dateRange, festivalYear } from "@/lib/festivalDate";
 import { PosterImage } from "@/components/ui/PosterImage";
 
 type Props = {
@@ -29,7 +29,12 @@ export function FestivalCard({ festival }: Props) {
         {host.name}
       </span>
       <h3 className="mt-1 truncate text-entity-name text-ink">{name}</h3>
+      {/* 연도·기간 두 줄. 목록엔 여러 해가 섞여 나오므로 연도를 따로 얹되,
+          같은 크기·색에 간격만 좁혀 한 덩어리로 읽히게 한다 */}
       <span className="mt-2 text-label-regular text-muted-soft">
+        {festivalYear(startDate, endDate)}
+      </span>
+      <span className="mt-1 text-label-regular text-muted-soft">
         {dateRange(startDate, endDate)}
       </span>
     </Link>
