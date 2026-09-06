@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { slideBasisClass, wallNameClass } from "./Hero";
+import { heroSplitFrom, slideBasisClass, wallNameClass } from "./Hero";
 
 // 히어로 패널이 몇 장 보이는지는 JS로 잰 화면 폭이 아니라 데이터 개수 +
 // CSS 브레이크포인트로만 정한다(LSN-0020: 폭을 JS로 재면 SSR과 하이드레이션이
@@ -31,6 +31,30 @@ describe("slideBasisClass", () => {
     // Hero는 0건에서 다른 화면으로 빠지지만, 클래스 조회가 undefined를
     // 문자열에 섞어 "shrink-0 undefined"를 만들지 않는지 본다.
     expect(slideBasisClass(0)).toBe(slideBasisClass(1));
+  });
+});
+
+// 패널 안 조판은 개수로만 갈린다 — 패널이 넓어질 때(1·2건)만 텍스트 열과 포스터를
+// 좌우로 나누고, 그 아래 폭에서는 언제나 세로 스택이다. 분기점이 개수마다 다른
+// 이유: 1건은 패널이 화면 전폭이라 lg(1024)부터 좌우가 서고, 2건은 반폭이라
+// xl(1280, 패널 640)은 돼야 포스터 옆에 텍스트 열이 들어간다.
+describe("heroSplitFrom", () => {
+  it("1건은 lg부터 좌우 분할", () => {
+    expect(heroSplitFrom(1)).toBe("lg");
+  });
+
+  it("2건은 xl부터 좌우 분할 — 패널이 반폭이라 한 단계 늦다", () => {
+    expect(heroSplitFrom(2)).toBe("xl");
+  });
+
+  it("3건부터는 어느 폭에서도 세로 스택 — 패널이 좁아 옆에 열을 둘 자리가 없다", () => {
+    expect(heroSplitFrom(3)).toBeNull();
+    expect(heroSplitFrom(4)).toBeNull();
+    expect(heroSplitFrom(32)).toBeNull();
+  });
+
+  it("0건은 1건과 같다 — Hero는 0건에서 다른 화면으로 빠지지만 조회가 깨지지 않는다", () => {
+    expect(heroSplitFrom(0)).toBe(heroSplitFrom(1));
   });
 });
 

@@ -6,7 +6,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { ChevronDown } from "lucide-react";
 import type { UpcomingFestival } from "@/features/home/types";
-import { HeroPanel } from "@/features/home/components/HeroPanel";
+import { HeroPanel, type HeroSplitFrom } from "@/features/home/components/HeroPanel";
 import { HeroSurface } from "@/components/layout/HeroSurface";
 
 // 아티스트를 못 불러왔을 때의 배경. 이 화면은 히어로 패널 네 장이 있어야 할 자리가 통째로
@@ -62,6 +62,18 @@ const BASIS_CLASS: Record<number, string> = {
 export function slideBasisClass(count: number): string {
   const slots = Math.min(4, Math.max(1, count));
   return `shrink-0 ${BASIS_CLASS[slots]}`;
+}
+
+/**
+ * 패널 안 조판이 좌우 분할(텍스트 열 | 포스터)로 서기 시작하는 브레이크포인트.
+ * null이면 어느 폭에서도 세로 스택이다.
+ *
+ * 개수로만 정하는 이유는 slideBasisClass와 같다(LSN-0020). 1건은 패널이 전폭이라
+ * lg(1024)부터, 2건은 반폭이라 xl(1280, 패널 640)부터 옆에 열을 둘 자리가 난다.
+ * 3건부터는 lg에서도 패널이 341 이하라 좌우로 나눌 폭이 없다.
+ */
+export function heroSplitFrom(count: number): HeroSplitFrom {
+  return count <= 1 ? "lg" : count === 2 ? "xl" : null;
 }
 
 // 이름 벽의 크기·불투명도 단계. 슬롯 폭과 같은 이유로 리터럴 표다 — 템플릿
@@ -297,7 +309,7 @@ export function Hero({ festivals, artists }: Props) {
         <div className="flex h-full">
           {festivals.map((festival) => (
             <div key={festival.festivalId} className={slideBasisClass(festivals.length)}>
-              <HeroPanel festival={festival} />
+              <HeroPanel festival={festival} splitFrom={heroSplitFrom(festivals.length)} />
             </div>
           ))}
         </div>
