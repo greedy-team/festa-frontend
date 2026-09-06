@@ -1,8 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-// 축제 목록의 검색 pill(SearchPill)은 아직 표시 전용(aria-hidden)이라 이 화면의
-// 실제 조작 가능한 필터는 정렬 드롭다운뿐이다 — 그래서 시나리오는 "검색"이
-// 아니라 "정렬 변경"이다.
+// 검색은 festivals-search.spec.ts가 따로 본다 — 여기서는 정렬 변경만.
 test("축제 목록에서 정렬을 바꾸면 URL과 목록이 갱신된다", async ({ page }) => {
   await page.goto("/festivals");
 
