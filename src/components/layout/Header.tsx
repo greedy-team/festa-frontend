@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Search, X } from "lucide-react";
@@ -72,8 +72,33 @@ export function Header() {
     // 그걸 못 보므로 명시한다. 구독은 여전히 마운트 시 한 번만 걸린다.
   }, [setIsMenuOpen]);
 
+  // 히어로 위에서도 조금만 내리면 솔리드로 바꾼다. 히어로가 화면 높이를 통째로
+  // 채우기 때문에, 히어로 하단이 헤더를 지나는 순간(overHero)만 기다리면 한 화면을
+  // 다 내려야 헤더가 변한다 — 그 사이 내내 흰 글자가 포스터 위에 떠 있다.
+  // 임계값을 넘으면 아래 transition-colors(300ms)가 색을 서서히 넘긴다.
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      setScrolled(window.scrollY > 80);
+    };
+    // 스크롤은 프레임보다 자주 발생한다 — rAF로 한 프레임에 한 번만 재계산한다.
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    update(); // 스크롤된 채로 새로고침한 경우(브라우저 스크롤 복원)
+    window.addEventListener("scroll", schedule, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+    };
+  }, []);
+
   // 드롭다운이 열리면 투명 상태에서도 솔리드로 — 흰 패널 위에 흰 글씨가 뜨지 않게.
-  const solid = !overHero || isMenuOpen;
+  const solid = !overHero || scrolled || isMenuOpen;
 
   return (
     // sticky: 스크롤해도 상단에 붙는다. 히어로 위에서는 투명이었다가 지나가면
@@ -85,19 +110,24 @@ export function Header() {
           : "border-transparent bg-transparent"
       }`}
     >
-      {/* 로고와 메뉴 사이 간격은 화면이 넓을수록 벌린다.
-          시안의 로고→첫 메뉴 거리는 그 프레임에서의 한 사례일 뿐이다. */}
-      <Container className="flex h-full items-center gap-4 sm:gap-10 lg:gap-20">
+      {/* 3열 그리드: 로고(좌) · 메뉴(중앙) · 검색·햄버거(우).
+          양옆 열이 같은 1fr이라 가운데 열이 헤더 정중앙에 온다 — 로고 폭과 우측
+          그룹 폭이 서로 달라도 메뉴 위치는 안 흔들린다. minmax(0,1fr)로 두는 이유는
+          그냥 1fr이면 내용보다 좁아지지 못해서 검색 폼(280px)이 있는 우측 열이
+          더 넓어지고, 그만큼 가운데가 왼쪽으로 밀리기 때문이다.
+          각 칸에 col-start를 못박는 이유: 640px 미만에서 nav가 display:none이 되면
+          자동 배치가 우측 그룹을 2번 칸으로 당겨온다. */}
+      <Container className="grid h-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 sm:gap-6">
         <Link
           href="/"
-          className={`shrink-0 text-logo transition-colors duration-300 ${
+          className={`col-start-1 justify-self-start text-logo transition-colors duration-300 ${
             solid ? "text-ink" : "text-on-media"
           }`}
         >
           {SITE_NAME}
         </Link>
 
-        <nav className="hidden min-w-0 items-center gap-3 sm:flex sm:gap-8 lg:gap-12">
+        <nav className="col-start-2 hidden min-w-0 items-center gap-3 sm:flex sm:gap-8 lg:gap-12">
           {/* 히어로 위에서는 인디고를 쓰지 않는다 — 흰색 + 불투명도만 (DESIGN.md Don'ts).
               활성 인디케이터는 글자 폭과 같은 너비 × 2px (DESIGN.md 819) */}
           <NavLinks
@@ -116,7 +146,7 @@ export function Header() {
           />
         </nav>
 
-        <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4 lg:gap-6">
+        <div className="col-start-3 flex shrink-0 items-center justify-self-end gap-3 sm:gap-4 lg:gap-6">
           {/* 640~1023px 구간 전용 검색 진입로. 이 구간은 검색 폼이 접혀 있는데
               (hidden lg:block) 햄버거도 없어서(sm:hidden) 드롭다운에 검색을 넣는
               방식으로는 덮이지 않는다 — 아이콘 하나로 /search에 보낸다 (#155).
@@ -137,7 +167,7 @@ export function Header() {
             onClick={() => setIsMenuOpen((open) => !open)}
             aria-label={isMenuOpen ? "메뉴 닫기" : "메뉴 열기"}
             aria-expanded={isMenuOpen}
-            className={`transition-colors duration-300 sm:hidden ${
+            className={`flex size-[44px] items-center justify-center transition-colors duration-300 sm:hidden ${
               solid ? "text-ink" : "text-on-media"
             }`}
           >
