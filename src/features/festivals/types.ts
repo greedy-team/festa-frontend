@@ -24,28 +24,36 @@ export type PaginatedFestivals = {
 
 export type FestivalSort = "LATEST" | "UPCOMING";
 
+/** GET /festivals의 status 필터 값. 판정 로직과 함께 festivalDate에 산다 — 여기서 다시
+ * 정의하지 않고 목록 파라미터 타입이 쓸 수 있게 다시 내보내기만 한다 */
+export type { FestivalStatus } from "@/lib/festivalDate";
+
 /** GET /festivals/{id} 응답 중 host 필드 — 목록 카드의 HostSummary와 달리 히어로의
- * 인스타그램·공식 사이트 링크에 필요한 필드가 추가로 있다 */
+ * 공식 사이트 링크(homepageUrl)에 필요한 필드가 더 있다.
+ * instagramUrl(학교 공식 계정)도 응답에 오지만 이 화면에서는 쓰지 않는다 —
+ * 히어로 인스타 링크는 축제 계정(FestivalDetail.instagramUrl)을 쓴다 (#190) */
 export type FestivalHostSummary = {
   id: number;
-  type: string;
   name: string;
   logoUrl: string | null;
   instagramUrl: string | null;
   homepageUrl: string | null;
 };
 
-/** revealed로 id/name/imageUrl/genre 유무가 갈린다 — 판별 유니온이라 !(non-null assertion) 없이 좁혀진다 */
-export type LineupArtist = { order: number } & (
+/**
+ * id로 name/imageUrl/genre 유무가 갈린다 — 판별 유니온이라 !(non-null assertion) 없이 좁혀진다.
+ * id가 null이면 시크릿 게스트 — DEC-0116: 시크릿 게스트는 artist null로만 표현하고
+ * revealed 파생 불리언을 응답에 두지 않는다.
+ * order 필드는 없다 — DEC-0109: 배열 순서 자체가 계약이고, 순번 표기는 프론트가 인덱스로 만든다.
+ */
+export type LineupArtist =
   | {
-      revealed: true;
       id: number;
       name: string;
       imageUrl: string | null;
       genre: ArtistGenre | null;
     }
-  | { revealed: false; id: null; name: null; imageUrl: null; genre: null }
-);
+  | { id: null; name: null; imageUrl: null; genre: null };
 
 export type LineupDay = {
   day: number;
@@ -63,15 +71,15 @@ export type Verification =
 export type TicketType = "FREE" | "PAID";
 
 export type Admission = {
-  externalVisitor: ExternalVisitor;
-  verification: Verification;
-  ticketType: TicketType;
+  externalVisitor: ExternalVisitor | null;
+  verification: Verification | null;
+  ticketType: TicketType | null;
   ticketOpenAt: string | null;
   note: string | null;
 };
 
 export type Location = {
-  venueName: string;
+  venueName: string | null;
   address: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -82,6 +90,9 @@ export type FestivalDetail = {
   id: number;
   name: string;
   host: FestivalHostSummary;
+  /** 축제 공식 인스타그램 계정 (festival.instagram_url). 히어로 우상단 링크가 쓴다.
+   * 학교 공식 계정은 host.instagramUrl에 따로 오지만 이 화면에서는 노출하지 않는다 (#190) */
+  instagramUrl: string | null;
   startDate: string;
   endDate: string;
   /** 서버가 계산한 값(숫자) — 다시 계산하지 않고 포맷만 한다 */

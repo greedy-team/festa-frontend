@@ -19,7 +19,7 @@ bun dev
 
 ```bash
 NEXT_PUBLIC_API_MOCKING=true
-NEXT_PUBLIC_API_BASE_URL=https://api.festa.kr
+NEXT_PUBLIC_API_BASE_URL=https://api.every-festa.com
 ```
 
 없어도 화면은 뜹니다 — 데이터가 빈 상태로 그려집니다.
@@ -48,6 +48,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ---
 
 <!-- AUTO-VERSION-SECTION: DO NOT EDIT MANUALLY -->
-## 최신 버전 : v0.1.10 (2026-08-24)
+## 최신 버전 : v0.1.11 (2026-09-06)
 
 [전체 버전 기록 보기](CHANGELOG.md)

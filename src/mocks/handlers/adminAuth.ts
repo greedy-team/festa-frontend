@@ -1,7 +1,8 @@
 import { http, HttpResponse } from 'msw';
 import { apiError } from '@/mocks/fixtures/errors';
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
+// /api 접두사: 2026-08-23 백엔드 결정(DEC-0099)이 DEC-0084(접두사 없음)를 대체했다.
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.every-festa.com'}/api`;
 
 /**
  * 실제 계정은 백엔드의 AdminAccountSeeder가 환경변수로 심는다. 서버를 띄우지 않고
@@ -14,7 +15,6 @@ const DEV_ACCOUNT = { username: 'admin', password: 'admin' } as const;
 const TOKEN_TTL_SECONDS = 3600;
 
 export const adminAuthHandlers = [
-  // DEC-0084: 경로에 /api 접두사를 붙이지 않는다.
   http.post(`${API}/admin/auth/login`, async ({ request }) => {
     const { username, password } = (await request.json()) as {
       username?: string;
@@ -28,7 +28,7 @@ export const adminAuthHandlers = [
         'ADMIN_INVALID_CREDENTIALS',
         'invalid admin credentials',
         401,
-        '/admin/auth/login'
+        '/api/admin/auth/login'
       );
     }
 

@@ -27,7 +27,7 @@ export function UpcomingFestivalsSection({ festivals }: Props) {
       <div className="flex items-center gap-2">
         <h2 className="text-block-title text-ink">다가오는 축제</h2>
         {hasMultiple ? (
-          <span className="text-caption text-muted-soft">
+          <span className="text-caption text-muted">
             {current + 1}/{festivals.length}
           </span>
         ) : null}

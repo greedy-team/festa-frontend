@@ -9,11 +9,13 @@
  * - 여기 있는 것만 수정하면 festivals/artists/hosts/search 응답이 전부 같이 갱신된다.
  */
 
+import { daysFromToday } from './date';
 export type HostRecord = {
   id: number;
   name: string;
   shortName: string;
-  type: 'UNIVERSITY' | 'LOCAL_GOV' | 'AGENCY' | 'ORGANIZATION';
+  // type 필드(UNIVERSITY 등)는 뺐다 — 확정된 ERD에 없는 필드라 화면 어디서도
+  // 참조하지 않는다 (features/hosts/types.ts, HostHero.tsx 주석, #46/#64 참고).
   region: string;
   logoUrl: string | null;
   bannerUrl: string | null;
@@ -31,9 +33,9 @@ export type ArtistRecord = {
 };
 
 export type LineupArtist = {
-  artistId: number | null; // null이면 revealed=false (시크릿)
-  order: number;
-  revealed: boolean;
+  // artistId가 null이면 시크릿 게스트 — DEC-0116: revealed 파생 불리언을 두지 않고 null 여부로만 판별한다.
+  // order 필드는 없다 — DEC-0109: 배열 순서(아래 fixture의 나열 순서) 자체가 계약이다.
+  artistId: number | null;
 };
 
 export type FestivalRecord = {
@@ -43,6 +45,7 @@ export type FestivalRecord = {
   startDate: string; // YYYY-MM-DD
   endDate: string;
   posterUrl: string | null; // DEC-0036: 대표 이미지 한 장만 — 갤러리 없음
+  instagramUrl: string | null; // 축제 공식 인스타 계정. 학교 계정은 host.instagramUrl (#190)
   venueName: string;
   address: string | null;
   latitude: number | null;
@@ -65,7 +68,6 @@ export const hostsDb: HostRecord[] = [
     id: 3,
     name: '연세대학교 신촌 캠퍼스',
     shortName: '연세대',
-    type: 'UNIVERSITY',
     region: '서울 서대문구',
     logoUrl: 'https://cdn.festa.kr/hosts/3/logo.png',
     bannerUrl: 'https://cdn.festa.kr/hosts/3/banner.jpg',
@@ -76,7 +78,6 @@ export const hostsDb: HostRecord[] = [
     id: 4,
     name: '고려대학교',
     shortName: '고려대',
-    type: 'UNIVERSITY',
     region: '서울 성북구',
     logoUrl: 'https://cdn.festa.kr/hosts/4/logo.png',
     bannerUrl: 'https://cdn.festa.kr/hosts/4/banner.jpg',
@@ -87,7 +88,6 @@ export const hostsDb: HostRecord[] = [
     id: 5,
     name: '성균관대학교',
     shortName: '성균관대',
-    type: 'UNIVERSITY',
     region: '서울 종로구',
     logoUrl: 'https://cdn.festa.kr/hosts/5/logo.png',
     bannerUrl: 'https://cdn.festa.kr/hosts/5/banner.jpg',
@@ -98,7 +98,6 @@ export const hostsDb: HostRecord[] = [
     id: 7,
     name: '세종대학교',
     shortName: '세종대',
-    type: 'UNIVERSITY',
     region: '서울 광진구',
     logoUrl: 'https://cdn.festa.kr/hosts/7/logo.png',
     bannerUrl: 'https://cdn.festa.kr/hosts/7/banner.jpg',
@@ -109,7 +108,6 @@ export const hostsDb: HostRecord[] = [
     id: 8,
     name: '한양대학교 서울 캠퍼스',
     shortName: '한양대',
-    type: 'UNIVERSITY',
     region: '서울 성동구',
     logoUrl: null,
     bannerUrl: null,
@@ -120,7 +118,6 @@ export const hostsDb: HostRecord[] = [
     id: 9,
     name: '중앙대학교 서울 캠퍼스',
     shortName: '중앙대',
-    type: 'UNIVERSITY',
     region: '서울 동작구',
     logoUrl: null,
     bannerUrl: null,
@@ -131,7 +128,6 @@ export const hostsDb: HostRecord[] = [
     id: 10,
     name: '경희대학교 서울 캠퍼스',
     shortName: '경희대',
-    type: 'UNIVERSITY',
     region: '서울 동대문구',
     logoUrl: null,
     bannerUrl: null,
@@ -142,7 +138,6 @@ export const hostsDb: HostRecord[] = [
     id: 11,
     name: '건국대학교 서울 캠퍼스',
     shortName: '건국대',
-    type: 'UNIVERSITY',
     region: '서울 광진구',
     logoUrl: null,
     bannerUrl: null,
@@ -153,7 +148,6 @@ export const hostsDb: HostRecord[] = [
     id: 12,
     name: '홍익대학교 서울 캠퍼스',
     shortName: '홍익대',
-    type: 'UNIVERSITY',
     region: '서울 마포구',
     logoUrl: null,
     bannerUrl: null,
@@ -164,7 +158,6 @@ export const hostsDb: HostRecord[] = [
     id: 13,
     name: '숭실대학교',
     shortName: '숭실대',
-    type: 'UNIVERSITY',
     region: '서울 동작구',
     logoUrl: null,
     bannerUrl: null,
@@ -175,7 +168,6 @@ export const hostsDb: HostRecord[] = [
     id: 14,
     name: '서울대학교 관악 캠퍼스',
     shortName: '서울대',
-    type: 'UNIVERSITY',
     region: '서울 관악구',
     logoUrl: null,
     bannerUrl: null,
@@ -206,6 +198,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-08-14',
     endDate: '2026-08-16',
     posterUrl: 'https://cdn.festa.kr/festivals/21/poster.jpg',
+    instagramUrl: 'https://instagram.com/akaraka_yonsei',
     venueName: '신촌캠퍼스 노천극장',
     address: '서울 서대문구 연세로 50',
     latitude: 37.5665,
@@ -221,13 +214,13 @@ export const festivalsDb: FestivalRecord[] = [
     hashtags: ['연세대축제', '아카라카', 'AKARAKA'],
     lineup: [
       { day: 1, date: '2026-08-14', artists: [
-        { artistId: 7, order: 1, revealed: true },
-        { artistId: 9, order: 2, revealed: true },
-        { artistId: 4, order: 3, revealed: true },
-        { artistId: null, order: 4, revealed: false },
+        { artistId: 7 },
+        { artistId: 9 },
+        { artistId: 4 },
+        { artistId: null },
       ]},
       { day: 2, date: '2026-08-15', artists: [
-        { artistId: 21, order: 1, revealed: true },
+        { artistId: 21 },
       ]},
     ],
   },
@@ -238,6 +231,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-04',
     endDate: '2026-09-06',
     posterUrl: 'https://cdn.festa.kr/festivals/31/poster.jpg',
+    instagramUrl: null,
     venueName: '성균관대학교 인문사회과학 캠퍼스',
     address: '서울 종로구 성균관로 25-2',
     latitude: 37.5883,
@@ -253,8 +247,8 @@ export const festivalsDb: FestivalRecord[] = [
     hashtags: ['성균관대축제', '대동제'],
     lineup: [
       { day: 1, date: '2026-09-04', artists: [
-        { artistId: 3, order: 1, revealed: true },
-        { artistId: 7, order: 2, revealed: true },
+        { artistId: 3 },
+        { artistId: 7 },
       ]},
     ],
   },
@@ -265,6 +259,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-05-25',
     endDate: '2026-05-27',
     posterUrl: 'https://cdn.festa.kr/festivals/41/poster.jpg',
+    instagramUrl: 'https://instagram.com/ipselenti',
     venueName: '고려대학교 화정체육관',
     address: '서울 성북구 안암로 145',
     latitude: 37.5895,
@@ -280,8 +275,8 @@ export const festivalsDb: FestivalRecord[] = [
     hashtags: ['고려대축제', '입실렌티'],
     lineup: [
       { day: 1, date: '2026-05-25', artists: [
-        { artistId: 5, order: 1, revealed: true },
-        { artistId: 12, order: 2, revealed: true },
+        { artistId: 5 },
+        { artistId: 12 },
       ]},
     ],
   },
@@ -292,6 +287,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-08-19',
     endDate: '2026-08-21',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '세종대 대양홀 앞 광장',
     address: '서울 광진구 능동로 209',
     latitude: 37.5503,
@@ -314,6 +310,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-08-24',
     endDate: '2026-08-26',
     posterUrl: null,
+    instagramUrl: 'https://instagram.com/lachios_official',
     venueName: '한양대 노천극장',
     address: '서울 성동구 왕십리로 222',
     latitude: 37.5573,
@@ -336,6 +333,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-08-28',
     endDate: '2026-08-30',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '중앙대 서울캠퍼스 운동장',
     address: '서울 동작구 흑석로 84',
     latitude: 37.5049,
@@ -358,6 +356,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-02',
     endDate: '2026-09-03',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '경희대 평화의전당',
     address: '서울 동대문구 경희대로 26',
     latitude: 37.5966,
@@ -377,9 +376,12 @@ export const festivalsDb: FestivalRecord[] = [
     id: 55,
     name: '녹지원 축제 2026',
     hostId: 11,
-    startDate: '2026-09-08',
-    endDate: '2026-09-10',
+    // 항상 미래여야 하는 유일한 축제 — 예정 공연 E2E의 검증 대상이다(#174).
+    // 고정 날짜로 두면 그 날이 지나는 순간 예정 공연이 0건이 되어 스펙이 스킵된다.
+    startDate: daysFromToday(10),
+    endDate: daysFromToday(12),
     posterUrl: null,
+    instagramUrl: 'https://instagram.com/nokjiwon_festival',
     venueName: '건국대 노천극장',
     address: '서울 광진구 능동로 120',
     latitude: 37.5426,
@@ -393,7 +395,18 @@ export const festivalsDb: FestivalRecord[] = [
     },
     description: '건국대학교 가을 축제.',
     hashtags: ['건국대축제', '녹지원'],
-    lineup: [],
+    // 미래 축제 중 유일하게 라인업이 있다. 아티스트 상세의 "예정 공연"이 여기서 나온다.
+    // 시크릿 게스트(null)를 하루에 섞어 "공개 예정" 행이 링크가 아닌 것도 함께 검증한다.
+    lineup: [
+      { day: 1, date: daysFromToday(10), artists: [
+        { artistId: 4 },
+        { artistId: 5 },
+        { artistId: null },
+      ] },
+      { day: 2, date: daysFromToday(11), artists: [
+        { artistId: 12 },
+      ] },
+    ],
   },
   {
     id: 56,
@@ -402,6 +415,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-14',
     endDate: '2026-09-16',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '홍익대 대운동장',
     address: '서울 마포구 와우산로 94',
     latitude: 37.5511,
@@ -424,6 +438,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-21',
     endDate: '2026-09-23',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '숭실대 교내 일대',
     address: '서울 동작구 상도로 369',
     latitude: 37.4963,
@@ -446,6 +461,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-25',
     endDate: '2026-09-26',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '서울대 대운동장',
     address: '서울 관악구 관악로 1',
     latitude: 37.4601,
@@ -468,6 +484,7 @@ export const festivalsDb: FestivalRecord[] = [
     startDate: '2026-09-29',
     endDate: '2026-10-01',
     posterUrl: null,
+    instagramUrl: null,
     venueName: '성균관대 금잔디광장',
     address: '서울 종로구 성균관로 25-2',
     latitude: 37.5878,

@@ -10,7 +10,6 @@ import type { RecentFestival, UpcomingFestival } from "@/features/home/types";
 const SAMPLE_HOST = {
   id: 3,
   name: "연세대학교 신촌 캠퍼스",
-  type: "UNIVERSITY",
   logoUrl: null,
 };
 
@@ -24,6 +23,38 @@ export const SAMPLE_UPCOMING: UpcomingFestival = {
   host: SAMPLE_HOST,
 };
 
+/** 히어로가 축제 개수에 따라 패널 폭·조판을 어떻게 바꾸는지 보여주는 표본용 — 1~4개로 잘라 쓴다 */
+export const SAMPLE_UPCOMING_LIST: UpcomingFestival[] = [
+  SAMPLE_UPCOMING,
+  {
+    festivalId: 22,
+    name: "입실렌티 2026",
+    venueName: "안암캠퍼스 화정체육관",
+    startDate: "2026-09-11",
+    endDate: "2026-09-13",
+    posterUrl: null,
+    host: { id: 4, name: "고려대학교 안암 캠퍼스", logoUrl: null },
+  },
+  {
+    festivalId: 23,
+    name: "대동제 2026",
+    venueName: "명륜캠퍼스 금잔디광장",
+    startDate: "2026-09-18",
+    endDate: "2026-09-20",
+    posterUrl: null,
+    host: { id: 5, name: "성균관대학교 명륜 캠퍼스", logoUrl: null },
+  },
+  {
+    festivalId: 24,
+    name: "라치오스 2026",
+    venueName: "서울캠퍼스 대운동장",
+    startDate: "2026-09-25",
+    endDate: "2026-09-27",
+    posterUrl: null,
+    host: { id: 8, name: "한양대학교 서울 캠퍼스", logoUrl: null },
+  },
+];
+
 export const SAMPLE_RECENT: RecentFestival = {
   festivalId: 52,
   name: "라치오스 2026",
@@ -33,7 +64,6 @@ export const SAMPLE_RECENT: RecentFestival = {
   host: {
     id: 8,
     name: "한양대학교 서울 캠퍼스",
-    type: "UNIVERSITY",
     logoUrl: null,
   },
 };
@@ -47,7 +77,7 @@ export const SAMPLE_RECENT_LIST: RecentFestival[] = [
     startDate: "2026-08-28",
     endDate: "2026-08-30",
     posterUrl: null,
-    host: { id: 9, name: "중앙대학교 서울 캠퍼스", type: "UNIVERSITY", logoUrl: null },
+    host: { id: 9, name: "중앙대학교 서울 캠퍼스", logoUrl: null },
   },
   {
     festivalId: 54,
@@ -55,7 +85,7 @@ export const SAMPLE_RECENT_LIST: RecentFestival[] = [
     startDate: "2026-09-02",
     endDate: "2026-09-03",
     posterUrl: null,
-    host: { id: 10, name: "경희대학교 서울 캠퍼스", type: "UNIVERSITY", logoUrl: null },
+    host: { id: 10, name: "경희대학교 서울 캠퍼스", logoUrl: null },
   },
   {
     festivalId: 55,
@@ -63,7 +93,7 @@ export const SAMPLE_RECENT_LIST: RecentFestival[] = [
     startDate: "2026-09-08",
     endDate: "2026-09-10",
     posterUrl: null,
-    host: { id: 11, name: "건국대학교 서울 캠퍼스", type: "UNIVERSITY", logoUrl: null },
+    host: { id: 11, name: "건국대학교 서울 캠퍼스", logoUrl: null },
   },
   {
     festivalId: 56,
@@ -71,6 +101,6 @@ export const SAMPLE_RECENT_LIST: RecentFestival[] = [
     startDate: "2026-09-14",
     endDate: "2026-09-16",
     posterUrl: null,
-    host: { id: 12, name: "홍익대학교 서울 캠퍼스", type: "UNIVERSITY", logoUrl: null },
+    host: { id: 12, name: "홍익대학교 서울 캠퍼스", logoUrl: null },
   },
 ];

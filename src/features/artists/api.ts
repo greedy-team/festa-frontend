@@ -12,14 +12,17 @@ type Params = {
   size: number;
   genre?: ArtistGenre;
   sort: ArtistSort;
+  /** 이름 검색어 — 아티스트 이름·다른 이름(otherNames) 부분 일치 */
+  q?: string;
 };
 
-/** 아티스트 목록. page/size/genre/sort는 GET /artists 그대로 전달 */
+/** 아티스트 목록. page/size/genre/sort/q는 GET /artists 그대로 전달 */
 export async function getArtists({
   page,
   size,
   genre,
   sort,
+  q,
 }: Params): Promise<ApiResult<PaginatedArtists>> {
   const params = new URLSearchParams({
     page: String(page),
@@ -27,6 +30,7 @@ export async function getArtists({
     sort,
   });
   if (genre) params.set("genre", genre);
+  if (q) params.set("q", q);
 
   return fetchJson<PaginatedArtists>(`/artists?${params}`);
 }

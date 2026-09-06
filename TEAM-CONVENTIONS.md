@@ -40,7 +40,9 @@
                                       └─▶ 버전 태그 + README 갱신
 ```
 
-**`main`에 직접 푸시 금지.** 브랜치 보호가 걸려 있진 않지만, 프론트는 그 순간 Production이 나갑니다.
+**`main`에 직접 푸시 금지.** 프론트는 그 순간 Production이 나갑니다.
+
+**`main`·`develop`은 Rulesets로 보호됩니다** (Settings → Rules → Rulesets `main-develop-protection`). `빌드 검증`·`유닛테스트` 두 CI 체크가 통과해야만 머지 버튼이 눌립니다 — 체크가 실패한 채로 머지되는 걸 GitHub이 막아줍니다. Bypass 목록은 비어 있어 예외 없이 강제됩니다.
 
 ## 2. 이슈 생성
 

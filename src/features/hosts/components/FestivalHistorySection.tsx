@@ -19,7 +19,7 @@ export function FestivalHistorySection({ hostId, items, total }: Props) {
         <h2 className="text-block-title text-ink">축제 이력</h2>
         <Link
           href={`/hosts/${hostId}/history`}
-          className="text-caption-strong text-muted-soft"
+          className="text-caption-strong text-muted"
         >
           전체 {total}개 →
         </Link>

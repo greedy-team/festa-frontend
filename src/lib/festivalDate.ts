@@ -45,6 +45,20 @@ export function dateRange(startDate: string, endDate: string): string {
   return `${short(startDate)} ~ ${short(endDate)}`;
 }
 
+/**
+ * '2026-05-07' + '2026-05-09' → '2026'
+ * '2025-12-30' + '2026-01-02' → '2025 ~ 2026'
+ *
+ * dateRange가 연도를 잘라내므로, 여러 해가 섞이는 화면(축제 목록·홈 최근 등록)에서
+ * 그 위에 따로 얹는 줄이다. 해를 걸치는 축제에 시작 연도만 적으면 아래의
+ * '12.30 ~ 01.02'와 어긋나 보이므로 두 연도를 함께 적는다.
+ */
+export function festivalYear(startDate: string, endDate: string): string {
+  const startYear = startDate.slice(0, 4);
+  const endYear = endDate.slice(0, 4);
+  return startYear === endYear ? startYear : `${startYear} ~ ${endYear}`;
+}
+
 /** '2026-05-21' → '2026년 봄' (1~6월), '2026-09-24' → '2026년 가을' (7~12월) */
 export function festivalSeason(startDate: string): string {
   const [year, month] = startDate.split("-").map(Number);

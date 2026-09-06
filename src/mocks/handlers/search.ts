@@ -4,7 +4,8 @@ import { Errors } from '@/mocks/fixtures/errors';
 import { findAppearances } from '@/mocks/fixtures/appearances';
 import { todayStr } from '@/mocks/fixtures/date';
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
+// /api 접두사: 2026-08-23 백엔드 결정(DEC-0099), #127 참고.
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.every-festa.com'}/api`;
 const VALID_TYPE = ['ALL', 'ARTIST', 'HOST', 'FESTIVAL'];
 
 function toFestivalResult(f: (typeof festivalsDb)[number]) {
@@ -33,10 +34,9 @@ function toHostResult(h: (typeof hostsDb)[number]) {
   const hostFestivals = festivalsDb.filter((f) => f.hostId === h.id);
   const latest = hostFestivals.slice().sort((x, y) => y.startDate.localeCompare(x.startDate))[0];
   return {
-    id: h.id,
+    hostId: h.id,
     name: h.name,
     logoUrl: h.logoUrl,
-    hostType: h.type,
     festivalCount: hostFestivals.length,
     latestFestivalYearMonth: latest ? latest.startDate.slice(0, 7) : null,
   };
@@ -81,7 +81,8 @@ export const searchHandlers = [
       festivals: type === 'ALL' || type === 'FESTIVAL' ? matchedFestivals.map(toFestivalResult) : [],
       artists: type === 'ALL' || type === 'ARTIST' ? matchedArtists.map(toArtistResult) : [],
       hosts: type === 'ALL' || type === 'HOST' ? matchedHosts.map(toHostResult) : [],
-      relatedKeywords: counts.all === 0 ? ['연세대 아카라카', '대학 축제', '싸이'] : [],
+      // 연관 검색어 생성은 이번 검색 API 범위 밖 — 백엔드가 항상 [] 로 내린다. 필드는 계약에 남아 있다.
+      relatedKeywords: [] as string[],
     });
   }),
 
@@ -115,7 +116,7 @@ export const searchHandlers = [
       festivals: primary && (primary as { type: string }).type !== 'FESTIVAL' ? relatedFestivals : [],
       artists: primary && (primary as { type: string }).type !== 'ARTIST' ? relatedArtists : [],
       hosts: primary && (primary as { type: string }).type !== 'HOST' ? relatedHosts : [],
-      relatedKeywords: primary ? [] : ['연세대 아카라카', '대학 축제', '싸이'],
+      relatedKeywords: [] as string[],
     });
   }),
 ];

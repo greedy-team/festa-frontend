@@ -34,8 +34,9 @@ export function AdmissionInfo({ admission }: Props) {
       <div className="mt-4 flex flex-col divide-y divide-divider rounded-card border border-border bg-surface">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center justify-between px-6 py-4">
-            <span className="text-caption-strong text-muted-soft">{row.label}</span>
-            <span className="text-caption-strong text-ink">{row.value}</span>
+            {/* 라벨이 값보다 흐리면 표로 읽히지 않는다 — 라벨은 muted 이상, 크기는 값이 한 단계 위 (#165) */}
+            <span className="text-caption-strong text-muted">{row.label}</span>
+            <span className="text-body text-ink">{row.value}</span>
           </div>
         ))}
       </div>

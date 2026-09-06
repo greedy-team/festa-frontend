@@ -4,7 +4,8 @@ import { Errors } from '@/mocks/fixtures/errors';
 import { todayStr, daysUntil } from '@/mocks/fixtures/date';
 import { findAppearances } from '@/mocks/fixtures/appearances';
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.festa.kr';
+// /api 접두사: 2026-08-23 백엔드 결정(DEC-0099), #127 참고.
+const API = `${process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.every-festa.com'}/api`;
 
 export const hostsHandlers = [
   // 5.1 GET /hosts/{id}
@@ -55,22 +56,23 @@ export const hostsHandlers = [
       ).length;
       if (count > 0) appearanceCount.set(artistId, count);
     }
+    // 배열 순서가 곧 순위다 (DEC-0108) — 출연 횟수 내림차순, 동점은 artistId 오름차순
     const frequentArtists = [...appearanceCount.entries()]
-      .sort((a, b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1] || a[0] - b[0])
       .slice(0, 3)
-      .map(([artistId, count], i) => {
+      .map(([artistId, count]) => {
         const artist = artistsDb.find((a) => a.id === artistId)!;
-        return { rank: i + 1, artistId: artist.id, name: artist.name, imageUrl: artist.imageUrl, appearanceCount: count };
+        return { artistId: artist.id, name: artist.name, imageUrl: artist.imageUrl, appearanceCount: count };
       });
 
     return HttpResponse.json({
       id: host.id,
-      type: host.type, // 부록 변경사항엔 제거 예정이라고 되어 있으나, 실제 필드표/응답 예시엔 남아있어서 스펙 원문 기준으로 포함. 팀 컨펌 나오면 이 줄만 지우면 됨.
       name: host.name,
       shortName: host.shortName,
       region: host.region,
       logoUrl: host.logoUrl,
       bannerUrl: host.bannerUrl,
+      homepageUrl: host.homepageUrl,
       availableYears: [...new Set(hostFestivals.map((f) => Number(f.startDate.slice(0, 4))))].sort((a, b) => b - a),
       upcomingFestivals,
       festivalHistory: { items: historyAll.slice(0, 2), total: historyAll.length },

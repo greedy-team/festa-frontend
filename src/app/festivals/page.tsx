@@ -4,10 +4,11 @@ import type { FestivalSort } from "@/features/festivals/types";
 import { FestivalCard } from "@/features/festivals/components/FestivalCard";
 import { parsePage } from "@/lib/searchParams";
 import { Container } from "@/components/layout/Container";
-import { SearchPill } from "@/components/ui/SearchPill";
+import { FestivalSearchForm } from "@/features/festivals/components/FestivalSearchForm";
 import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
+import { PageFadeIn } from "@/components/ui/PageFadeIn";
 
 const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
   { value: "LATEST", label: "최신순" },
@@ -17,16 +18,21 @@ const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
 const PAGE_SIZE = 10;
 
 type Props = {
-  searchParams: Promise<{ page?: string; sort?: string; artistId?: string }>;
+  searchParams: Promise<{ page?: string; sort?: string; artistId?: string; q?: string }>;
 };
 
 export default async function FestivalsPage({ searchParams }: Props) {
   const params = await searchParams;
   const page = parsePage(params.page);
   const sort: FestivalSort = params.sort === "UPCOMING" ? "UPCOMING" : "LATEST";
+  // "다가오는 순"(sort=UPCOMING)은 개최일 오름차순 정렬만 하고 지난 축제를 거르지 않는다
+  // (DEC-0115) — 오늘 이후 시작하는 축제만 남기는 건 status 필터의 몫이라 함께 보낸다.
+  // 이력 화면(/hosts/[id]/history)은 같은 sort를 "오래된순"으로 쓰므로 status를 붙이지 않는다.
+  const status = sort === "UPCOMING" ? "UPCOMING" : undefined;
   const artistId = params.artistId ? Number(params.artistId) : undefined;
+  const q = params.q?.trim() || undefined;
 
-  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, artistId });
+  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, status, artistId, q });
 
   if (!res.ok) {
     console.error("GET /festivals 실패", res.status, res.message);
@@ -39,10 +45,12 @@ export default async function FestivalsPage({ searchParams }: Props) {
 
   // 상한 클램프 — ?page=99(총 2페이지)로 들어오면 목록은 비고 캡션·이전 화살표만
   // 잘못된 페이지를 가리키게 된다. 실제로 존재하는 마지막 페이지로 다시 받는다.
+  // totalPages가 0(필터 결과 자체가 0건)이면 클램프 대상이 없다 — 그대로 두면
+  // page: -1로 재요청하게 되어 정상적인 빈 상태 대신 에러 화면이 뜬다.
   let currentPage = page;
-  if (currentPage > res.data.totalPages) {
+  if (currentPage > res.data.totalPages && res.data.totalPages > 0) {
     currentPage = res.data.totalPages;
-    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, artistId });
+    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, status, artistId, q });
     if (!res.ok) {
       console.error("GET /festivals 실패", res.status, res.message);
       return (
@@ -56,61 +64,67 @@ export default async function FestivalsPage({ searchParams }: Props) {
   const data = res.data;
 
   return (
-    <Container className="mt-10 mb-16">
-      <nav className="flex items-center gap-1 text-meta text-muted-soft">
-        <Link href="/">홈</Link>
-        <span>›</span>
-        <span className="text-ink">축제</span>
-      </nav>
+    // nav·footer에서 "축제"를 눌러 들어오는 화면이라, 뚝 뜨지 않고 진입 시
+    // 부드럽게 나타나게 한다
+    <PageFadeIn>
+      <Container className="mt-10 mb-16">
+        <nav className="flex items-center gap-1 text-meta text-muted-soft">
+          <Link href="/">홈</Link>
+          <span>›</span>
+          <span className="text-ink">축제</span>
+        </nav>
 
-      <div className="mt-2 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-hero text-ink">축제 전체</h1>
-          <p className="mt-2 text-body text-muted">
-            전국 대학 축제 라인업을 한 곳에서 확인하세요
+        <div className="mt-2 flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-hero text-ink">축제 전체</h1>
+            <p className="mt-2 text-body text-muted">
+              전국 대학 축제 라인업을 한 곳에서 확인하세요
+            </p>
+          </div>
+          <span className="mt-4 shrink-0 text-caption-strong text-muted">
+            전체 {data.totalElements}개 ›
+          </span>
+        </div>
+
+        <div className="mt-10 flex items-center justify-end gap-3">
+          <FestivalSearchForm defaultValue={q} sort={sort} artistId={params.artistId} />
+          <SortDropdown value={sort} options={SORT_OPTIONS} />
+        </div>
+
+        {data.items.length ? (
+          <div className="mt-10 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
+            {data.items.map((festival) => (
+              <FestivalCard key={festival.festivalId} festival={festival} />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-10 text-body text-muted">
+            {q ? `"${q}"에 해당하는 축제가 없습니다.` : "등록된 축제가 없습니다."}
           </p>
-        </div>
-        <span className="mt-4 shrink-0 text-caption-strong text-muted">
-          전체 {data.totalElements}개 ›
-        </span>
-      </div>
+        )}
 
-      <div className="mt-10 flex items-center justify-end gap-3">
-        <SearchPill placeholder="학교 또는 축제 이름 검색" />
-        <SortDropdown value={sort} options={SORT_OPTIONS} />
-      </div>
+        {data.totalPages > 1 ? (
+          <Pagination
+            className="mt-16"
+            page={currentPage}
+            totalPages={data.totalPages}
+            totalElements={data.totalElements}
+            makeHref={(p) => {
+              // page/sort 말고 다른 쿼리(q, artistId 등)가 나중에 붙어도 페이지
+              // 이동 시 사라지지 않도록 현재 쿼리를 먼저 복사한다.
+              const entries = Object.entries(params).filter(
+                (entry): entry is [string, string] => entry[1] != null,
+              );
+              const qs = new URLSearchParams(entries);
+              qs.set("page", String(p));
+              qs.set("sort", sort);
+              return `/festivals?${qs}`;
+            }}
+          />
+        ) : null}
 
-      {data.items.length ? (
-        <div className="mt-10 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
-          {data.items.map((festival) => (
-            <FestivalCard key={festival.festivalId} festival={festival} />
-          ))}
-        </div>
-      ) : (
-        <p className="mt-10 text-body text-muted">등록된 축제가 없습니다.</p>
-      )}
-
-      {data.totalPages > 1 ? (
-        <Pagination
-          className="mt-16"
-          page={currentPage}
-          totalPages={data.totalPages}
-          totalElements={data.totalElements}
-          makeHref={(p) => {
-            // page/sort 말고 다른 쿼리(q, artistId 등)가 나중에 붙어도 페이지
-            // 이동 시 사라지지 않도록 현재 쿼리를 먼저 복사한다.
-            const entries = Object.entries(params).filter(
-              (entry): entry is [string, string] => entry[1] != null,
-            );
-            const qs = new URLSearchParams(entries);
-            qs.set("page", String(p));
-            qs.set("sort", sort);
-            return `/festivals?${qs}`;
-          }}
-        />
-      ) : null}
-
-      <AdSlot variant="banner" className="mt-16" />
-    </Container>
+        <AdSlot variant="banner" className="mt-16" />
+      </Container>
+    </PageFadeIn>
   );
 }

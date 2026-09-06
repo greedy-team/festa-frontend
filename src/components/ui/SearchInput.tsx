@@ -30,7 +30,7 @@ export function SearchInput({ name, placeholder = "검색", className = "" }: Pr
           <input key={key} type="hidden" name={key} value={value} />
         ))}
 
-      <div className="inline-flex h-[36px] w-[280px] max-w-full items-center gap-2 rounded-pill bg-surface-field px-4">
+      <div className="inline-flex h-[36px] w-[280px] max-w-full items-center gap-2 rounded-pill bg-surface-field px-4 focus-within:ring-2 focus-within:ring-primary">
         <input
           name={name}
           defaultValue={searchParams.get(name) ?? ""}

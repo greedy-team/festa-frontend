@@ -25,14 +25,14 @@ export const TICKET_TYPE_LABELS: Record<TicketType, string> = {
 };
 
 // 백엔드가 명세 밖 값을 내려도 빈 칸 대신 안내 문구로 떨어진다 (genreLabel과 같은 원칙)
-export function externalVisitorLabel(value: ExternalVisitor): string {
-  return EXTERNAL_VISITOR_LABELS[value] ?? "안내 없음";
+export function externalVisitorLabel(value: ExternalVisitor | null): string {
+  return value === null ? "안내 없음" : EXTERNAL_VISITOR_LABELS[value] ?? "안내 없음";
 }
 
-export function verificationLabel(value: Verification): string {
-  return VERIFICATION_LABELS[value] ?? "안내 없음";
+export function verificationLabel(value: Verification | null): string {
+  return value === null ? "안내 없음" : VERIFICATION_LABELS[value] ?? "안내 없음";
 }
 
-export function ticketTypeLabel(value: TicketType): string {
-  return TICKET_TYPE_LABELS[value] ?? "안내 없음";
+export function ticketTypeLabel(value: TicketType | null): string {
+  return value === null ? "안내 없음" : TICKET_TYPE_LABELS[value] ?? "안내 없음";
 }

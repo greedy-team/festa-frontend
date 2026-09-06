@@ -7,23 +7,19 @@ import { PosterImage } from "@/components/ui/PosterImage";
 
 type Props = {
   festival: FestivalResult;
-  /** 매칭 하이라이트 판단용 검색어 */
-  query: string;
 };
 
 /**
- * 시안의 부분 문자열 하이라이트 대신, 학교명에서만 매칭됐을 때 한 줄로 알려주는
- * 걸로 단순화했다 (#53) — /search 응답이 어떤 필드에서 매칭됐는지 알려주지 않는다.
+ * 시안엔 검색어 매칭 하이라이트가 있지만 뺐다 (#153) — /search 응답이 어떤 필드에서
+ * 매칭됐는지 알려주지 않고, 학교명 매칭은 바로 위 메타 줄(· {학교명})과 겹친다.
  */
-export function FestivalResultRow({ festival, query }: Props) {
+export function FestivalResultRow({ festival }: Props) {
   const { festivalId, name, host, startDate, endDate, posterUrl } = festival;
-  const q = query.trim();
-  const matchedByHost = !name.includes(q) && host.name.includes(q);
 
   return (
     <Link
       href={`/festivals/${festivalId}`}
-      className="flex items-center gap-4 rounded-row border border-border bg-surface px-6 py-4"
+      className="flex items-center gap-3 rounded-row border border-border bg-surface px-4 py-4 sm:gap-4 sm:px-6"
     >
       <div
         className={`relative h-[88px] w-[80px] shrink-0 overflow-hidden rounded-md ${gridTint(festivalId)}`}
@@ -40,12 +36,6 @@ export function FestivalResultRow({ festival, query }: Props) {
           <Calendar size={14} className="shrink-0" aria-hidden />
           {dateRange(startDate, endDate)} · {host.name}
         </p>
-        {matchedByHost ? (
-          <p className="mt-1 flex items-center gap-1.5 text-meta-medium text-primary">
-            <span className="size-1 shrink-0 rounded-pill bg-accent" aria-hidden />
-            학교명 일치: {host.name}
-          </p>
-        ) : null}
       </div>
 
       <span className="shrink-0 rounded-pill bg-primary-soft px-3 py-1 text-meta-strong text-primary">
