@@ -1,7 +1,75 @@
 # Changelog
 
-**현재 버전:** 0.1.10  
-**마지막 업데이트:** 2026-08-24T06:38:59Z  
+**현재 버전:** 0.1.11  
+**마지막 업데이트:** 2026-09-06T17:08:03Z  
+
+---
+
+## [0.1.11] - 2026-09-06
+
+**PR:** #197  
+
+**기타**
+- Merge pull request from greedy-team/feat_187_축제_개수에_따른_히어로_레이아웃과_빈_상태_화면_정리
+- docs : 리포트 문서 작성
+- docs : DESIGN.md 히어로 절에 개수별 조판 규칙 반영
+- feat : 쇼케이스 히어로 표본을 개수별 조판(1~4건)으로 갱신
+- feat : 히어로 패널 조판을 축제 개수에 따라 좌우 분할·세로 스택으로 나눈다
+- feat : 오시는 길을 지도 우선 레이아웃으로 바꾼다
+- feat : 히어로 개수별 레이아웃 이슈 초안 추가
+- feat : 헤더 메뉴를 중앙 정렬하고 스크롤 전환 시점을 앞당긴다
+- feat : 축제 2건 이상일 때 히어로가 크래시하는 문제 수정
+- feat : 히어로 포스터를 자르지 않고 원본 비율로 보여준다
+- Merge pull request from greedy-team/fix_194_다가오는_순_정렬이_실제로는_오래된순으로_동작한다
+- docs : 다가오는 순 정렬 status 필터 결합 구현 보고서 추가
+- fix : "다가오는 순" 정렬에 status=UPCOMING 필터를 함께 보내 지난 축제를 제외한다
+- Merge pull request from greedy-team/docs_192_190_구현_보고서의_결정_노트_참조를_dec_0173으로_정정
+- docs : 구현 보고서의 결정 노트 참조를 DEC-0173으로 정정
+- Merge pull request from greedy-team/feat_190_축제_상세_히어로_인스타_링크를_축제_계정으로_교체
+- feat : 축제 상세 히어로 인스타 링크를 축제 계정으로 교체
+- Merge pull request from greedy-team/fix_188_축제_전체_페이지에서_검색이_동작하지_않는다
+- docs : 리포트 문서 작성
+- fix : 축제 전체 페이지 검색 기능 연결
+- Merge pull request from greedy-team/fix_181_실데이터_연동과_홈_스크롤_경계_점검
+- docs : 관리자 실서버 인증 검증 결과 기록
+- Merge pull request from greedy-team/docs_184_design_md_카드_스펙에_연도_줄을_반영한다
+- docs : 리포트 문서 작성
+- docs : DESIGN.md 카드 스펙에 연도 줄 반영
+- Merge pull request from greedy-team/feat_182_축제_카드_기간_위에_연도를_표시한다
+- docs : 리포트 문서 작성
+- feat : 축제 목록·홈 최근 카드 기간 위에 연도 표시
+- docs : 프로덕션 빌드와 전체 E2E 검증 결과 기록
+- fix : 홈 스크롤 경계와 입장 안내 null 계약 보정
+- Merge pull request from greedy-team/docs_178_홈_히어로_빈_상태_구현_보고서
+- docs : 홈 히어로 빈 상태 구현 보고서 추가
+- Merge pull request from greedy-team/feat_178_다가오는_축제가_0건일_때_히어로에_아티스트_이름을_조판한다
+- feat : 홈 히어로 스크롤 애니메이션 추가
+- feat : 다가오는 축제가 0건일 때 히어로 배경을 아티스트 이름 벽으로 교체
+- Merge pull request from greedy-team/docs_176_e2e_구현_보고서에_리뷰_반영_내용_누락
+- docs : E2E 보고서에 타임존 하루 밀림 수정과 href 단언 반영
+- Merge pull request from greedy-team/chore_174_e2e가_안_덮는_흐름_추가
+- Merge pull request from greedy-team/chore_172_테스트가_없는_순수_함수에_유닛테스트_추가
+- docs : 순수 함수 유닛테스트 추가 구현 보고서 작성
+- fix : daysFromToday 서쪽 타임존 하루 밀림 수정, 라인업 href 모양 단언 추가
+- chore : 리뷰 반영 - 요청 URL·옵션과 일시 포맷 결과를 단언해 살아남던 변이 차단
+- docs : CI 경쟁 상태 수정과 재현 절차를 구현 보고서에 반영
+- fix : CI에서 렌더 전 count()가 0을 읽어 스펙이 대상을 건너뛰던 문제 수정
+- docs : E2E 흐름 추가 구현 보고서 작성
+- chore : E2E가 안 덮던 흐름 8개 스펙 추가와 스킵 해소 (17 → 36건)
+- chore : 테스트 없던 순수 함수 9곳에 유닛테스트 추가 (74 → 126건)
+- Merge pull request from greedy-team/chore_48_구글_맵_키_결제_설정과_축제_상세_지도_임베드
+- docs : 구글 맵 임베드 구현 보고서와 결과물 보존 규칙 추가
+- chore : 축제 상세 오시는 길 폴백 박스를 구글 맵 임베드로 교체
+- Merge pull request from greedy-team/chore_116_관리자_화면_e2e_테스트_도입
+- docs : 관리자 E2E 구현 보고서 갱신과 실행 결과물 보존
+- chore : 축제 검수 E2E를 실 API 화면 기준으로 재작성 — 발행·해제·차단 3건
+- chore : 관리자 검수 목록·발행·해제 MSW 핸들러와 실서버 캡처 픽스처 추가
+- Merge remote-tracking branch 'origin/develop' into chore_116_관리자_화면_e2e_테스트_도입
+- Merge pull request from greedy-team/feat_165_축제_상세_화면_텍스트가_작고_흐려_읽기_어려운_문제_개선
+- feat : 주최·아티스트 상세에 상세 화면 텍스트 규칙 적용, 검색 결과 행 스펙 정정
+- feat : 축제 상세 텍스트 대비·크기 개선, 라인업 바텀시트 제거와 아티스트 링크
+- Merge pull request from greedy-team/docs_166_design_md_day_card_라인업_바텀시트_자주_온_아티스트_스펙을_아바타_제거_반영해_갱신
+- docs : DESIGN.md day-card·라인업 바텀시트·자주 온 아티스트 스펙을 아바타 제거 반영해 갱신
 
 ---
 
