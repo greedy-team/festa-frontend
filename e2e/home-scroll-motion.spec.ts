@@ -1,5 +1,16 @@
 import { test, expect } from "@playwright/test";
 
+test("높은 화면에서도 맨 아래로 내리면 히어로를 벗어난다", async ({ page }) => {
+  await page.setViewportSize({ width: 1880, height: 1340 });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "최근 등록된 축제" })).toBeAttached();
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  const hero = page.locator("main > section").first();
+  await expect.poll(() => hero.evaluate((el) => el.getBoundingClientRect().bottom))
+    .toBeLessThanOrEqual(72);
+  await expect(page.locator("header")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+});
+
 for (const [width, height] of [[1440, 800], [1880, 1340], [375, 800]]) {
   test(`축제 0건 이름 배경의 스크롤 전환 (${width}px)`, async ({ page }) => {
     await page.setViewportSize({ width, height });

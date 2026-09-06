@@ -10,6 +10,12 @@ import type {
   Verification,
 } from "@/features/festivals/types";
 
+it("실제 API의 미정(null) 입장 정보는 안내 없음으로 표시한다", () => {
+  expect(externalVisitorLabel(null)).toBe("안내 없음");
+  expect(verificationLabel(null)).toBe("안내 없음");
+  expect(ticketTypeLabel(null)).toBe("안내 없음");
+});
+
 describe("externalVisitorLabel", () => {
   it("명세에 있는 값은 한글 문구로 매핑한다", () => {
     expect(externalVisitorLabel("ALLOWED")).toBe("외부인 입장 가능");
