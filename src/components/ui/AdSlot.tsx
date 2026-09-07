@@ -1,30 +1,38 @@
+import { randomInt } from "node:crypto";
+import Image from "next/image";
+
 type Variant = "panel" | "banner";
 
+const AD_HREF = "https://docs.google.com/forms/d/1z2Cvhk7p7ef6-TFNesqUrpqeg8Ha5OjQoyAVfvVeX7M/edit";
+const PANEL_IMAGES = ["/ads/panel1.png", "/ads/panel2.png"] as const;
+
 const VARIANT = {
-  panel: { height: "h-[420px]", size: "680 × 420" },
-  banner: { height: "h-[96px]", size: "1280 × 96" },
-} satisfies Record<Variant, { height: string; size: string }>;
+  panel: { height: "h-[420px]" },
+  banner: { height: "h-[96px]" },
+} satisfies Record<Variant, { height: string }>;
 
 type Props = {
   variant?: Variant;
   className?: string;
 };
 
-/**
- * 항상 플레이스홀더다 — 광고 정책은 배치 원칙(페이지당 하나, DEC-0087)만 정해졌고
- * 실제 소재·트리거는 아직 없다.
- */
 export function AdSlot({ variant = "panel", className = "" }: Props) {
-  const { height, size } = VARIANT[variant];
+  const { height } = VARIANT[variant];
+  const imageSrc =
+    variant === "banner" ? "/ads/banner.png" : PANEL_IMAGES[randomInt(PANEL_IMAGES.length)];
 
   return (
-    <div
-      className={`relative flex ${height} w-full items-center justify-center rounded-card border border-border-strong bg-surface-field ${className}`}
+    <a
+      href={AD_HREF}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="광고 페이지 열기"
+      className={`relative flex ${height} w-full items-center justify-center overflow-hidden rounded-card border border-border-strong bg-surface-field ${className}`}
     >
-      <span className="absolute left-5 top-5 flex h-[20px] w-[32px] items-center justify-center rounded-xs bg-muted-soft text-micro text-white">
+      <span className="absolute left-5 top-5 z-10 flex h-[20px] w-[32px] items-center justify-center rounded-xs bg-muted-soft text-micro text-white">
         AD
       </span>
-      <p className="text-button-sm text-muted-soft">광고 배너 영역 · {size}</p>
-    </div>
+      <Image src={imageSrc} alt="" fill sizes="100vw" className={variant === "panel" ? "object-cover" : "object-contain"} />
+    </a>
   );
 }

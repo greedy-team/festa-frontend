@@ -9,6 +9,12 @@ import { Container } from "@/components/layout/Container";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Chip } from "@/components/ui/Chip";
+import { NO_INDEX, pageMetadata } from "@/lib/seo";
+
+export const metadata = {
+  ...pageMetadata("/search", "학교·축제·아티스트 검색"),
+  ...NO_INDEX,
+};
 
 const TYPE_OPTIONS: { value: SearchType | null; label: string }[] = [
   { value: null, label: "전체" },
