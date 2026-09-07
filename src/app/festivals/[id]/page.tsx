@@ -8,6 +8,7 @@ import { LocationSection } from "@/features/festivals/components/LocationSection
 import { Container } from "@/components/layout/Container";
 import { FadeInSection } from "@/components/ui/FadeInSection";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
+import { NO_INDEX, pageMetadata } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -16,10 +17,16 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id: idParam } = await params;
   const id = Number(idParam);
-  if (!Number.isInteger(id) || id <= 0) return {};
+  if (!Number.isInteger(id) || id <= 0) return NO_INDEX;
 
   const res = await getFestival(id);
-  return res.ok ? { title: `${res.data.name} | FESTA` } : {};
+  if (!res.ok) {
+    return { title: "축제 정보를 불러오지 못했습니다", ...NO_INDEX };
+  }
+  const festival = res.data;
+  const artists = [...new Set(festival.lineup.flatMap((day) => day.artists.flatMap((artist) => artist.name ? [artist.name] : [])))].slice(0, 6);
+  const description = `${festival.host.name} ${festival.name}, ${festival.startDate}~${festival.endDate}. ${artists.length ? `출연: ${artists.join(", ")}. ` : ""}일자별 라인업과 외부인 입장 안내, 장소를 확인하세요.`;
+  return pageMetadata(`/festivals/${festival.id}`, `${festival.name} 일정·라인업·입장 안내`, description);
 }
 
 export default async function FestivalDetailPage({ params }: Props) {

@@ -22,12 +22,8 @@ async function allFestivalHrefs(page: Page) {
 }
 
 test("라인업의 공개된 아티스트 행을 누르면 그 아티스트 상세로 이동한다", async ({ page }) => {
-  await page.goto("/");
-
-  const festivalLink = page.locator('a[href^="/festivals/"]').first();
-  await expect(festivalLink).toBeVisible();
-  await festivalLink.click();
-  await expect(page).toHaveURL(/\/festivals\/\d+$/);
+  // 홈의 첫 축제는 날짜에 따라 바뀐다. 55는 항상 미래이고 공개 라인업이 있는 fixture다.
+  await page.goto("/festivals/55");
   await expect(page.getByRole("heading", { name: "라인업" })).toBeVisible();
 
   const artistRow = page.locator('a[href^="/artists/"]').first();

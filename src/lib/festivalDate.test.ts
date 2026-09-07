@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   dDay,
   dateRange,
+  dateRangeWithYear,
   dateWithWeekday,
   festivalSeason,
   festivalStatus,
@@ -50,6 +51,16 @@ describe("dateRange", () => {
 
   it("월이 걸쳐 있어도 각자의 월.일을 그대로 보여준다", () => {
     expect(dateRange("2026-08-30", "2026-09-02")).toBe("08.30 ~ 09.02");
+  });
+});
+
+describe("dateRangeWithYear", () => {
+  it("양쪽 날짜에 연도를 붙여 물결로 잇는다", () => {
+    expect(dateRangeWithYear("2026-05-07", "2026-05-09")).toBe("2026.05.07 ~ 2026.05.09");
+  });
+
+  it("해를 걸쳐도 각자의 연도를 그대로 보여준다", () => {
+    expect(dateRangeWithYear("2025-12-30", "2026-01-02")).toBe("2025.12.30 ~ 2026.01.02");
   });
 });
 

@@ -30,6 +30,17 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## SEO 및 공유 이미지
+
+- 대표 주소: `https://www.every-festa.com` (`src/lib/seo.ts`). 루트 도메인은 현재 www로 리다이렉트됩니다.
+- 파비콘: `public/festa_symbol.png`에 정사각 PNG를 넣습니다. 최소 48×48, 권장 192×192 이상입니다. 교체하면 `src/app/layout.tsx`의 아이콘 URL 두 곳에 있는 `v` 값을 새 파일의 SHA-256 앞 8자리로 갱신해 이전 캐시와 구분합니다.
+- 공유 이미지: `public/festa-og-image.jpg` (1729×910, 약 312KB). 모든 공개 페이지가 이 이미지를 사용하며 제목·설명은 페이지별로 달라집니다. 교체할 때 실제 크기와 `src/lib/seo.ts`의 크기 정보를 맞춥니다.
+- `/sitemap.xml`은 공개 축제·아티스트 전체 목록과 축제가 등록된 학교·학교 이력을 포함합니다. 별도 공개 학교 목록 API가 없어 축제가 없는 학교는 사이트맵에 포함하지 않습니다.
+- 관리자·showcase·내부 검색·검색 필터 조합은 검색에서 제외합니다. 기본 목록의 페이지네이션은 별도 대표 URL을 유지합니다. Vercel의 production 외 환경은 응답 헤더로 전체 검색 제외합니다.
+- 배포 후 이미지 두 URL의 200 응답과 링크 미리보기를 확인하고, Google Search Console과 네이버 서치어드바이저에서 대표 도메인 소유권 확인 후 `/sitemap.xml`을 제출합니다. 인증 파일/태그는 각 콘솔에서 발급받은 실제 값이 필요합니다.
+
+기술 기준: [Next.js Metadata](https://nextjs.org/docs/app/api-reference/functions/generate-metadata), [Google noindex](https://developers.google.com/search/docs/crawling-indexing/block-indexing).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
@@ -48,6 +59,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ---
 
 <!-- AUTO-VERSION-SECTION: DO NOT EDIT MANUALLY -->
-## 최신 버전 : v0.1.11 (2026-09-06)
+## 최신 버전 : v0.1.12 (2026-09-07)
 
 [전체 버전 기록 보기](CHANGELOG.md)

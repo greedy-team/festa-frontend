@@ -6,10 +6,16 @@ import { SiteChrome } from "@/components/layout/SiteChrome";
 import { MockProvider } from "@/mocks/MockProvider";
 import { SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 import { MOCKING_ENABLED } from "@/lib/mocking";
+import { SITE_TITLE, SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: SITE_NAME,
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_TITLE, template: `%s | ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
+  icons: {
+    icon: { url: "/festa_symbol.png?v=e225f8f0", type: "image/png" },
+    apple: { url: "/festa_symbol.png?v=e225f8f0", type: "image/png" },
+  },
 };
 
 export default function RootLayout({
