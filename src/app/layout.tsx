@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: SITE_TITLE, template: `%s | ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
+  verification: {
+    other: { "naver-site-verification": "a4f80ea342ce4a22d6deda4a38456550f0d1e6da" },
+  },
   icons: {
     icon: { url: "/festa_symbol.png?v=e225f8f0", type: "image/png" },
     apple: { url: "/festa_symbol.png?v=e225f8f0", type: "image/png" },
