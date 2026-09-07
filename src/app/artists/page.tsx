@@ -12,6 +12,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Chip } from "@/components/ui/Chip";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
+import { listingMetadata } from "@/lib/seo";
 
 const PAGE_SIZE = 10;
 
@@ -42,6 +43,20 @@ const VALID_GENRES = Object.keys(GENRE_LABELS) as ArtistGenre[];
 type Props = {
   searchParams: Promise<{ page?: string; sort?: string; genre?: string; q?: string }>;
 };
+
+export async function generateMetadata({ searchParams }: Props) {
+  const params = await searchParams;
+  return listingMetadata(
+    "/artists",
+    "대학 축제 아티스트·출연 이력",
+    "대학 축제 무대에 오른 아티스트와 예정 공연, 지난 축제 출연 기록을 확인하세요.",
+    {
+      ...params,
+      sort: params.sort === "NAME" ? "NAME" : undefined,
+      genre: VALID_GENRES.find((genre) => genre === params.genre),
+    },
+  );
+}
 
 export default async function ArtistsPage({ searchParams }: Props) {
   const params = await searchParams;

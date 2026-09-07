@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getFestivals } from "@/features/festivals/api";
 import type { FestivalSort } from "@/features/festivals/types";
 import { FestivalCard } from "@/features/festivals/components/FestivalCard";
@@ -9,6 +10,7 @@ import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
+import { listingMetadata } from "@/lib/seo";
 
 const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
   { value: "LATEST", label: "최신순" },
@@ -21,6 +23,16 @@ type Props = {
   searchParams: Promise<{ page?: string; sort?: string; artistId?: string; q?: string }>;
 };
 
+export async function generateMetadata({ searchParams }: Props) {
+  const params = await searchParams;
+  return listingMetadata(
+    "/festivals",
+    "대학 축제 일정·라인업",
+    "전국 대학 축제 일정과 출연 아티스트를 찾아보고, 축제별 라인업과 입장 정보를 확인하세요.",
+    { ...params, sort: params.sort === "UPCOMING" ? "UPCOMING" : undefined },
+  );
+}
+
 export default async function FestivalsPage({ searchParams }: Props) {
   const params = await searchParams;
   const page = parsePage(params.page);
@@ -32,7 +44,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
   const artistId = params.artistId ? Number(params.artistId) : undefined;
   const q = params.q?.trim() || undefined;
 
-  let res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, status, artistId, q });
+  const res = await getFestivals({ page: page - 1, size: PAGE_SIZE, sort, status, artistId, q });
 
   if (!res.ok) {
     console.error("GET /festivals 실패", res.status, res.message);
@@ -43,22 +55,15 @@ export default async function FestivalsPage({ searchParams }: Props) {
     );
   }
 
-  // 상한 클램프 — ?page=99(총 2페이지)로 들어오면 목록은 비고 캡션·이전 화살표만
-  // 잘못된 페이지를 가리키게 된다. 실제로 존재하는 마지막 페이지로 다시 받는다.
-  // totalPages가 0(필터 결과 자체가 0건)이면 클램프 대상이 없다 — 그대로 두면
-  // page: -1로 재요청하게 되어 정상적인 빈 상태 대신 에러 화면이 뜬다.
-  let currentPage = page;
-  if (currentPage > res.data.totalPages && res.data.totalPages > 0) {
-    currentPage = res.data.totalPages;
-    res = await getFestivals({ page: currentPage - 1, size: PAGE_SIZE, sort, status, artistId, q });
-    if (!res.ok) {
-      console.error("GET /festivals 실패", res.status, res.message);
-      return (
-        <Container className="mt-10 mb-16">
-          <p className="mt-10 text-body text-muted">축제 목록을 불러오지 못했습니다.</p>
-        </Container>
-      );
-    }
+  // 마지막 페이지를 다른 URL로 중복 노출하지 않도록 실제 페이지로 이동한다.
+  const currentPage = page;
+  if (page > res.data.totalPages && res.data.totalPages > 0) {
+    const entries = Object.entries(params).filter(
+      (entry): entry is [string, string] => entry[1] != null,
+    );
+    const query = new URLSearchParams(entries);
+    query.set("page", String(res.data.totalPages));
+    redirect(`/festivals?${query}`);
   }
 
   const data = res.data;

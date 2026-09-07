@@ -7,6 +7,9 @@ import { Container } from "@/components/layout/Container";
 import { HeroSurface } from "@/components/layout/HeroSurface";
 import { SectionHeaderRow } from "@/components/ui/SectionHeaderRow";
 import { FadeInSection } from "@/components/ui/FadeInSection";
+import { pageMetadata, SITE_TITLE } from "@/lib/seo";
+
+export const metadata = pageMetadata("/", SITE_TITLE);
 
 export default async function Home() {
   const [upcomingRes, recentRes] = await Promise.all([
@@ -53,6 +56,10 @@ export default async function Home() {
 
   return (
     <>
+      {/* 빈 시즌에는 Hero가 h1을 제공한다. 축제 패널이 있을 때도 문서 제목을 유지한다. */}
+      {!upcomingRes.ok || upcoming.length > 0 ? (
+        <h1 className="sr-only">전국 대학 축제 일정과 라인업</h1>
+      ) : null}
       {upcomingRes.ok ? (
         <Hero festivals={upcoming} artists={artists} />
       ) : (

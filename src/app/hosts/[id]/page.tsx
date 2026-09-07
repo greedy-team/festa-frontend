@@ -9,10 +9,21 @@ import { Container } from "@/components/layout/Container";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { FadeInSection } from "@/components/ui/FadeInSection";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
+import { NO_INDEX, pageMetadata } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props) {
+  const id = Number((await params).id);
+  if (!Number.isInteger(id) || id <= 0) return NO_INDEX;
+  const res = await getHost(id);
+  if (!res.ok) {
+    return { title: "학교 정보를 불러오지 못했습니다", ...NO_INDEX };
+  }
+  return pageMetadata(`/hosts/${res.data.id}`, `${res.data.name} 축제 일정·라인업`, `${res.data.name}의 다가오는 축제 일정, 역대 라인업과 자주 출연한 아티스트를 확인하세요.`);
+}
 
 export default async function HostDetailPage({ params }: Props) {
   const { id: idParam } = await params;
