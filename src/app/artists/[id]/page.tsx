@@ -6,10 +6,21 @@ import { AppearancesSection } from "@/features/artists/components/AppearancesSec
 import { Container } from "@/components/layout/Container";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
+import { NO_INDEX, pageMetadata } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props) {
+  const id = Number((await params).id);
+  if (!Number.isInteger(id) || id <= 0) return NO_INDEX;
+  const res = await getArtist(id);
+  if (!res.ok) {
+    return { title: "아티스트 정보를 불러오지 못했습니다", ...NO_INDEX };
+  }
+  return pageMetadata(`/artists/${res.data.id}`, `${res.data.name} 대학 축제 공연·출연 이력`, `${res.data.name}의 대학 축제 예정 공연과 지난 출연 이력을 확인하세요.`);
+}
 
 export default async function ArtistDetailPage({ params }: Props) {
   const { id: idParam } = await params;

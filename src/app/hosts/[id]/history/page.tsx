@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getHost } from "@/features/hosts/api";
 import { getFestivals } from "@/features/festivals/api";
 import type { FestivalSort } from "@/features/festivals/types";
@@ -11,6 +11,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Chip } from "@/components/ui/Chip";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
+import { listingMetadata, NO_INDEX } from "@/lib/seo";
 
 const PAGE_SIZE = 10;
 
@@ -24,9 +25,30 @@ type Props = {
   searchParams: Promise<{ page?: string; sort?: string; year?: string }>;
 };
 
+export async function generateMetadata({ params, searchParams }: Props) {
+  const id = Number((await params).id);
+  if (!Number.isInteger(id) || id <= 0) return NO_INDEX;
+  const res = await getHost(id);
+  if (!res.ok) {
+    return { title: "학교 정보를 불러오지 못했습니다", ...NO_INDEX };
+  }
+  const sp = await searchParams;
+  return listingMetadata(
+    `/hosts/${res.data.id}/history`,
+    `${res.data.name} 역대 축제 이력`,
+    `${res.data.name}의 연도별 축제 일정과 지난 라인업을 확인하세요.`,
+    {
+      ...sp,
+      sort: sp.sort === "UPCOMING" ? "UPCOMING" : undefined,
+      year: res.data.availableYears.find((year) => String(year) === sp.year)?.toString(),
+    },
+  );
+}
+
 export default async function FestivalHistoryPage({ params, searchParams }: Props) {
   const { id } = await params;
   const hostId = Number(id);
+  if (!Number.isInteger(hostId) || hostId <= 0) notFound();
   const sp = await searchParams;
   const page = parsePage(sp.page);
   const sort: FestivalSort = sp.sort === "UPCOMING" ? "UPCOMING" : "LATEST";
@@ -34,6 +56,7 @@ export default async function FestivalHistoryPage({ params, searchParams }: Prop
   const hostRes = await getHost(hostId);
   // 실패해도 throw하지 않는다 — 이 화면은 host 정보 없이는 의미가 없어 안내 문구로 대체한다.
   if (!hostRes.ok) {
+    if (hostRes.status === 404) notFound();
     return (
       <Container className="mt-10 mb-16">
         <p className="text-body text-muted">학교 정보를 불러올 수 없습니다.</p>
