@@ -19,7 +19,7 @@ for (const path of ["/", "/festivals", "/artists", "/festivals/21", "/artists/3"
     expect(head).toContain('property="og:description"');
     expect(head).toContain('content="https://www.every-festa.com/festa-og-image.jpg"');
     expect(head).toContain('name="twitter:card" content="summary_large_image"');
-    expect(head).toContain('href="/festa_symbol.png"');
+    expect(head).toContain('href="/festa_symbol.png?v=e225f8f0"');
     expect(head).not.toContain('href="/favicon.ico');
     expect(head).not.toContain("noindex");
     const title = head.match(/<title>(.*?)<\/title>/)?.[1];

@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   title: { default: SITE_TITLE, template: `%s | ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
   icons: {
-    icon: { url: "/festa_symbol.png", type: "image/png" },
-    apple: { url: "/festa_symbol.png", type: "image/png" },
+    icon: { url: "/festa_symbol.png?v=e225f8f0", type: "image/png" },
+    apple: { url: "/festa_symbol.png?v=e225f8f0", type: "image/png" },
   },
 };
 
