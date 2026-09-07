@@ -46,6 +46,19 @@ export function dateRange(startDate: string, endDate: string): string {
 }
 
 /**
+ * '2026-05-07' + '2026-05-09' → '2026.05.07 ~ 2026.05.09'
+ *
+ * dateRange가 연도를 잘라내므로, 하나의 축제를 보고 있어도 그게 몇 년 축제인지
+ * 알아야 하는 화면(축제 상세 히어로·검색 결과 행·관리자 검수 표)에서 쓴다.
+ * 여러 해가 섞이는 목록 카드는 기간 위에 festivalYear를 별도 줄로 얹지만,
+ * 이 화면들은 줄을 늘리지 않고 날짜 줄 자체에 연도를 넣는다 (DEC-0178).
+ * 양쪽 연도를 모두 적어 해를 걸치는 축제('2025.12.30 ~ 2026.01.02')도 그대로 읽힌다.
+ */
+export function dateRangeWithYear(startDate: string, endDate: string): string {
+  return `${fullDate(startDate)} ~ ${fullDate(endDate)}`;
+}
+
+/**
  * '2026-05-07' + '2026-05-09' → '2026'
  * '2025-12-30' + '2026-01-02' → '2025 ~ 2026'
  *

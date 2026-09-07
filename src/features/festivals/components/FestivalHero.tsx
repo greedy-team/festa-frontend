@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AtSign, Calendar, Globe, MapPin, Ticket } from "lucide-react";
 import type { FestivalDetail } from "@/features/festivals/types";
 import { heroTint } from "@/lib/posterTint";
-import { dateRange, formatDday, festivalStatus } from "@/lib/festivalDate";
+import { dateRangeWithYear, formatDday, festivalStatus } from "@/lib/festivalDate";
 import { ticketTypeLabel } from "@/lib/admission";
 import { safeHttpUrl } from "@/lib/safeUrl";
 import { PosterImage } from "@/components/ui/PosterImage";
@@ -87,7 +87,7 @@ export function FestivalHero({ festival }: Props) {
           <div className="flex flex-col gap-2 text-body text-on-media">
             <p className="flex items-center gap-2">
               <Calendar size={16} className="shrink-0" aria-hidden />
-              {dateRange(startDate, endDate)}
+              {dateRangeWithYear(startDate, endDate)}
             </p>
             <p className="flex items-center gap-2">
               <MapPin size={16} className="shrink-0" aria-hidden />
