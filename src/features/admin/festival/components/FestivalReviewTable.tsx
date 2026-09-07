@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { PUBLISH_BLOCKER, type AdminFestival } from "@/features/admin/festival/types";
 import { discoveryLabel, publishBlockerLabel } from "@/lib/adminEnums";
-import { dateRange } from "@/lib/festivalDate";
+import { dateRangeWithYear } from "@/lib/festivalDate";
 import { safeHttpUrl } from "@/lib/safeUrl";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
@@ -18,8 +18,8 @@ type Props = {
   isUnpublishing?: boolean;
 };
 
-// 기간 표기는 lib/festivalDate.ts의 dateRange()를 쓴다 — 공개 화면이 이미 쓰는 함수다.
-// 같은 포맷터를 여기서 다시 만들지 않는다.
+// 기간 표기는 lib/festivalDate.ts의 dateRangeWithYear()를 쓴다 — 여러 해의 축제가
+// 한 표에 섞이고 연도 필터가 없어 연차 구분이 필요하다 (DEC-0178). 같은 포맷터를 여기서 다시 만들지 않는다.
 
 /**
  * md 이상에서 table-fixed로 열 폭을 콘텐츠와 무관하게 고정한다.
@@ -45,7 +45,8 @@ type ColumnKey = (typeof COLUMNS)[number]["key"];
 // name은 폭을 지정하지 않는다 — table-fixed에서 남는 폭을 전부 가져간다.
 const DEFAULT_WIDTHS: Partial<Record<ColumnKey, number>> = {
   host: 100,
-  period: 120,
+  // 기간 열은 dateRangeWithYear로 양쪽 연도가 들어가 '2026.05.07 ~ 2026.05.09'까지 담는다.
+  period: 168,
   lineup: 68,
   discovery: 80,
   status: 88,
@@ -185,7 +186,7 @@ export function FestivalReviewTable({
                   )}
                   {/* 모바일에서 접힌 열의 핵심만 서브라인으로 */}
                   <p className="text-label-regular text-muted md:hidden">
-                    {dateRange(festival.startDate, festival.endDate)} · {festival.lineupCount}팀
+                    {dateRangeWithYear(festival.startDate, festival.endDate)} · {festival.lineupCount}팀
                   </p>
                 </td>
                 <td className="hidden truncate whitespace-nowrap p-4 text-caption text-body-text md:table-cell">
@@ -196,7 +197,7 @@ export function FestivalReviewTable({
                   )}
                 </td>
                 <td className="hidden whitespace-nowrap p-4 text-caption text-body-text md:table-cell">
-                  {dateRange(festival.startDate, festival.endDate)}
+                  {dateRangeWithYear(festival.startDate, festival.endDate)}
                 </td>
                 <td className="hidden whitespace-nowrap p-4 md:table-cell">
                   {blockers.includes(PUBLISH_BLOCKER.LINEUP_EMPTY) ? (

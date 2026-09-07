@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Calendar, ChevronRight } from "lucide-react";
 import type { FestivalResult } from "@/features/search/types";
 import { gridTint } from "@/lib/posterTint";
-import { dateRange, dDay } from "@/lib/festivalDate";
+import { dateRangeWithYear, dDay } from "@/lib/festivalDate";
 import { PosterImage } from "@/components/ui/PosterImage";
 
 type Props = {
@@ -34,7 +34,7 @@ export function FestivalResultRow({ festival }: Props) {
         <h3 className="truncate text-row-title text-ink">{name}</h3>
         <p className="mt-1 flex items-center gap-1.5 text-caption-strong text-muted">
           <Calendar size={14} className="shrink-0" aria-hidden />
-          {dateRange(startDate, endDate)} · {host.name}
+          {dateRangeWithYear(startDate, endDate)} · {host.name}
         </p>
       </div>
 
