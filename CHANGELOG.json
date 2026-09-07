@@ -1,14 +1,37 @@
 {
   "metadata": {
-    "lastUpdated": "2026-09-07T05:28:42Z",
-    "currentVersion": "0.1.12",
+    "lastUpdated": "2026-09-07T06:43:22Z",
+    "currentVersion": "0.1.13",
     "projectType": "react",
     "projectTypes": [
       "react"
     ],
-    "totalReleases": 12
+    "totalReleases": 13
   },
   "releases": [
+    {
+      "version": "0.1.13",
+      "project_type": "react",
+      "project_types": [
+        "react"
+      ],
+      "date": "2026-09-07",
+      "pr_number": 209,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **기타**\n  * Merge pull request from greedy-team/feat_201_검색_노출_기본_설정과_festa_공유_이미지_적용\n  * feat : 검색엔진 등록 후속 보고서 추가\n  * feat : SEO 공유 이미지 및 광고 적용 보고서 추가\n  * feat : 첫 번째 히어로 배경색 조정\n  * feat : 네이버 사이트 소유확인 메타태그 추가",
+      "parsed_changes": {
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Merge pull request from greedy-team/feat_201_검색_노출_기본_설정과_festa_공유_이미지_적용",
+            "feat : 검색엔진 등록 후속 보고서 추가",
+            "feat : SEO 공유 이미지 및 광고 적용 보고서 추가",
+            "feat : 첫 번째 히어로 배경색 조정",
+            "feat : 네이버 사이트 소유확인 메타태그 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "0.1.12",
       "project_type": "react",
