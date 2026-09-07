@@ -1,7 +1,23 @@
 # Changelog
 
-**현재 버전:** 0.1.11  
-**마지막 업데이트:** 2026-09-06T17:08:03Z  
+**현재 버전:** 0.1.12  
+**마지막 업데이트:** 2026-09-07T05:28:42Z  
+
+---
+
+## [0.1.12] - 2026-09-07
+
+**PR:** #206  
+
+**기타**
+- Merge pull request from greedy-team/feat_202_연도가_없는_화면_세_곳에_연도를_노출한다
+- Merge remote-tracking branch 'origin/develop' into feat_202_연도가_없는_화면_세_곳에_연도를_노출한다
+- Merge pull request from greedy-team/feat_201_검색_노출_기본_설정과_festa_공유_이미지_적용
+- fix : 날짜에 흔들리는 라인업 E2E 대상 고정
+- feat : 축제 상세·검색 결과·관리자 검수 표의 날짜에 연도 노출
+- feat : 광고 이미지와 랜덤 패널 및 신청 링크 적용
+- fix : 교체한 파비콘 적용과 캐시 갱신
+- feat : 공개 페이지 SEO와 FESTA 공유 이미지 적용
 
 ---
 
