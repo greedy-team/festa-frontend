@@ -80,7 +80,15 @@ export default async function Home() {
             {/* /festivals 목록 화면이 생겼다 (같은 PR의 축제 목록 조립 커밋) */}
             <SectionHeaderRow title="최근 등록된 축제" href="/festivals" />
             {recentRes.ok ? (
-              <div className="mt-5 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5">
+              // 모바일(2열)에서는 5개가 2 + 2 + 1로 떨어져 마지막 카드가 고아 행이
+              // 된다. 5개 이상일 때만 다섯 번째부터를 sm 미만에서 숨겨 2 x 2로 맞춘다.
+              // 개수는 데이터(recent.length)가, 뷰포트 판정은 CSS(max-sm)가 한다 —
+              // 히어로 패널 캐러셀에서 폭을 JS로 재다 겪은 함정과 같은 이유다.
+              <div
+                className={`mt-5 grid grid-cols-2 gap-[25px] sm:grid-cols-3 lg:grid-cols-5 ${
+                  recent.length > 4 ? "max-sm:[&>*:nth-child(n+5)]:hidden" : ""
+                }`}
+              >
                 {recent.map((festival) => (
                   <RecentCard key={festival.festivalId} festival={festival} />
                 ))}
