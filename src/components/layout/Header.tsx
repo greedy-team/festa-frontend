@@ -132,14 +132,18 @@ export function Header() {
               활성 인디케이터는 글자 폭과 같은 너비 × 2px (DESIGN.md 819) */}
           <NavLinks
             pathname={pathname}
+            // hover 시 살짝 커진다. font-size가 아니라 scale이라 인접 메뉴·활성
+            // 밑줄이 밀리지 않는다. transition-colors 대신 transition으로 색·크기를
+            // 함께 전환하고, 동작 줄이기에서는 hover:scale-100으로 확대만 끈다
+            // (색 전환은 헤더 다른 곳과 같이 유지 — #94 관례의 scale 부분만 적용).
             linkClassName={(isActive) =>
               isActive
-                ? `relative shrink-0 text-nav-active transition-colors duration-300 after:absolute after:-bottom-[5px] after:left-0 after:h-[2px] after:w-full after:transition-colors after:duration-300 ${
+                ? `relative shrink-0 text-nav-active transition duration-300 hover:scale-[1.15] motion-reduce:hover:scale-100 after:absolute after:-bottom-[5px] after:left-0 after:h-[2px] after:w-full after:transition-colors after:duration-300 ${
                     solid
                       ? "text-primary after:bg-primary"
                       : "text-on-media after:bg-on-media"
                   }`
-                : `shrink-0 text-body transition-colors duration-300 ${
+                : `shrink-0 text-body transition duration-300 hover:scale-[1.15] motion-reduce:hover:scale-100 ${
                     solid ? "text-muted" : "text-on-media/75"
                   }`
             }
