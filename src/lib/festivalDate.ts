@@ -21,11 +21,11 @@ export function formatDday(days: number): string {
 }
 
 /**
- * 시작일까지 남은 일수. 단, 진행 중(오늘이 시작일~종료일 사이)이면 종료일까지
- * 남은 일수로 바꾼다 — 시작한 지 며칠 지났다는 "D+2"보다 언제 끝나는지가
- * 사용자에게 더 필요한 정보다(#218). 시작 전 축제는 기존과 동일하게 시작일
- * 기준. 종료된 축제는(이 함수를 쓰는 화면엔 보통 없지만) 기존처럼 시작일
- * 기준 "D+N"을 유지한다 — 이 이슈의 범위가 아니다.
+ * 시작일까지 남은 일수. 단, 진행 중(오늘이 시작일~종료일 사이)이면 날짜가
+ * 며칠 남았든 "D-DAY"로 고정한다 — "시작한 지 2일 지났다"는 D+2보다 "오늘도
+ * 축제 날이다"가 사용자에게 필요한 정보다(#218). 시작 전 축제는 기존과 동일하게
+ * 시작일 기준 D-N. 종료된 축제는(이 함수를 쓰는 화면엔 보통 없지만) 기존처럼
+ * 시작일 기준 "D+N"을 유지한다 — 이 이슈의 범위가 아니다.
  * 세 값 모두 날짜 문자열이라 시각이 섞이지 않는다.
  */
 export function dDay(
@@ -33,15 +33,13 @@ export function dDay(
   endDate: string,
   today = todayInSeoul(),
 ): string {
+  if (festivalStatus(startDate, endDate, today) === "ONGOING") return "D-DAY";
+
   const toUtc = (s: string) => {
     const [y, m, d] = s.split("-").map(Number);
     return Date.UTC(y, m - 1, d);
   };
-  const target =
-    festivalStatus(startDate, endDate, today) === "ONGOING"
-      ? endDate
-      : startDate;
-  const days = Math.round((toUtc(target) - toUtc(today)) / 86_400_000);
+  const days = Math.round((toUtc(startDate) - toUtc(today)) / 86_400_000);
 
   return formatDday(days);
 }
