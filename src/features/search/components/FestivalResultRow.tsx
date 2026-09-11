@@ -39,7 +39,7 @@ export function FestivalResultRow({ festival }: Props) {
       </div>
 
       <span className="shrink-0 rounded-pill bg-primary-soft px-3 py-1 text-meta-strong text-primary">
-        {dDay(startDate)}
+        {dDay(startDate, endDate)}
       </span>
       <ChevronRight size={20} className="shrink-0 text-muted-soft" aria-hidden />
     </Link>
