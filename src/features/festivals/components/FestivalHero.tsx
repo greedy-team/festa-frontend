@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AtSign, Calendar, Globe, MapPin, Ticket } from "lucide-react";
 import type { FestivalDetail } from "@/features/festivals/types";
 import { heroTint } from "@/lib/posterTint";
-import { dateRangeWithYear, formatDday, festivalStatus } from "@/lib/festivalDate";
+import { dateRangeWithYear, dDay, festivalStatus } from "@/lib/festivalDate";
 import { ticketTypeLabel } from "@/lib/admission";
 import { safeHttpUrl } from "@/lib/safeUrl";
 import { PosterImage } from "@/components/ui/PosterImage";
@@ -20,7 +20,6 @@ export function FestivalHero({ festival }: Props) {
     instagramUrl,
     startDate,
     endDate,
-    dday,
     posterUrl,
     location,
     admission,
@@ -75,7 +74,11 @@ export function FestivalHero({ festival }: Props) {
 
       <div className="relative z-10 flex flex-1 flex-col justify-between gap-6 p-8">
         <div className="flex items-center gap-2">
-          <Badge>{formatDday(dday)}</Badge>
+          {/* 서버 dday는 시작일 기준이라 진행 중엔 "D+2"가 된다(#218과 같은 문제).
+              festivals/types.ts는 이 필드를 "다시 계산하지 않는다"고 적어뒀지만,
+              여기서는 예외로 홈·검색과 같은 dDay(startDate, endDate)를 쓴다 —
+              같은 축제가 화면마다 다르게 보이면 안 된다. */}
+          <Badge>{dDay(startDate, endDate)}</Badge>
           {/* 진행중(success)만 정의된 상태 색이 있다 — 예정·종료는 D-day 텍스트로 충분해 배지를 더 만들지 않는다 */}
           {status === "ONGOING" ? <Badge variant="success">진행중</Badge> : null}
         </div>
