@@ -7,11 +7,12 @@ import { NO_INDEX, pageMetadata } from "@/lib/seo";
 // 제목)만 세운다. 문구가 없는 상태로는 검색에 노출하지 않는다.
 export const metadata = { ...pageMetadata("/copyright", "저작권 정책"), ...NO_INDEX };
 
+// 아티스트 사진·주최 로고는 서비스에서 아예 쓰지 않는다(DEC-0063, DEC-0129) — 표시하지
+// 않는 것에 대한 저작권 고지는 필요 없어 두 섹션을 빼고 "명칭"만 남겼다.
 const SECTIONS = [
   "서비스가 다루는 정보",
   "포스터 이미지",
-  "아티스트 이미지",
-  "명칭·로고",
+  "명칭",
   "권리자 요청",
   "면책",
 ];
