@@ -84,7 +84,7 @@ export function FestivalHero({ festival }: Props) {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h1 className="text-hero text-on-media">{name}</h1>
+          <h1 className="text-section-title text-on-media sm:text-hero">{name}</h1>
 
           {/* 읽어야 하는 메타는 body(16)·흰 100% — 85%는 밝은 포스터에서 대비를 잃는다 (#165) */}
           <div className="flex flex-col gap-2 text-body text-on-media">
