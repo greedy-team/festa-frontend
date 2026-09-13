@@ -9,6 +9,7 @@ type FooterItem = { label: string; href: string };
 const LINKS: FooterItem[] = [
   { label: "축제", href: "/festivals" },
   { label: "아티스트", href: "/artists" },
+  { label: "저작권 정책", href: "/copyright" }, // #221 — 문구는 아직 없다(/copyright 참고)
 ];
 
 export function Footer() {
