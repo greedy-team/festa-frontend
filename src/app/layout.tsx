@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { Analytics } from "@/components/analytics/Analytics";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -33,6 +35,15 @@ export default function RootLayout({
       {/* Header·Footer를 SiteChrome이 import하지 않고 여기서 넘긴다 —
           그래야 Footer(와 Container)가 서버 컴포넌트로 남는다. */}
       <body className="flex min-h-full flex-col bg-canvas font-sans">
+        <Suspense fallback={null}>
+          <Analytics
+            enabled={process.env.VERCEL_ENV === "production" && !MOCKING_ENABLED}
+            // 동의 기능·수집 경계 검증을 마친 후 실제 동의 상태로 연결한다.
+            consentGranted={false}
+            gaMeasurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}
+            clarityProjectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID}
+          />
+        </Suspense>
         {/* 관리자 로그인이 실제 API를 부르게 되면서 목이 필요해졌다 — 워커는 공개·관리자
             양쪽에서 돌아야 하므로 여기서 감싼다. 워커가 준비될 때까지 자식을 렌더하지
             않으므로, 초기 렌더에 실제 네트워크로 요청이 새지 않는다. */}
