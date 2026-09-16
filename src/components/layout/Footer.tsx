@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "./Container";
 import { SITE_NAME } from "@/lib/site";
+import { AnalyticsSettingsButton } from "@/components/analytics/AnalyticsSettingsButton";
 
 type FooterItem = { label: string; href: string };
 
@@ -14,7 +15,7 @@ const LINKS: FooterItem[] = [
   { label: "개인정보 처리방침", href: "/privacy" }, // #228 — 운영 정보 확정 전(/privacy 참고)
 ];
 
-export function Footer() {
+export function Footer({ analyticsEnabled = false }: { analyticsEnabled?: boolean }) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -39,6 +40,7 @@ export function Footer() {
               </Link>
             </li>
           ))}
+          {analyticsEnabled ? <li><AnalyticsSettingsButton /></li> : null}
         </ul>
       </Container>
     </footer>

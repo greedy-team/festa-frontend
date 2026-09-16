@@ -31,6 +31,7 @@ export function ArtistHero({ artist }: Props) {
         {safeInstagramUrl ? (
           <a
             href={safeInstagramUrl}
+            data-analytics-official="instagram"
             target="_blank"
             rel="noreferrer"
             aria-label="인스타그램"
