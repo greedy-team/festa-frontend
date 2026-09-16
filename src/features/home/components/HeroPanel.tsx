@@ -99,7 +99,7 @@ export function HeroPanel({ festival, splitFrom = null }: Props) {
         <div className={`contents ${split.text}`}>
           {/* 56/700 흰색 100%. 패널이 헤더 아래까지 올라와 있어서(Hero.tsx)
               시안의 프레임 좌표 y140을 그대로 쓴다 — 헤더 72 + 인셋 68 */}
-          <p className="order-1 text-hero-dday text-on-media">{dDay(startDate)}</p>
+          <p className="order-1 text-hero-dday text-on-media">{dDay(startDate, endDate)}</p>
 
           {/* 위계는 흰색 불투명도로만 낸다. 한 줄에 몰아넣지 않고 항목마다 줄을
               나눠서, 학교명·축제명·장소명 중 어느 하나가 길어져도 다른 항목을

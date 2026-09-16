@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "./Container";
 import { SITE_NAME } from "@/lib/site";
+import { AnalyticsSettingsButton } from "@/components/analytics/AnalyticsSettingsButton";
 
 type FooterItem = { label: string; href: string };
 
@@ -9,9 +10,12 @@ type FooterItem = { label: string; href: string };
 const LINKS: FooterItem[] = [
   { label: "축제", href: "/festivals" },
   { label: "아티스트", href: "/artists" },
+  { label: "저작권 정책", href: "/copyright" }, // #221 — 문구는 아직 없다(/copyright 참고)
+  { label: "이용약관", href: "/terms" }, // #228 — 운영 정보 확정 전(/terms 참고)
+  { label: "개인정보 처리방침", href: "/privacy" }, // #228 — 운영 정보 확정 전(/privacy 참고)
 ];
 
-export function Footer() {
+export function Footer({ analyticsEnabled = false }: { analyticsEnabled?: boolean }) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -36,6 +40,7 @@ export function Footer() {
               </Link>
             </li>
           ))}
+          {analyticsEnabled ? <li><AnalyticsSettingsButton /></li> : null}
         </ul>
       </Container>
     </footer>

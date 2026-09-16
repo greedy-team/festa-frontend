@@ -10,6 +10,7 @@ import { PageFadeIn } from "@/components/ui/PageFadeIn";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { Chip } from "@/components/ui/Chip";
 import { NO_INDEX, pageMetadata } from "@/lib/seo";
+import { SearchResultsAnalytics } from "@/components/analytics/SearchResultsAnalytics";
 
 export const metadata = {
   ...pageMetadata("/search", "학교·축제·아티스트 검색"),
@@ -124,6 +125,7 @@ export default async function SearchPage({ searchParams }: Props) {
     // 아티스트 화면은 성공 return에만 캡을 걸었지만 여기선 세 return 모두에 건다.
     // 셋 다 같은 SearchBar를 그려서, 결과 화면에만 걸면 검색 전후로 검색창 폭이 튄다.
     <PageFadeIn>
+      <SearchResultsAnalytics result_count={resultCount} search_type={type} />
       <Container className="mt-10 mb-16 max-w-[1200px] mx-auto">
         <h1 className="sr-only">검색</h1>
         <SearchBar q={q} />

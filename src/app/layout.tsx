@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AnalyticsConsent } from "@/components/analytics/AnalyticsConsent";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -24,6 +25,9 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const analyticsEnabled = process.env.ANALYTICS_ENABLED === "true" &&
+    process.env.VERCEL_ENV === "production" && !MOCKING_ENABLED;
+
   return (
     <html lang="ko" className="h-full antialiased">
       {/* flex 컬럼은 남긴다 — SiteChrome과 관리자 셸이 flex-1로 채운다.
@@ -32,11 +36,18 @@ export default function RootLayout({
           관리자 셸이 자기 배경으로 덮을 수 있게 한다. */}
       {/* Header·Footer를 SiteChrome이 import하지 않고 여기서 넘긴다 —
           그래야 Footer(와 Container)가 서버 컴포넌트로 남는다. */}
-      <body className="flex min-h-full flex-col bg-canvas font-sans">
+      <body data-clarity-mask="true" className="flex min-h-full flex-col bg-canvas font-sans">
+        {analyticsEnabled ? (
+          <AnalyticsConsent
+            enabled
+            gaMeasurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}
+            clarityProjectId={process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID}
+          />
+        ) : null}
         {/* 관리자 로그인이 실제 API를 부르게 되면서 목이 필요해졌다 — 워커는 공개·관리자
             양쪽에서 돌아야 하므로 여기서 감싼다. 워커가 준비될 때까지 자식을 렌더하지
             않으므로, 초기 렌더에 실제 네트워크로 요청이 새지 않는다. */}
-        <SiteChrome header={<Header />} footer={<Footer />}>
+        <SiteChrome header={<Header />} footer={<Footer analyticsEnabled={analyticsEnabled} />}>
           {MOCKING_ENABLED ? (
             <MockProvider>{children}</MockProvider>
           ) : (

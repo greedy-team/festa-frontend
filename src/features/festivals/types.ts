@@ -95,7 +95,8 @@ export type FestivalDetail = {
   instagramUrl: string | null;
   startDate: string;
   endDate: string;
-  /** 서버가 계산한 값(숫자) — 다시 계산하지 않고 포맷만 한다 */
+  /** 서버가 계산한 값(숫자)이지만 시작일 기준이라 진행 중엔 "D+N"이 된다.
+   * 화면은 이 값 대신 dDay(startDate, endDate)로 다시 계산한다 (#218). */
   dday: number;
   posterUrl: string | null;
   lineup: LineupDay[];
