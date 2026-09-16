@@ -6,7 +6,7 @@ import { AdSlot } from "./AdSlot";
 vi.mock("node:crypto", () => ({ randomInt: vi.fn() }));
 
 it("패널 소재를 무작위로 고르고 모든 광고를 같은 신청 폼에 연결한다", () => {
-  vi.mocked(randomInt).mockReturnValueOnce(0).mockReturnValueOnce(1);
+  vi.mocked(randomInt).mockImplementationOnce(() => 0).mockImplementationOnce(() => 1);
 
   const banner = renderToStaticMarkup(<AdSlot variant="banner" />);
   const panel1 = renderToStaticMarkup(<AdSlot variant="panel" />);

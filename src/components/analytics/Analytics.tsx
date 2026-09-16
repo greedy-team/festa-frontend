@@ -3,7 +3,9 @@
 import Script from "next/script";
 import { useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { analyticsIds, analyticsPage, analyticsReferrer } from "@/lib/analytics";
+import { ANALYTICS_EVENT, analyticsIds, analyticsLink, analyticsPage, analyticsRecordingAllowed, analyticsReferrer, type AnalyticsEvent } from "@/lib/analytics";
+import { analyticsConsentAllows, readAnalyticsConsent, type AnalyticsConsent } from "@/lib/analyticsConsent";
+import { installAnalyticsBoundary } from "@/lib/analyticsBoundary";
 
 declare global {
   interface Window {
@@ -15,25 +17,32 @@ declare global {
 
 type Props = {
   enabled: boolean;
-  consentGranted: boolean;
+  consent: AnalyticsConsent;
   gaMeasurementId?: string;
   clarityProjectId?: string;
 };
 
-export function Analytics({ enabled, consentGranted, gaMeasurementId, clarityProjectId }: Props) {
+export function Analytics({ enabled, consent, gaMeasurementId, clarityProjectId }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const lastPage = useRef<string | null>(null);
   const ids = analyticsIds(gaMeasurementId, clarityProjectId);
-  const allowed = enabled && consentGranted && analyticsPage(pathname) !== null;
+  const allowed = enabled && analyticsPage(pathname) !== null;
+  const gaAllowed = allowed && analyticsConsentAllows(consent, "ga");
+  const clarityAllowed = allowed && analyticsConsentAllows(consent, "clarity") &&
+    typeof window !== "undefined" && analyticsRecordingAllowed(window.location.href, document.referrer);
   const navigation = `${pathname}?${searchParams.toString()}`;
 
   useEffect(() => {
+    if (!enabled) return;
+    return installAnalyticsBoundary(ids.ga);
+  }, [enabled, ids.ga]);
+
+  useEffect(() => {
     if (ids.ga) {
-      Object.assign(window, { [`ga-disable-${ids.ga}`]: !allowed });
+      Object.assign(window, { [`ga-disable-${ids.ga}`]: !gaAllowed });
     }
-    if (!allowed) {
-      window.clarity?.("stop");
+    if (!gaAllowed) {
       lastPage.current = null;
       return;
     }
@@ -64,16 +73,45 @@ export function Analytics({ enabled, consentGranted, gaMeasurementId, clarityPro
     });
     window.gtag("event", "page_view", { ...page, send_to: ids.ga });
     lastPage.current = navigation;
-  }, [allowed, ids.ga, navigation]);
+  }, [gaAllowed, ids.ga, navigation]);
+
+  useEffect(() => {
+    if (!gaAllowed || !ids.ga) return;
+    function send(event: AnalyticsEvent) {
+      const page = analyticsPage(window.location.pathname);
+      if (!analyticsConsentAllows(readAnalyticsConsent(), "ga") || !page) return;
+      const { name, ...parameters } = event;
+      window.gtag?.("event", name, { ...parameters, ...page, send_to: ids.ga });
+    }
+    const onEvent = (event: Event) => send((event as CustomEvent<AnalyticsEvent>).detail);
+    const onClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0) return;
+      const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
+      if (!(link instanceof HTMLAnchorElement)) return;
+      const officialType = link.dataset.analyticsOfficial;
+      if (officialType === "homepage" || officialType === "instagram") {
+        send({ name: "official_link_click", link_type: officialType });
+      } else {
+        const selected = analyticsLink(link.href, window.location.origin);
+        if (selected) send(selected);
+      }
+    };
+    window.addEventListener(ANALYTICS_EVENT, onEvent);
+    document.addEventListener("click", onClick, true);
+    return () => {
+      window.removeEventListener(ANALYTICS_EVENT, onEvent);
+      document.removeEventListener("click", onClick, true);
+    };
+  }, [gaAllowed, ids.ga]);
 
   if (!allowed) return null;
 
   return (
     <>
-      {ids.ga ? (
+      {gaAllowed && ids.ga ? (
         <Script id="festa-ga4" src={`https://www.googletagmanager.com/gtag/js?id=${ids.ga}`} strategy="afterInteractive" />
       ) : null}
-      {ids.clarity ? (
+      {clarityAllowed && ids.clarity ? (
         <Script id="festa-clarity" strategy="afterInteractive">{`
           window.clarity = window.clarity || function() {
             (window.clarity.q = window.clarity.q || []).push(arguments);

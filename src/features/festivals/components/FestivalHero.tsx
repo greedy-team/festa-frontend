@@ -51,6 +51,7 @@ export function FestivalHero({ festival }: Props) {
         {safeInstagramUrl ? (
           <a
             href={safeInstagramUrl}
+            data-analytics-official="instagram"
             target="_blank"
             rel="noreferrer"
             aria-label="축제 인스타그램"
@@ -62,6 +63,7 @@ export function FestivalHero({ festival }: Props) {
         {safeHomepageUrl ? (
           <a
             href={safeHomepageUrl}
+            data-analytics-official="homepage"
             target="_blank"
             rel="noreferrer"
             aria-label="주최 공식 사이트"

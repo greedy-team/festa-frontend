@@ -11,7 +11,7 @@ vi.mock("next/navigation", () => ({
 vi.mock("next/script", () => ({ default: () => <span>tracking-script</span> }));
 
 it("Production ID가 있어도 동의 기능 연결 전에는 태그를 렌더하지 않는다", () => {
-  expect(renderToStaticMarkup(<Analytics enabled consentGranted={false} gaMeasurementId="G-TEST" clarityProjectId="test" />)).toBe("");
-  expect(renderToStaticMarkup(<Analytics enabled={false} consentGranted gaMeasurementId="G-TEST" clarityProjectId="test" />)).toBe("");
-  expect(renderToStaticMarkup(<Analytics enabled consentGranted gaMeasurementId="G-TEST" clarityProjectId="test" />)).toContain("tracking-script");
+  expect(renderToStaticMarkup(<Analytics enabled consent={null} gaMeasurementId="G-TEST" clarityProjectId="test" />)).toBe("");
+  expect(renderToStaticMarkup(<Analytics enabled={false} consent="all" gaMeasurementId="G-TEST" clarityProjectId="test" />)).toBe("");
+  expect(renderToStaticMarkup(<Analytics enabled consent="ga" gaMeasurementId="G-TEST" clarityProjectId="test" />)).toContain("tracking-script");
 });

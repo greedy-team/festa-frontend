@@ -3,7 +3,8 @@ import { defineConfig, devices } from "@playwright/test";
 // 3000은 로컬 개발 서버(`pnpm dev`)나 다른 프로젝트가 이미 쓰고 있을 수 있는 포트다 —
 // reuseExistingServer가 그 무관한 서버에 그대로 붙어버려 엉뚱한 페이지를 테스트하는
 // 사고가 실제로 있었다. E2E 전용 포트로 분리한다.
-const PORT = 3100;
+const analytics = process.env.ANALYTICS_E2E === "true";
+const PORT = analytics ? 3110 : 3100;
 const baseURL = `http://localhost:${PORT}`;
 
 // 스펙은 목/실제 데이터 어느 쪽이 와도 흔들리지 않는 것(URL 패턴·요소 존재 여부)만
@@ -14,6 +15,7 @@ const baseURL = `http://localhost:${PORT}`;
 // `process.env`에 이미 있는 값을 `.env.local`로 덮지 않으므로 이걸로 충분하다.
 export default defineConfig({
   testDir: "./e2e",
+  testMatch: analytics ? "analytics-consent.spec.ts" : undefined,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -34,10 +36,14 @@ export default defineConfig({
   webServer: {
     command: `pnpm build && pnpm start -p ${PORT}`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI && !analytics,
     timeout: 120_000,
     env: {
-      NEXT_PUBLIC_API_MOCKING: "true",
+      NEXT_PUBLIC_API_MOCKING: analytics ? "false" : "true",
+      ANALYTICS_ENABLED: analytics ? "true" : "false",
+      VERCEL_ENV: analytics ? "production" : "preview",
+      NEXT_PUBLIC_GA_MEASUREMENT_ID: "G-TEST233",
+      NEXT_PUBLIC_CLARITY_PROJECT_ID: "yiqqighve5",
     },
   },
 });
