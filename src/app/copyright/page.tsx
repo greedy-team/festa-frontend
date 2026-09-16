@@ -1,11 +1,12 @@
 import { Container } from "@/components/layout/Container";
-import { PendingField } from "@/components/ui/PendingField";
+import { ContactLink } from "@/components/ui/ContactLink";
+import { POLICY_EFFECTIVE_DATE } from "@/lib/policy";
 import { NO_INDEX, pageMetadata } from "@/lib/seo";
 
 // 문구는 festa-brain의 docs/legal/02-copyright-policy.md(조문 초안, 2026-09-14)를
 // 그대로 옮긴다 — DEC-0191(포스터 이미지는 허락 없이 자체 서버에 저장, 방어선은
-// 권리자 요청 시 삭제)을 반영해 작성된 문서다. `{{저작권신고이메일}}`·`{{시행일}}`은
-// 원문에도 아직 빈칸이라 값을 지어내지 않고 PendingField로 표시한다.
+// 권리자 요청 시 삭제)을 반영해 작성된 문서다. 초안의 `{{저작권신고이메일}}`·
+// `{{시행일}}`은 #238에서 실제 운영 정보로 채웠다.
 //
 // 법률 지식이 있는 사람의 검토가 끝나기 전까지는 검색에 노출하지 않는다.
 export const metadata = { ...pageMetadata("/copyright", "저작권 정책"), ...NO_INDEX };
@@ -51,7 +52,7 @@ export default function CopyrightPage() {
           원하는 경우, 대상 페이지와 요청 내용을 아래 연락처로 보내주세요.
         </p>
         <p className="text-body text-ink">
-          문의: <PendingField label="저작권신고이메일" />
+          문의: <ContactLink />
         </p>
       </section>
 
@@ -66,8 +67,7 @@ export default function CopyrightPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-block-title text-ink">부칙</h2>
         <p className="text-body text-ink">
-          1. 이 정책은 <PendingField label="시행일" />
-          부터 시행합니다.
+          1. 이 정책은 {POLICY_EFFECTIVE_DATE}부터 시행합니다.
         </p>
       </section>
     </Container>

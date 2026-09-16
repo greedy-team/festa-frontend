@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { PendingField } from "@/components/ui/PendingField";
+import { ContactLink } from "@/components/ui/ContactLink";
+import { OPERATOR_NAME, POLICY_EFFECTIVE_DATE } from "@/lib/policy";
 import { NO_INDEX, pageMetadata } from "@/lib/seo";
 
 // 문구는 festa-brain의 docs/legal/01-terms-of-service.md(조문 초안, 2026-09-14)를
-// 그대로 옮긴다. `{{...}}` 자리는 실제 운영 정보가 확정되기 전까지 값을 지어내지
-// 않고 PendingField로 표시한다.
+// 그대로 옮긴다. 초안의 `{{...}}` 자리는 #238에서 실제 운영 정보로 채웠다.
 //
-// 법률 지식이 있는 사람의 검토와 운영 정보 확정이 끝나기 전까지는 검색에
-// 노출하지 않는다.
+// 법률 지식이 있는 사람의 검토가 끝나기 전까지는 검색에 노출하지 않는다.
 export const metadata = { ...pageMetadata("/terms", "이용약관"), ...NO_INDEX };
 
 export default function TermsPage() {
@@ -19,23 +18,19 @@ export default function TermsPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-block-title text-ink">제1조 (목적 및 운영자)</h2>
         <p className="text-body text-ink">
-          1. 이 약관은 <PendingField label="운영자명" />
+          1. 이 약관은 {OPERATOR_NAME}
           (이하 “운영자”)이 제공하는 페스타(FESTA, https://www.every-festa.com,
           이하 “서비스”)의 이용 조건, 운영자와 이용자의 권리·의무 및 분쟁 처리
           기준을 정합니다.
         </p>
         <ul className="flex flex-col gap-1 text-body text-ink">
+          <li>운영자: {OPERATOR_NAME}</li>
           <li>
-            운영자: <PendingField label="운영자명" />
+            고객 문의·권리침해 신고: <ContactLink />
           </li>
           <li>
-            주소: <PendingField label="운영자주소" />
-          </li>
-          <li>
-            고객 문의: <PendingField label="고객문의이메일" />
-          </li>
-          <li>
-            권리침해 신고: <PendingField label="저작권신고이메일" />
+            전화와 우편 주소는 따로 운영하지 않습니다. 위 문의 창구로 접수한
+            내용에 회신합니다.
           </li>
         </ul>
       </section>
@@ -286,8 +281,7 @@ export default function TermsPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-block-title text-ink">부칙</h2>
         <p className="text-body text-ink">
-          1. 이 약관은 <PendingField label="시행일" />
-          부터 시행합니다. 최초 시행본이며, 이후 변경 시 이전 버전과 변경
+          1. 이 약관은 {POLICY_EFFECTIVE_DATE}부터 시행합니다. 최초 시행본이며, 이후 변경 시 이전 버전과 변경
           내용을 함께 공개합니다.
         </p>
       </section>

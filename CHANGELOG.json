@@ -1,14 +1,36 @@
 {
   "metadata": {
-    "lastUpdated": "2026-09-16T16:58:32Z",
-    "currentVersion": "0.1.14",
+    "lastUpdated": "2026-09-16T18:06:13Z",
+    "currentVersion": "0.1.15",
     "projectType": "react",
     "projectTypes": [
       "react"
     ],
-    "totalReleases": 14
+    "totalReleases": 15
   },
   "releases": [
+    {
+      "version": "0.1.15",
+      "project_type": "react",
+      "project_types": [
+        "react"
+      ],
+      "date": "2026-09-16",
+      "pr_number": 240,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **기타**\n  * Merge pull request from greedy-team/feat_238_정책_확정값_반영과_첫_방문_이용_고지_모달\n  * docs : 리포트 문서 작성\n  * feat : 첫 방문 약관 적용 고지 모달 추가\n  * feat : 개인정보 처리방침·이용약관·저작권 정책 확정값 반영",
+      "parsed_changes": {
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Merge pull request from greedy-team/feat_238_정책_확정값_반영과_첫_방문_이용_고지_모달",
+            "docs : 리포트 문서 작성",
+            "feat : 첫 방문 약관 적용 고지 모달 추가",
+            "feat : 개인정보 처리방침·이용약관·저작권 정책 확정값 반영"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "0.1.14",
       "project_type": "react",
