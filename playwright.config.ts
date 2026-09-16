@@ -15,7 +15,8 @@ const baseURL = `http://localhost:${PORT}`;
 // `process.env`에 이미 있는 값을 `.env.local`로 덮지 않으므로 이걸로 충분하다.
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: analytics ? "analytics-consent.spec.ts" : undefined,
+  // 분석 활성 조건에서는 분석 동의 스펙과, 고지→동의 순서를 보는 고지 스펙만 돈다.
+  testMatch: analytics ? ["analytics-consent.spec.ts", "site-notice.spec.ts"] : undefined,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -26,6 +27,17 @@ export default defineConfig({
   use: {
     baseURL,
     trace: "on-first-retry",
+    // 첫 방문 약관 고지(SiteNotice)는 <dialog showModal>이라 열려 있는 동안 화면
+    // 전체를 막는다. 고지 자체를 검증하는 스펙만 test.use로 이 값을 비우고, 나머지
+    // 스펙은 이미 확인한 방문자로 시작한다 — 스펙 20여 개에 같은 준비 코드를
+    // 복사하지 않으려고 여기 한 곳에 둔다.
+    storageState: {
+      cookies: [],
+      origins: [{
+        origin: baseURL,
+        localStorage: [{ name: "festa.site-notice.v1", value: "acknowledged" }],
+      }],
+    },
   },
   projects: [
     {

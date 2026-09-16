@@ -11,6 +11,7 @@ import {
   subscribeAnalyticsConsent,
   writeAnalyticsConsent,
 } from "@/lib/analyticsConsent";
+import { readSiteNoticeAcknowledged, subscribeSiteNotice } from "@/lib/siteNotice";
 import { Analytics } from "./Analytics";
 
 type Props = {
@@ -21,14 +22,26 @@ type Props = {
 
 export function AnalyticsConsent(props: Props) {
   const consent = useSyncExternalStore(subscribeAnalyticsConsent, readAnalyticsConsent, () => null);
+  // 약관 적용 고지(SiteNotice)를 확인하기 전에는 이 모달을 띄우지 않는다.
+  // 둘 다 <dialog>라 동시에 열면 모달이 겹친다.
+  const noticeAcknowledged = useSyncExternalStore(
+    subscribeSiteNotice,
+    readSiteNoticeAcknowledged,
+    () => true,
+  );
   const pathname = usePathname();
   const dialog = useRef<HTMLDialogElement>(null);
   const publicPage = analyticsPage(pathname) !== null;
 
   useEffect(() => {
-    if (props.enabled && publicPage && readAnalyticsConsent() === null) dialog.current?.showModal();
-    else if (!publicPage) dialog.current?.close();
-  }, [props.enabled, publicPage]);
+    // noticeAcknowledged는 재실행을 걸기 위한 구독값이고, 판정은 저장소를 직접
+    // 읽는다 — hydration 시점 스냅샷은 서버값(true)이라 그걸 믿으면 고지를 보기
+    // 전에 이 모달이 먼저 열린다. 아래 consent도 같은 이유로 직접 읽는다.
+    const acknowledged = readSiteNoticeAcknowledged();
+    if (props.enabled && publicPage && acknowledged && readAnalyticsConsent() === null) {
+      dialog.current?.showModal();
+    } else if (!publicPage || !acknowledged) dialog.current?.close();
+  }, [props.enabled, publicPage, noticeAcknowledged]);
 
   function choose(value: "all" | "ga" | "clarity" | "denied") {
     writeAnalyticsConsent(value);
