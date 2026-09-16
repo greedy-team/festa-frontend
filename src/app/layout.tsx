@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AnalyticsConsent } from "@/components/analytics/AnalyticsConsent";
+import { SiteNotice } from "@/components/policy/SiteNotice";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -37,6 +38,10 @@ export default function RootLayout({
       {/* Header·Footer를 SiteChrome이 import하지 않고 여기서 넘긴다 —
           그래야 Footer(와 Container)가 서버 컴포넌트로 남는다. */}
       <body data-clarity-mask="true" className="flex min-h-full flex-col bg-canvas font-sans">
+        {/* 약관 적용 고지는 분석 스위치와 무관하게 모든 배포에서 띄운다.
+            분석 동의는 고지를 확인한 뒤에 이어서 묻는다 — 모달 두 개가 겹치지
+            않게 AnalyticsConsent가 고지 확인 여부를 함께 본다. */}
+        <SiteNotice />
         {analyticsEnabled ? (
           <AnalyticsConsent
             enabled
