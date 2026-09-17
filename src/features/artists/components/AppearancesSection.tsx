@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import type { Appearance } from "@/features/artists/types";
 import { dateRange } from "@/lib/festivalDate";
 
@@ -31,21 +32,34 @@ export function AppearancesSection({ artistId, items, total }: Props) {
         <div className="relative mt-6 flex flex-col gap-7">
           <div className="absolute bottom-1 left-[3px] top-1 w-px bg-divider" aria-hidden />
           {items.map((appearance) => (
-            <div key={appearance.festivalId} className="relative pl-6">
+            /* 행 전체가 그 축제의 상세로 가는 링크다 — 라인업 행(DayCard)과 같은 문법이며,
+               hover가 없는 모바일에서는 chevron이 유일한 어포던스라 함께 둔다.
+               행 배경을 칠하지 않고 축제명 색만 바꾸는 이유: 마커의 흰 ring이 타임라인
+               세로선을 끊어주는 장치라, 배경이 깔리면 그 ring이 흰 얼룩으로 남는다 */
+            <Link
+              key={appearance.festivalId}
+              href={`/festivals/${appearance.festivalId}`}
+              className="group relative flex items-center justify-between gap-2 pl-6"
+            >
               <span
                 className="absolute left-[3px] top-1.5 size-[7px] -translate-x-1/2 rounded-pill bg-primary ring-4 ring-surface"
                 aria-hidden
               />
-              <p className="text-caption text-muted">
-                {appearance.startDate.slice(0, 4)}
-              </p>
-              <h3 className="mt-0.5 text-entity-name text-ink">{appearance.name}</h3>
-              {/* 학교·기간을 각각 한 줄씩 두면 둘 다 같은 옅은 회색이라 구분 없이
-                  늘어져 보인다 — 같은 성격(부가 정보)이니 한 줄로 묶는다 */}
-              <p className="mt-0.5 text-caption text-muted">
-                {appearance.hostName} · {dateRange(appearance.startDate, appearance.endDate)}
-              </p>
-            </div>
+              <span className="min-w-0">
+                <span className="block text-caption text-muted">
+                  {appearance.startDate.slice(0, 4)}
+                </span>
+                <h3 className="mt-0.5 truncate text-entity-name text-ink transition-colors group-hover:text-primary motion-reduce:transition-none">
+                  {appearance.name}
+                </h3>
+                {/* 학교·기간을 각각 한 줄씩 두면 둘 다 같은 옅은 회색이라 구분 없이
+                    늘어져 보인다 — 같은 성격(부가 정보)이니 한 줄로 묶는다 */}
+                <span className="mt-0.5 block text-caption text-muted">
+                  {appearance.hostName} · {dateRange(appearance.startDate, appearance.endDate)}
+                </span>
+              </span>
+              <ChevronRight size={16} className="shrink-0 text-muted-soft" aria-hidden />
+            </Link>
           ))}
           {hasMore ? (
             <Link
