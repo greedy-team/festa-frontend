@@ -1,7 +1,28 @@
 # Changelog
 
-**현재 버전:** 0.1.17  
-**마지막 업데이트:** 2026-09-18T07:10:52Z  
+**현재 버전:** 0.1.18  
+**마지막 업데이트:** 2026-09-18T16:03:20Z  
+
+---
+
+## [0.1.18] - 2026-09-18
+
+**PR:** #256  
+
+**문서**
+- 5차 데모데이 README 피드백 반영
+
+**기타**
+- Merge pull request from greedy-team/fix_readme_최신_버전_표기_복원
+- fix : 릴리스 워크플로우가 찾는 README 최신 버전 표기 복원
+- Merge pull request from greedy-team/feat_252_홈_히어로_lcp_포스터에_높은_요청_우선순위를_준다
+- docs : 리포트 문서 작성
+- docs : LCP 우선순위 측정 자료 보강 (데스크톱 측정·점수 스크린샷·사이트 캡처)
+- feat : 홈 히어로 첫 포스터에 높은 요청 우선순위를 준다
+- Merge pull request from greedy-team/docs_5차_데모데이_github_서비스_레포_readme_작성
+- docs : README 디자인과 주요 기능 이미지 적용
+- docs : README 로고와 팀원 사진 연결
+- docs : GitHub 서비스 레포 README.md 작성
 
 ---
 
