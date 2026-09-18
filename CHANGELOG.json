@@ -1,14 +1,35 @@
 {
   "metadata": {
-    "lastUpdated": "2026-09-17T08:02:56Z",
-    "currentVersion": "0.1.16",
+    "lastUpdated": "2026-09-18T07:10:52Z",
+    "currentVersion": "0.1.17",
     "projectType": "react",
     "projectTypes": [
       "react"
     ],
-    "totalReleases": 16
+    "totalReleases": 17
   },
   "releases": [
+    {
+      "version": "0.1.17",
+      "project_type": "react",
+      "project_types": [
+        "react"
+      ],
+      "date": "2026-09-18",
+      "pr_number": 248,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **기타**\n  * Merge pull request from greedy-team/feat_246_clarity_재생에서_화면_내용이_보이도록_마스킹을_해제\n  * docs : 리포트 문서 작성\n  * feat : Clarity 재생에서 화면 내용이 보이도록 마스킹 해제",
+      "parsed_changes": {
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Merge pull request from greedy-team/feat_246_clarity_재생에서_화면_내용이_보이도록_마스킹을_해제",
+            "docs : 리포트 문서 작성",
+            "feat : Clarity 재생에서 화면 내용이 보이도록 마스킹 해제"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "0.1.16",
       "project_type": "react",
