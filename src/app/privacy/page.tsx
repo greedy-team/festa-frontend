@@ -217,8 +217,9 @@ export default function PrivacyPage() {
                     클릭·스크롤 등 화면 이용 장면을 확인해 사용성을 개선
                   </td>
                   <td className={td}>
-                    쿠키 식별자, 화면 경로, 마우스·터치·스크롤 위치, 글자를 모두
-                    가린 화면 구조
+                    쿠키 식별자, 화면 경로, 마우스·터치·스크롤 위치, 화면에
+                    표시된 축제 정보를 포함한 화면 구조(입력창에 입력한 내용과
+                    검색 화면은 제외)
                   </td>
                   <td className={td}>13개월</td>
                   <td className={td}>
