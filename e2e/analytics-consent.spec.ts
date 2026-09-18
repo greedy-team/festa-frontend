@@ -8,7 +8,7 @@ test.beforeEach(async ({ page }) => {
   await page.route("https://c.clarity.ms/**", (route) => route.fulfill({ status: 204, body: "" }));
 });
 
-test("실제 Clarity 전송에서 본문·링크·입력의 테스트 문자열이 마스킹된다", async ({ page }) => {
+test("실제 Clarity 전송에 화면 내용은 담기고 입력값은 마스킹된다", async ({ page }) => {
   const payloads: string[] = [];
   await page.route(/https:\/\/[^/]*clarity\.ms\/collect.*/, async (route) => {
     const raw = route.request().postDataBuffer();
@@ -23,18 +23,19 @@ test("실제 Clarity 전송에서 본문·링크·입력의 테스트 문자열�
   await page.evaluate(() => {
     const link = document.createElement("a");
     link.id = "analytics-mask-probe";
-    link.href = "/search?q=PRIVATE_LINK_CANARY_233";
+    link.href = "/festivals";
     link.textContent = "PRIVATE_TEXT_CANARY_233";
-    link.title = "PRIVATE_TITLE_CANARY_233";
-    link.setAttribute("aria-label", "PRIVATE_ARIA_CANARY_233");
     document.body.append(link);
   });
   await page.getByRole("checkbox", { name: "화면 이용 분석 (Microsoft Clarity)", exact: true }).check();
   await page.getByRole("button", { name: "선택 저장" }).click();
   await page.getByRole("searchbox", { name: "검색어", exact: true }).fill("PRIVATE_INPUT_CANARY_233");
-  // 전송이 없어서 통과하는 것을 막고, 검사한 DOM 노드가 실제 페이로드에 있음을 확인한다.
-  await expect.poll(() => payloads.some((text) => text.includes("analytics-mask-probe")), { timeout: 15_000 }).toBe(true);
-  expect(payloads.join("\n")).not.toMatch(/PRIVATE_(LINK|TEXT|TITLE|ARIA|INPUT)_CANARY_233/);
+  // 본문 텍스트가 실제로 담기는지가 마스킹 해제(DEC-0211)의 검증이자, 전송이 없어서
+  // 통과하는 것을 막는 가드다. 이 단언은 Clarity 프로젝트의 masking mode가 Relaxed일
+  // 때만 통과한다 — 여기서 실패하면 코드가 아니라 대시보드 설정을 먼저 본다.
+  await expect.poll(() => payloads.some((text) => text.includes("PRIVATE_TEXT_CANARY_233")), { timeout: 15_000 }).toBe(true);
+  // 입력창·드롭다운은 masking mode와 무관하게 Clarity가 강제로 마스킹한다(설정 불가).
+  expect(payloads.join("\n")).not.toMatch(/PRIVATE_INPUT_CANARY_233/);
 });
 
 test("다른 탭의 철회를 수신하면 기존 분석 문서도 종료한다", async ({ page, context }) => {
