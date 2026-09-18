@@ -1,14 +1,48 @@
 {
   "metadata": {
-    "lastUpdated": "2026-09-18T07:10:52Z",
-    "currentVersion": "0.1.17",
+    "lastUpdated": "2026-09-18T16:03:20Z",
+    "currentVersion": "0.1.18",
     "projectType": "react",
     "projectTypes": [
       "react"
     ],
-    "totalReleases": 17
+    "totalReleases": 18
   },
   "releases": [
+    {
+      "version": "0.1.18",
+      "project_type": "react",
+      "project_types": [
+        "react"
+      ],
+      "date": "2026-09-18",
+      "pr_number": 256,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **문서**\n  * 5차 데모데이 README 피드백 반영\n\n* **기타**\n  * Merge pull request from greedy-team/fix_readme_최신_버전_표기_복원\n  * fix : 릴리스 워크플로우가 찾는 README 최신 버전 표기 복원\n  * Merge pull request from greedy-team/feat_252_홈_히어로_lcp_포스터에_높은_요청_우선순위를_준다\n  * docs : 리포트 문서 작성\n  * docs : LCP 우선순위 측정 자료 보강 (데스크톱 측정·점수 스크린샷·사이트 캡처)\n  * feat : 홈 히어로 첫 포스터에 높은 요청 우선순위를 준다\n  * Merge pull request from greedy-team/docs_5차_데모데이_github_서비스_레포_readme_작성\n  * docs : README 디자인과 주요 기능 이미지 적용\n  * docs : README 로고와 팀원 사진 연결\n  * docs : GitHub 서비스 레포 README.md 작성",
+      "parsed_changes": {
+        "문서": {
+          "title": "문서",
+          "items": [
+            "5차 데모데이 README 피드백 반영"
+          ]
+        },
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Merge pull request from greedy-team/fix_readme_최신_버전_표기_복원",
+            "fix : 릴리스 워크플로우가 찾는 README 최신 버전 표기 복원",
+            "Merge pull request from greedy-team/feat_252_홈_히어로_lcp_포스터에_높은_요청_우선순위를_준다",
+            "docs : 리포트 문서 작성",
+            "docs : LCP 우선순위 측정 자료 보강 (데스크톱 측정·점수 스크린샷·사이트 캡처)",
+            "feat : 홈 히어로 첫 포스터에 높은 요청 우선순위를 준다",
+            "Merge pull request from greedy-team/docs_5차_데모데이_github_서비스_레포_readme_작성",
+            "docs : README 디자인과 주요 기능 이미지 적용",
+            "docs : README 로고와 팀원 사진 연결",
+            "docs : GitHub 서비스 레포 README.md 작성"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "0.1.17",
       "project_type": "react",

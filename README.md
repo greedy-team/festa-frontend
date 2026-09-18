@@ -1,64 +1,181 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+<img src="docs/images/logo.jpg" width="900" alt="FESTA logo" />
 
-First, run the development server:
+# 🎉 FESTA
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 전국 대학 축제 정보를 한곳에서
 
-목 데이터로 화면을 보려면 `.env.local`에 아래 두 줄이 필요합니다. Vercel에도 같은
-이름으로 등록하면 배포 환경에서도 동일하게 목 데이터로 동작합니다.
+<p>
+  흩어져 있는 대학 축제 정보와 아티스트 라인업을<br>
+  한곳에서 쉽고 빠르게 확인할 수 있는 <strong>대학&nbsp;축제&nbsp;정보&nbsp;통합&nbsp;서비스입니다.</strong>
+</p>
 
-```bash
-NEXT_PUBLIC_API_MOCKING=true
-NEXT_PUBLIC_API_BASE_URL=https://api.every-festa.com
-```
+### [🎉 FESTA 바로가기](https://www.every-festa.com)
 
-없어도 화면은 뜹니다 — 데이터가 빈 상태로 그려집니다.
+</div>
+<br>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📖 서비스 소개
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+대학 축제 정보는 각 학교의 총학생회 SNS, 공지사항 등 여러 채널에 흩어져 있어 원하는 정보를 한 번에 확인하기 어렵습니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+특히 좋아하는 아티스트가 **어떤 대학 축제에 출연하는지** 알고 싶다면 여러 학교의 축제 정보를 직접 찾아봐야 합니다.
 
-## SEO 및 공유 이미지
+**FESTA**는 흩어진 대학 축제 정보를 한곳에 모아,
 
-- 대표 주소: `https://www.every-festa.com` (`src/lib/seo.ts`). 루트 도메인은 현재 www로 리다이렉트됩니다.
-- 파비콘: `public/festa_symbol.png`에 정사각 PNG를 넣습니다. 최소 48×48, 권장 192×192 이상입니다. 교체하면 `src/app/layout.tsx`의 아이콘 URL 두 곳에 있는 `v` 값을 새 파일의 SHA-256 앞 8자리로 갱신해 이전 캐시와 구분합니다.
-- 공유 이미지: `public/festa-og-image.jpg` (1729×910, 약 312KB). 모든 공개 페이지가 이 이미지를 사용하며 제목·설명은 페이지별로 달라집니다. 교체할 때 실제 크기와 `src/lib/seo.ts`의 크기 정보를 맞춥니다.
-- `/sitemap.xml`은 공개 축제·아티스트 전체 목록과 축제가 등록된 학교·학교 이력을 포함합니다. 별도 공개 학교 목록 API가 없어 축제가 없는 학교는 사이트맵에 포함하지 않습니다.
-- 관리자·showcase·내부 검색·검색 필터 조합은 검색에서 제외합니다. 기본 목록의 페이지네이션은 별도 대표 URL을 유지합니다. Vercel의 production 외 환경은 응답 헤더로 전체 검색 제외합니다.
-- 배포 후 이미지 두 URL의 200 응답과 링크 미리보기를 확인하고, Google Search Console과 네이버 서치어드바이저에서 대표 도메인 소유권 확인 후 `/sitemap.xml`을 제출합니다. 인증 파일/태그는 각 콘솔에서 발급받은 실제 값이 필요합니다.
+-  **학교별** 축제 일정과 라인업을 확인하고
+-  **아티스트별** 출연 대학 축제를 찾아보고
+-  원하는 **학교·축제·아티스트를 한 번에 검색**할 수 있도록 만든 서비스입니다.
 
-기술 기준: [Next.js Metadata](https://nextjs.org/docs/app/api-reference/functions/generate-metadata), [Google noindex](https://developers.google.com/search/docs/crawling-indexing/block-indexing).
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+<br>
 
 ---
 
-<!-- AUTO-VERSION-SECTION: DO NOT EDIT MANUALLY -->
-## 최신 버전 : v0.1.17 (2026-09-18)
+## 🛠️ Technology Stack
 
-[전체 버전 기록 보기](CHANGELOG.md)
+###  Frontend
+
+<p>
+  <img src="https://skillicons.dev/icons?i=nextjs,react,ts,tailwind" />
+</p>
+
+**Next.js 16 · React 19 · TypeScript · Tailwind CSS · TanStack Query · Vercel**
+
+###  Backend
+
+<p>
+  <img src="https://skillicons.dev/icons?i=java,spring,postgres,docker,grafana" />
+</p>
+
+**Java 21 · Spring Boot 4.1 · Spring Security · Spring Data JPA · PostgreSQL 17 · Flyway · Docker · Caddy · Grafana Cloud**
+
+###  Cooperation (협업 도구)
+
+<p>
+  <img src="https://skillicons.dev/icons?i=github,notion,figma,discord" />
+</p>
+
+**GitHub · GitHub Actions · Notion · Figma · Discord**
+
+<br>
+
+---
+
+## ️ System Architecture
+
+<p align="center">
+  <img src="docs/images/arch.png" width="100%" />
+</p>
+
+<br>
+
+---
+
+## 👥 Team Members
+
+###  Front-End Team
+
+| **홍의민** | **이규형** |
+| :---: | :---: |
+| <img src="docs/images/uimin.jpg" width="150" height="195" alt="홍의민" /> | <img src="docs/images/gyuhyeong.jpg" width="150" height="195" alt="이규형" /> |
+| FE Developer | FE Developer |
+| 컴퓨터공학과 | 컴퓨터공학과 |
+
+<br>
+
+###  Back-End Team
+
+| **김하은** | **정명준** |
+| :---: | :---: |
+| <img src="docs/images/haeun.png" width="150" height="195" alt="김하은" /> | <img src="docs/images/myeongjun.jpg" width="150" height="195" alt="정명준" /> |
+| BE Developer | BE Developer |
+| 영어영문학과 | 컴퓨터공학과 |
+
+<br>
+
+---
+
+## ✨ 주요 기능
+
+### 🔍 통합 검색
+
+아티스트, 학교, 축제를 하나의 검색창에서 검색할 수 있습니다.
+
+학교의 정식 명칭뿐만 아니라 `연대`, `고대`, `외대`, `이대` 등 실제로 자주 사용하는 대학 약어를 이용해서도 원하는 정보를 찾을 수 있습니다.
+
+<p align="center">
+  <img src="docs/images/search-system.png" width="900" alt="통합 검색 화면" />
+</p>
+
+<br>
+
+### 🎤 아티스트별 축제 정보
+
+좋아하는 아티스트를 검색하면 해당 아티스트가 출연하는 대학 축제를 한눈에 확인할 수 있습니다.
+
+기존의 **학교 → 라인업** 방식뿐만 아니라 **아티스트 → 대학 축제** 방향으로도 축제 정보를 탐색할 수 있습니다.
+
+<p align="center">
+  <img src="docs/images/artist-service.png" width="900" alt="아티스트별 축제 정보 화면" />
+</p>
+
+<br>
+
+### 🏫 학교별 축제 정보
+
+학교별로 개최되는 축제의 일정과 아티스트 라인업을 확인할 수 있습니다.
+
+여러 대학의 축제 정보를 한곳에 모아 원하는 학교의 축제 정보를 편리하게 탐색할 수 있습니다.
+
+<p align="center">
+  <img src="docs/images/host-service.png" width="900" alt="학교별 축제 정보 화면" />
+</p>
+
+<br>
+
+### 🎪 축제 상세 정보
+
+각 축제의 개최 기간과 학교 정보, 일자별 아티스트 라인업 등 상세 정보를 제공합니다.
+
+<p align="center">
+  <img src="docs/images/festival-service.png" width="900" alt="축제 상세 정보 화면" />
+</p>
+
+<br>
+
+---
+
+##  Links
+
+###  Service
+
+[**FESTA 바로가기 →**](https://www.every-festa.com)
+
+###  Repository
+
+**Frontend**  
+https://github.com/greedy-team/festa-frontend
+
+**Backend**  
+https://github.com/greedy-team/festa-backend
+
+<br>
+
+## 최신 버전 : v0.1.18 (2026-09-18)
+
+<br>
+
+---
+
+<div align="center">
+
+###  Every Festival, FESTA
+
+**학교로 찾고, 아티스트로 발견하는 대학 축제 플랫폼**
+
+<br>
+
+<img src="docs/images/logo.jpg" width="360" alt="FESTA logo" />
+
+</div>

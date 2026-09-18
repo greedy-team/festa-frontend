@@ -53,9 +53,11 @@ const NONE = {
 type Props = {
   festival: UpcomingFestival;
   splitFrom?: HeroSplitFrom;
+  /** 첫 화면에 보이는 패널에만 켠다. 이 패널의 포스터가 홈의 LCP 요소다. */
+  priority?: boolean;
 };
 
-export function HeroPanel({ festival, splitFrom = null }: Props) {
+export function HeroPanel({ festival, splitFrom = null, priority = false }: Props) {
   const { festivalId, name, venueName, startDate, endDate, posterUrl, host } =
     festival;
   const split = splitFrom ? SPLIT[splitFrom] : NONE;
@@ -81,6 +83,7 @@ export function HeroPanel({ festival, splitFrom = null }: Props) {
           scale-110: blur가 가장자리를 투명하게 번지게 해서 틴트가 비치는 것을 막는다 */}
       <PosterImage
         src={posterUrl}
+        priority={priority}
         className="absolute inset-0 h-full w-full scale-110 object-cover blur-sm"
       />
       {/* 스크림 띠 대신 전면을 한 단계 누른다. 띠는 포스터 하단(날짜·장소가 인쇄된
@@ -138,6 +141,7 @@ export function HeroPanel({ festival, splitFrom = null }: Props) {
         >
           <PosterImage
             src={posterUrl}
+            priority={priority}
             className="max-h-full max-w-full object-contain"
           />
         </div>
