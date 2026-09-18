@@ -162,7 +162,7 @@ https://github.com/greedy-team/festa-backend
 
 <br>
 
-## 최신 버전 : v0.1.17 (2026-09-18)
+## 최신 버전 : v0.1.18 (2026-09-18)
 
 <br>
 
