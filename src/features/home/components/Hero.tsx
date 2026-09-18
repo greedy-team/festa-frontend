@@ -307,9 +307,11 @@ export function Hero({ festivals, artists }: Props) {
       {/* 패널은 풀블리드다. 여백도 radius도 없이 맞닿는다 */}
       <div className="h-full w-full overflow-hidden" ref={hasCarousel ? emblaRef : undefined}>
         <div className="flex h-full">
-          {festivals.map((festival) => (
+          {festivals.map((festival, i) => (
             <div key={festival.festivalId} className={slideBasisClass(festivals.length)}>
-              <HeroPanel festival={festival} splitFrom={heroSplitFrom(festivals.length)} />
+              {/* 첫 패널의 포스터만 LCP 후보다. 뒤 슬라이드까지 높은 우선순위를 주면
+                  첫 화면에 보이지도 않는 요청과 대역폭을 다툰다. */}
+              <HeroPanel festival={festival} splitFrom={heroSplitFrom(festivals.length)} priority={i === 0} />
             </div>
           ))}
         </div>
