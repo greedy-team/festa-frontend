@@ -1,14 +1,36 @@
 {
   "metadata": {
-    "lastUpdated": "2026-09-18T16:03:20Z",
-    "currentVersion": "0.1.18",
+    "lastUpdated": "2026-09-19T17:35:44Z",
+    "currentVersion": "0.1.19",
     "projectType": "react",
     "projectTypes": [
       "react"
     ],
-    "totalReleases": 18
+    "totalReleases": 19
   },
   "releases": [
+    {
+      "version": "0.1.19",
+      "project_type": "react",
+      "project_types": [
+        "react"
+      ],
+      "date": "2026-09-19",
+      "pr_number": 261,
+      "raw_summary": "## Summary by CodeRabbit\n\n## 릴리스 노트\n\n* **기타**\n  * Merge pull request from greedy-team/feat_259_검색_결과_제목에_학교명_연도를_넣고_구조화_데이터를_추가한다\n  * docs : 리포트 문서 작성\n  * docs : 검색 노출 강화 이슈 문서 작성\n  * feat : 검색 결과 제목에 학교명·연도를 넣고 구조화 데이터 추가",
+      "parsed_changes": {
+        "기타": {
+          "title": "기타",
+          "items": [
+            "Merge pull request from greedy-team/feat_259_검색_결과_제목에_학교명_연도를_넣고_구조화_데이터를_추가한다",
+            "docs : 리포트 문서 작성",
+            "docs : 검색 노출 강화 이슈 문서 작성",
+            "feat : 검색 결과 제목에 학교명·연도를 넣고 구조화 데이터 추가"
+          ]
+        }
+      },
+      "parse_method": "markdown"
+    },
     {
       "version": "0.1.18",
       "project_type": "react",
