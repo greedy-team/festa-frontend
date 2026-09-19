@@ -67,3 +67,37 @@ test("robots는 사이트맵을 안내하고 사이트맵에는 공개 상세 UR
   expect(xml).toContain("https://www.every-festa.com/hosts/3/history</loc>");
   expect(xml).not.toMatch(/\/(admin|showcase|search)[/< ?]/);
 });
+
+// 제목·구조화 데이터는 화면에 보이지 않아서, 빠져도 눈으로는 알 수 없다(#259).
+// 목 모드에서는 MockProvider가 워커 준비 전까지 본문을 그리지 않아 원본 HTML에 본문이 없다 —
+// 그래서 이 둘은 request가 아니라 렌더된 DOM에서 읽는다. 운영 빌드의 원본 HTML에 들어가는 것은
+// 구현 보고서에 실측으로 남겼다.
+const jsonLd = (page: import("@playwright/test").Page) =>
+  page.locator('script[type="application/ld+json"]').evaluateAll((els) => els.map((el) => JSON.parse(el.textContent ?? "null")));
+
+test("축제 상세는 제목에 학교명·연도를 담고 행사 구조화 데이터를 내보낸다", async ({ page }) => {
+  await page.goto("/festivals/21");
+  await expect(page.locator("h1")).toBeVisible();
+  const event = (await jsonLd(page)).find((d) => d["@type"] === "Festival");
+  expect(event).toBeTruthy();
+  expect(event.url).toBe("https://www.every-festa.com/festivals/21");
+  expect(event.startDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+
+  const title = await page.title();
+  expect(title).toContain(event.organizer.name);
+  expect(title).toContain(event.startDate.slice(0, 4));
+  // 구조화 데이터의 이름과 대표 제목이 같은 말을 해야 한다
+  const h1 = ((await page.locator("h1").textContent()) ?? "").replace(/\s+/g, " ").trim();
+  expect(h1).toBe(event.name);
+});
+
+test("축제 목록은 항목 목록을 내보내고, 고지 모달은 제목 태그를 쓰지 않는다", async ({ page }) => {
+  await page.goto("/festivals");
+  await expect(page.locator("h1")).toHaveText("전국 대학 축제 모음");
+  const list = (await jsonLd(page)).find((d) => d["@type"] === "ItemList");
+  expect(list.itemListElement.length).toBeGreaterThan(0);
+  expect(list.itemListElement[0].url).toMatch(/^https:\/\/www\.every-festa\.com\/festivals\/\d+$/);
+  // 모달 제목이 실제로 그려진 상태에서 본다 — 요소가 없어서 통과하는 것을 막는다
+  await expect(page.locator("#site-notice-title")).toHaveCount(1);
+  await expect(page.locator(":is(h1,h2,h3,h4,h5,h6)#site-notice-title")).toHaveCount(0);
+});

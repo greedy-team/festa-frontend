@@ -7,9 +7,13 @@ import { Container } from "@/components/layout/Container";
 import { HeroSurface } from "@/components/layout/HeroSurface";
 import { SectionHeaderRow } from "@/components/ui/SectionHeaderRow";
 import { FadeInSection } from "@/components/ui/FadeInSection";
-import { pageMetadata, SITE_TITLE } from "@/lib/seo";
+import { siteTitle } from "@/lib/festivalSeo";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata = pageMetadata("/", SITE_TITLE);
+// 제목의 연도를 요청 시점에 계산한다 — 상수로 두면 해가 바뀌어도 다음 배포까지 작년으로 남는다
+export function generateMetadata() {
+  return pageMetadata("/", siteTitle());
+}
 
 export default async function Home() {
   const [upcomingRes, recentRes] = await Promise.all([
@@ -58,7 +62,7 @@ export default async function Home() {
     <>
       {/* 빈 시즌에는 Hero가 h1을 제공한다. 축제 패널이 있을 때도 문서 제목을 유지한다. */}
       {!upcomingRes.ok || upcoming.length > 0 ? (
-        <h1 className="sr-only">전국 대학 축제 일정과 라인업</h1>
+        <h1 className="sr-only">전국 대학 축제 모음 — 일정과 라인업</h1>
       ) : null}
       {upcomingRes.ok ? (
         <Hero festivals={upcoming} artists={artists} />

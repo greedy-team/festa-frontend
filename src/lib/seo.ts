@@ -11,7 +11,8 @@ export function pageMetadata(
   title: string,
   description = SITE_DESCRIPTION,
 ): Metadata {
-  const fullTitle = title === SITE_TITLE ? title : `${title} | ${SITE_NAME}`;
+  // 홈 제목은 연도가 붙어 해마다 달라진다(siteTitle) — 상수 비교가 아니라 접두어로 가른다
+  const fullTitle = title.startsWith(`${SITE_NAME} |`) ? title : `${title} | ${SITE_NAME}`;
   const images = [{
     url: "/festa-og-image.jpg",
     width: 1729,

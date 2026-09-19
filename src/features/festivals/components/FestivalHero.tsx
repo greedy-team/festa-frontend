@@ -4,6 +4,7 @@ import type { FestivalDetail } from "@/features/festivals/types";
 import { heroTint } from "@/lib/posterTint";
 import { dateRangeWithYear, dDay, festivalStatus } from "@/lib/festivalDate";
 import { ticketTypeLabel } from "@/lib/admission";
+import { festivalHeadingParts } from "@/lib/festivalSeo";
 import { safeHttpUrl } from "@/lib/safeUrl";
 import { PosterImage } from "@/components/ui/PosterImage";
 import { Badge } from "@/components/ui/Badge";
@@ -15,7 +16,6 @@ type Props = {
 export function FestivalHero({ festival }: Props) {
   const {
     id,
-    name,
     host,
     instagramUrl,
     startDate,
@@ -25,6 +25,7 @@ export function FestivalHero({ festival }: Props) {
     admission,
   } = festival;
   const status = festivalStatus(startDate, endDate);
+  const heading = festivalHeadingParts(festival);
   // 인스타 링크는 축제 공식 계정을 쓴다 (#190) — 학교 계정(host.instagramUrl)은 이 화면에 노출하지 않는다.
   // 관리자 등록 API가 URL 형식을 검사하지 않는다 (DEC-0107) — http(s)가 아니면 링크로 그리지 않는다
   const safeInstagramUrl = instagramUrl ? safeHttpUrl(instagramUrl) : null;
@@ -86,7 +87,13 @@ export function FestivalHero({ festival }: Props) {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h1 className="text-section-title text-on-media sm:text-hero">{name}</h1>
+          {/* 화면 글자는 축제명 그대로 둔다. 학교명·연도는 바로 아래 메타에 이미 보이는 값이고,
+              대표 제목만 읽는 보조 기술·검색엔진이 "어느 학교의 몇 년 축제인지" 알 수 있게 덧붙인다 (#259) */}
+          <h1 className="text-section-title text-on-media sm:text-hero">
+            {heading.before ? <span className="sr-only">{heading.before} </span> : null}
+            {heading.name}
+            {heading.after ? <span className="sr-only"> {heading.after}</span> : null}
+          </h1>
 
           {/* 읽어야 하는 메타는 body(16)·흰 100% — 85%는 밝은 포스터에서 대비를 잃는다 (#165) */}
           <div className="flex flex-col gap-2 text-body text-on-media">
