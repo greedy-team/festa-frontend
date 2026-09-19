@@ -75,9 +75,11 @@ export function SiteNotice() {
       }}
       className="m-auto max-h-[calc(100dvh-32px)] w-[min(480px,calc(100vw-32px))] overflow-y-auto rounded-card border border-border bg-surface p-6 text-ink backdrop:bg-black/40"
     >
-      <h2 id="site-notice-title" className="text-subtitle">
+      {/* 제목 태그가 아니다 — 이 고지는 모든 공개 페이지의 HTML에 들어가므로 h2로 두면 페이지마다
+          서비스 내용과 무관한 제목이 하나씩 끼어든다(#259). 대화상자 이름은 aria-labelledby가 맡는다 */}
+      <p id="site-notice-title" className="text-subtitle">
         로그인 없이 바로 볼 수 있어요
-      </h2>
+      </p>
       <p id="site-notice-description" className="mt-4 text-body">
         페스타는 회원가입 없이 모든 축제 정보를 볼 수 있어요. 계속 이용하면 아래
         두 문서에 동의한 것으로 봐요.
