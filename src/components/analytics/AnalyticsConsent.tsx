@@ -68,7 +68,9 @@ export function AnalyticsConsent(props: Props) {
         }}
         className="m-auto max-h-[calc(100dvh-32px)] w-[min(480px,calc(100vw-32px))] overflow-y-auto rounded-card border border-border bg-surface p-6 text-ink backdrop:bg-black/40"
       >
-        <h2 id="analytics-consent-title" className="text-subtitle">더 편한 축제 탐색을 위한 분석</h2>
+        {/* 제목 태그가 아니다 — 이 모달은 모든 공개 페이지의 HTML에 들어가므로 h2로 두면 페이지마다
+            서비스 내용과 무관한 제목이 하나씩 끼어든다(#259). 대화상자 이름은 aria-labelledby가 맡는다 */}
+        <p id="analytics-consent-title" className="text-subtitle">더 편한 축제 탐색을 위한 분석</p>
         <p id="analytics-consent-description" className="mt-4 text-body">
           Google Analytics와 Microsoft Clarity로 방문 경로, 클릭·스크롤과 화면 이용 장면을 분석해 서비스를 개선합니다. 쿠키 등 브라우저 저장소를 사용하며, 검색어 원문은 분석에 보내지 않습니다.
         </p>
