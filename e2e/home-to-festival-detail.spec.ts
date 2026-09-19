@@ -17,5 +17,7 @@ test("홈에서 축제 카드를 누르면 해당 축제 상세로 이동한다"
   await expect(page).toHaveURL(/\/festivals\/\d+$/);
   // h1만 보이는지 확인하면 부족하다 — error.tsx·not-found.tsx도 h1을 그려서
   // 상세가 500·404여도 통과해버린다. 클릭한 카드의 이름과 실제로 일치하는지까지 본다.
-  await expect(page.locator("h1")).toHaveText(festivalName);
+  // 대표 제목은 축제명 앞뒤에 학교명·연도를 보조 텍스트로 덧붙인다(#259) — 완전 일치가 아니라 포함으로 본다.
+  // 의도는 그대로다: error.tsx·not-found.tsx의 h1에는 클릭한 축제 이름이 들어 있지 않다.
+  await expect(page.locator("h1")).toContainText(festivalName);
 });

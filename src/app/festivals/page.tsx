@@ -10,6 +10,8 @@ import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Pagination } from "@/components/ui/Pagination";
 import { AdSlot } from "@/components/ui/AdSlot";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { festivalListJsonLd, festivalListTitle } from "@/lib/festivalSeo";
 import { listingMetadata } from "@/lib/seo";
 
 const SORT_OPTIONS: { value: FestivalSort; label: string }[] = [
@@ -27,7 +29,7 @@ export async function generateMetadata({ searchParams }: Props) {
   const params = await searchParams;
   return listingMetadata(
     "/festivals",
-    "대학 축제 일정·라인업",
+    festivalListTitle(),
     "전국 대학 축제 일정과 출연 아티스트를 찾아보고, 축제별 라인업과 입장 정보를 확인하세요.",
     { ...params, sort: params.sort === "UPCOMING" ? "UPCOMING" : undefined },
   );
@@ -73,6 +75,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
     // 부드럽게 나타나게 한다
     <PageFadeIn>
       <Container className="mt-10 mb-16">
+        {data.items.length ? <JsonLd data={festivalListJsonLd(data.items)} /> : null}
         <nav className="flex items-center gap-1 text-meta text-muted-soft">
           <Link href="/">홈</Link>
           <span>›</span>
@@ -81,7 +84,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
 
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-section-title text-ink sm:text-hero">축제 전체</h1>
+            <h1 className="text-section-title text-ink sm:text-hero">전국 대학 축제 모음</h1>
             <p className="mt-2 text-body text-muted">
               전국 대학 축제 라인업을 한 곳에서 확인하세요
             </p>

@@ -8,6 +8,8 @@ import { LocationSection } from "@/features/festivals/components/LocationSection
 import { Container } from "@/components/layout/Container";
 import { FadeInSection } from "@/components/ui/FadeInSection";
 import { PageFadeIn } from "@/components/ui/PageFadeIn";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { festivalEventJsonLd, festivalSeoTitle } from "@/lib/festivalSeo";
 import { NO_INDEX, pageMetadata } from "@/lib/seo";
 
 type Props = {
@@ -26,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const festival = res.data;
   const artists = [...new Set(festival.lineup.flatMap((day) => day.artists.flatMap((artist) => artist.name ? [artist.name] : [])))].slice(0, 6);
   const description = `${festival.host.name} ${festival.name}, ${festival.startDate}~${festival.endDate}. ${artists.length ? `출연: ${artists.join(", ")}. ` : ""}일자별 라인업과 외부인 입장 안내, 장소를 확인하세요.`;
-  return pageMetadata(`/festivals/${festival.id}`, `${festival.name} 일정·라인업·입장 안내`, description);
+  return pageMetadata(`/festivals/${festival.id}`, festivalSeoTitle(festival), description);
 }
 
 export default async function FestivalDetailPage({ params }: Props) {
@@ -51,6 +53,7 @@ export default async function FestivalDetailPage({ params }: Props) {
     // 전체가 한 번 부드럽게 나타나게 한다(목록 화면과 같은 PageFadeIn).
     // 그 아래 섹션들은 스크롤로 들어올 때 추가로 한 번 더 페이드인된다.
     <PageFadeIn>
+      <JsonLd data={festivalEventJsonLd(festival)} />
       <Container className="mt-10 mb-16 flex flex-col gap-16">
         <FestivalHero festival={festival} />
         <FadeInSection>
