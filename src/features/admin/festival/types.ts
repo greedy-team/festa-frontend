@@ -115,5 +115,5 @@ export type FestivalFormValues = {
 export type FestivalPublishResponse = {
   festivalId: number;
   name: string;
-  publishedAt: string;
+  publishedAt: string | null;
 };

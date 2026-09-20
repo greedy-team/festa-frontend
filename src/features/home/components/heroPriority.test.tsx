@@ -24,6 +24,13 @@ const preloads = (html: string) =>
 const prioritisedImgs = (html: string) =>
   [...html.matchAll(/<img[^>]*fetchpriority="high"[^>]*>/gi)].map((m) => m[0]);
 
+it("장소가 없으면 히어로에 빈 장소 문단을 만들지 않는다", () => {
+  const html = renderToStaticMarkup(<Hero festivals={[{ ...festival(1), venueName: null }]} />);
+  expect(html).not.toMatch(/<p\b[^>]*><\/p>/);
+  expect(html).not.toContain("null");
+  expect(renderToStaticMarkup(<Hero festivals={[festival(1)]} />)).toContain("장소");
+});
+
 // 운영 모바일 LCP 관측 합계의 약 60%가 resourceLoadDelay였고(5회 중앙값 794ms),
 // Lighthouse가 실패로 잡은 항목은 fetchpriority=high 하나였다 (#252). 힌트가 빠져도 화면은 멀쩡해
 // 보이므로 렌더 결과에서 직접 센다.

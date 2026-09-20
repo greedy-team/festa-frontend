@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { useAdminHosts } from "@/features/admin/host/queries";
+import { useAllAdminHosts } from "@/features/admin/host/queries";
 import {
   EMPTY_FESTIVAL_FORM,
   coordinateError,
@@ -59,12 +59,10 @@ export function FestivalFormDialog({
   const [draft, setDraft] = useState<FestivalFormValues | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
 
-  // ponytail: size 50(서버 상한)의 첫 페이지만 — 주최가 50을 넘으면 페이지 순회가 필요하다
-  const hosts = useAdminHosts({ page: 0, size: 50 });
-  // 현재 주최가 첫 페이지에 없으면 select가 빈 값으로 보여 운영자가 엉뚱한 주최로
-  // 다시 고를 수 있다 — 단건 조회의 hostId·hostName으로 옵션을 하나 채워 넣는다.
+  const hosts = useAllAdminHosts();
+  // 목록을 불러오는 동안에도 단건 조회의 현재 주최 선택은 유지한다.
   const hostOptions = (() => {
-    const items = hosts.data?.items ?? [];
+    const items = hosts.data ?? [];
     if (festival?.hostId != null && !items.some((h) => h.hostId === festival.hostId)) {
       return [{ hostId: festival.hostId, name: festival.hostName ?? `#${festival.hostId}` }, ...items];
     }
@@ -147,6 +145,16 @@ export function FestivalFormDialog({
                   </option>
                 ))}
               </select>
+              {hosts.isError ? (
+                <span role="alert" className="text-label-regular text-danger">
+                  주최 목록을 불러오지 못했습니다.
+                  <button type="button" onClick={() => hosts.refetch()} className="ml-2 underline">
+                    다시 시도
+                  </button>
+                </span>
+              ) : hosts.isPending ? (
+                <span className="text-label-regular text-muted-soft">주최 목록을 불러오는 중…</span>
+              ) : null}
               {isEdit && festival?.hostId === null ? (
                 <span className="text-label-regular text-muted-soft">
                   주최 미연결 축제입니다 — 저장하려면 주최를 골라야 합니다.

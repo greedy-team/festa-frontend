@@ -100,9 +100,9 @@ export function HeroPanel({ festival, splitFrom = null, priority = false }: Prop
         className={`relative flex h-full flex-col px-6 pb-20 pt-24 [text-shadow:0_2px_16px_rgba(0,0,0,0.45)] sm:px-10 sm:pb-14 sm:pt-[140px] ${split.container}`}
       >
         <div className={`contents ${split.text}`}>
-          {/* 56/700 흰색 100%. 패널이 헤더 아래까지 올라와 있어서(Hero.tsx)
+          {/* 모바일 36/700, sm 이상 56/700. 패널이 헤더 아래까지 올라와 있어서(Hero.tsx)
               시안의 프레임 좌표 y140을 그대로 쓴다 — 헤더 72 + 인셋 68 */}
-          <p className="order-1 text-hero-dday text-on-media">{dDay(startDate, endDate)}</p>
+          <p className="order-1 text-section-title text-on-media sm:text-hero-dday">{dDay(startDate, endDate)}</p>
 
           {/* 위계는 흰색 불투명도로만 낸다. 한 줄에 몰아넣지 않고 항목마다 줄을
               나눠서, 학교명·축제명·장소명 중 어느 하나가 길어져도 다른 항목을
@@ -119,9 +119,11 @@ export function HeroPanel({ festival, splitFrom = null, priority = false }: Prop
             <p className={`truncate text-caption-strong text-on-media/85 ${split.meta}`}>
               {dateRange(startDate, endDate)}
             </p>
-            <p className={`truncate text-caption-strong text-on-media/85 ${split.meta}`}>
-              {venueName}
-            </p>
+            {venueName ? (
+              <p className={`truncate text-caption-strong text-on-media/85 ${split.meta}`}>
+                {venueName}
+              </p>
+            ) : null}
             {/* 넓은 패널에서만 보이는 CTA. 스택에서는 칸 전체가 링크라 따로 두지
                 않는다. 흰 채움 + ink — 히어로 안에 인디고를 넣지 않는다(DESIGN.md).
                 텍스트 그림자는 흰 버튼 안에서 번지므로 여기서만 끈다 */}

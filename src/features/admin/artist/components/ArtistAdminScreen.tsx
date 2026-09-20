@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Pagination } from "@/components/ui/Pagination";
-import { FilterChip } from "@/components/ui/FilterChip";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { SortDropdown } from "@/components/ui/SortDropdown";
 import { Button } from "@/components/ui/Button";
@@ -68,12 +67,11 @@ export function ArtistAdminScreen() {
   const genre = parseGenre(searchParams.get("genre"));
   const sort = parseSort(searchParams.get("sort"));
   const q = searchParams.get("q") ?? undefined;
-  const needsReview = searchParams.get("needsReview") === "true" ? true : undefined;
 
   const [modal, setModal] = useState<Modal>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const list = useAdminArtists({ needsReview, q, genre, sort, page: page - 1, size: PAGE_SIZE });
+  const list = useAdminArtists({ q, genre, sort, page: page - 1, size: PAGE_SIZE });
   // 수정 폼은 목록 행이 아니라 단건 조회로 채운다 (DEC-0140).
   const detail = useAdminArtist(modal?.kind === "edit" ? modal.artistId : null);
   const candidates = useMergeCandidates(modal?.kind === "merge" ? modal.artist.artistId : null);
@@ -85,10 +83,8 @@ export function ArtistAdminScreen() {
 
   const items = list.data?.items ?? [];
 
-  function makeHref(next: { page?: number; needsReview?: boolean }) {
+  function makeHref(next: { page?: number }) {
     const p = new URLSearchParams();
-    const nextNeedsReview = "needsReview" in next ? next.needsReview : needsReview;
-    if (nextNeedsReview) p.set("needsReview", "true");
     if (genre) p.set("genre", genre);
     if (q) p.set("q", q);
     if (sort !== ARTIST_SORT.CREATED_DESC) p.set("sort", sort);
@@ -139,12 +135,6 @@ export function ArtistAdminScreen() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <FilterChip href={makeHref({ needsReview: undefined, page: 1 })} active={!needsReview}>
-          전체
-        </FilterChip>
-        <FilterChip href={makeHref({ needsReview: true, page: 1 })} active={needsReview === true}>
-          검수 필요
-        </FilterChip>
         <SearchInput name="q" placeholder="이름·별칭 검색" className="ml-auto" />
         <SortDropdown name="sort" value={sort} options={SORT_OPTIONS} ariaLabel="정렬" />
       </div>
@@ -172,7 +162,6 @@ export function ArtistAdminScreen() {
                 <th className="hidden p-4 md:table-cell">별칭</th>
                 <th className="hidden p-4 md:table-cell">장르</th>
                 <th className="hidden p-4 md:table-cell">출연</th>
-                <th className="hidden p-4 md:table-cell">검수</th>
                 <th className="p-4" />
               </tr>
             </thead>
@@ -184,7 +173,6 @@ export function ArtistAdminScreen() {
                     {/* 모바일에서 접힌 열의 핵심만 서브라인으로 */}
                     <p className="text-label-regular text-muted md:hidden">
                       {genreLabel(artist.genre)} · 출연 {artist.appearanceCount}회
-                      {artist.needsReview ? " · 검수 필요" : ""}
                     </p>
                   </td>
                   <td className="hidden p-4 text-label-regular text-muted md:table-cell">
@@ -195,9 +183,6 @@ export function ArtistAdminScreen() {
                   </td>
                   <td className="hidden p-4 text-label-regular text-muted md:table-cell">
                     {artist.appearanceCount}회
-                  </td>
-                  <td className="hidden p-4 text-label-regular text-muted md:table-cell">
-                    {artist.needsReview ? "필요" : "—"}
                   </td>
                   <td className="p-4">
                     <div className="flex flex-col items-stretch gap-2 md:flex-row md:justify-end">

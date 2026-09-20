@@ -40,7 +40,7 @@ export function UpcomingShowCard({ show }: Props) {
       </span>
       <h3 className="mt-1 truncate text-entity-name text-ink">{name}</h3>
       <span className="mt-1 truncate text-caption text-muted">
-        {hostName} · {venueName}
+        {[hostName, venueName].filter(Boolean).join(" · ")}
       </span>
     </Link>
   );
