@@ -107,10 +107,10 @@ docs/reports/   구현 보고서
 | --- | --- |
 | PR → `main`/`develop` | 빌드 검증 (`pnpm install --frozen-lockfile && pnpm build`) |
 | push `develop` | Vercel Preview 배포 |
-| push `main` | Vercel Production 배포 + 버전 태그 + README 갱신 |
+| push `main` | Vercel Production 배포 + 버전 태그 |
 | 이슈 생성·라벨 변경 | 브랜치명·커밋 메시지 댓글 |
 | PR → `develop` 머지 | 이슈 자동 종료 |
-| `develop` → `main` PR | CHANGELOG 생성 후 자동 머지 |
+| `develop` → `main` PR | 버전·CHANGELOG·README를 준비 PR에서 갱신·검증 후 자동 머지 |
 
 워크플로우가 **어느 브랜치에서 읽히는지**가 중요합니다. `issues`·`issue_comment`·
 `pull_request_target`은 기본 브랜치(`main`)에서 읽습니다. 봇 설정을 `develop`에만 두면
@@ -120,4 +120,5 @@ docs/reports/   구현 보고서
 
 - 릴리스 워크플로우는 `git add -A`로 커밋합니다. 워킹 트리에 남긴 임시 파일이 릴리스 커밋에 쓸려 들어갑니다
 - `.github/scripts/`와 워크플로우는 `npx projectops` 업데이트 시 덮어써집니다. 설정은 코드 기본값이 아니라 `version.yml`에 둡니다
+- `PROJECT-COMMON-README-VERSION-UPDATE.yaml`은 제거했습니다. README 갱신은 `RELEASE-CHANGELOG`의 준비 PR이 담당합니다. projectops 업데이트 시 main 직접 푸시·develop 역병합을 하는 옛 워크플로우를 복원하지 마세요
 - `version.yml`의 `deploy:` 블록은 런타임에 아무도 읽지 않습니다. `npx projectops` 재실행 때만 쓰이는 메모입니다
