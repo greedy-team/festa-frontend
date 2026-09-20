@@ -24,7 +24,7 @@ export function HostHero({ host }: Props) {
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <p className="text-caption-strong text-muted">
-        {shortName} · {region}
+        {[shortName, region].filter(Boolean).join(" · ")}
       </p>
 
       <div className="flex flex-wrap items-center gap-3">

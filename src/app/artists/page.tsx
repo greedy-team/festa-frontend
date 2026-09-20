@@ -112,7 +112,7 @@ export default async function ArtistsPage({ searchParams }: Props) {
           </nav>
 
           <div className="mt-2">
-            <h1 className="text-section-title text-ink sm:text-hero">아티스트</h1>
+            <h1 className="text-section-title-home text-ink sm:text-hero">아티스트</h1>
             {/* 모바일에서는 필터까지 합치면 화면 대부분을 설명 텍스트가
                 차지해서 뺀다 — 데스크톱은 여유가 있어 그대로 둔다 */}
             <p className="mt-2 hidden text-body text-muted sm:block">
