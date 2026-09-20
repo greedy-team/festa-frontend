@@ -15,6 +15,18 @@ export async function getHosts(params: HostListParams): Promise<PageResponse<Adm
   return adminFetch<PageResponse<AdminHost>>(`/admin/hosts?${qs.toString()}`);
 }
 
+/** 축제 폼 선택지. 서버의 페이지 크기 상한을 지키며 마지막 페이지까지 읽는다. */
+export async function getAllHosts(): Promise<AdminHost[]> {
+  const items: AdminHost[] = [];
+  let page = 0;
+  while (true) {
+    const result = await getHosts({ page, size: 50 });
+    items.push(...result.items);
+    if (!result.hasNext) return items;
+    page += 1;
+  }
+}
+
 /** GET /admin/hosts/{id} — 수정 폼을 채우는 값 (DEC-0140) */
 export async function getHost(hostId: number): Promise<AdminHost> {
   return adminFetch<AdminHost>(`/admin/hosts/${hostId}`);

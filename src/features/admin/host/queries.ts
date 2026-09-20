@@ -4,11 +4,19 @@ import {
   deleteHost,
   getHost,
   getHosts,
+  getAllHosts,
   updateHost,
 } from "@/features/admin/host/api";
 import type { HostFormValues, HostListParams } from "@/features/admin/host/types";
 
 const KEY = "admin-hosts";
+
+export function useAllAdminHosts() {
+  return useQuery({
+    queryKey: [KEY, "all"],
+    queryFn: getAllHosts,
+  });
+}
 
 export function useAdminHosts(params: HostListParams) {
   return useQuery({
