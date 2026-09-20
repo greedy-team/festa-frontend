@@ -23,7 +23,6 @@ export async function getArtists(
   params: ArtistListParams,
 ): Promise<PageResponse<AdminArtist>> {
   const qs = new URLSearchParams();
-  if (params.needsReview !== undefined) qs.set("needsReview", String(params.needsReview));
   if (params.q) qs.set("q", params.q);
   if (params.genre) qs.set("genre", params.genre);
   if (params.sort) qs.set("sort", params.sort);

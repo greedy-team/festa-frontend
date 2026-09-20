@@ -12,7 +12,6 @@ export type AdminArtist = {
   imageUrl: string | null;
   instagramUrl: string | null;
   appearanceCount: number;
-  needsReview: boolean;
   createdAt: string;
 };
 
@@ -26,7 +25,6 @@ export const ARTIST_SORT = {
 export type ArtistSort = (typeof ARTIST_SORT)[keyof typeof ARTIST_SORT];
 
 export type ArtistListParams = {
-  needsReview?: boolean;
   q?: string;
   genre?: ArtistGenre;
   sort?: ArtistSort;
@@ -47,7 +45,6 @@ export type ArtistFormValues = {
   otherNames: string[];
   genre: ArtistGenre | "";
   instagramUrl: string;
-  needsReview: boolean;
 };
 
 export type ArtistMergeCandidate = {
@@ -79,5 +76,4 @@ export type ArtistMergeResult = {
   movedAppearances: number;
   removedDuplicates: number;
   otherNames: string[];
-  needsReview: boolean;
 };
