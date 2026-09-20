@@ -24,7 +24,6 @@ const EMPTY: ArtistFormValues = {
   otherNames: [],
   genre: "",
   instagramUrl: "",
-  needsReview: false,
 };
 
 function toValues(artist: AdminArtist | null): ArtistFormValues {
@@ -35,7 +34,6 @@ function toValues(artist: AdminArtist | null): ArtistFormValues {
     // 서버가 null을 주면 폼에서는 빈 선택이다 — DEC-0150에서 ""가 「비우기」다.
     genre: artist.genre ?? "",
     instagramUrl: artist.instagramUrl ?? "",
-    needsReview: artist.needsReview ?? false,
   };
 }
 
@@ -170,15 +168,6 @@ export function ArtistFormDialog({
               onChange={(e) => patch({ instagramUrl: e.target.value })}
               className="h-[44px] rounded-md border border-border bg-surface px-3 text-caption-regular text-ink"
             />
-          </label>
-
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={values.needsReview}
-              onChange={(e) => patch({ needsReview: e.target.checked })}
-            />
-            <span className="text-label-regular text-muted">검수 필요로 표시</span>
           </label>
 
           {errorMessage === null ? null : (

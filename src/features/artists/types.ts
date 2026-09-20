@@ -3,7 +3,7 @@ export type ArtistGenre = "HIPHOP" | "BALLAD_RNB" | "BAND" | "DANCE";
 export type RecentAppearance = {
   festivalId: number;
   name: string;
-  hostShortName: string;
+  hostShortName: string | null;
 };
 
 /** GET /artists 목록 항목. imageUrl은 항상 null이다 (DEC-0063: 초상권 문제로 실제 사진 미사용) */
@@ -33,7 +33,7 @@ export type UpcomingShow = {
   festivalId: number;
   name: string;
   hostName: string;
-  venueName: string;
+  venueName: string | null;
   posterUrl: string | null;
   startDate: string;
   endDate: string;

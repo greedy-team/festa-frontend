@@ -28,7 +28,7 @@ export function ArtistRow({ artist }: Props) {
         <p className="mt-1 truncate text-caption-strong text-muted">
           {genreLabel(genre)} · 출연 {appearanceCount}회
           {recentFestival
-            ? ` · 최근 ${recentFestival.hostShortName} ${recentFestival.name}`
+            ? ` · 최근 ${[recentFestival.hostShortName, recentFestival.name].filter(Boolean).join(" ")}`
             : ""}
         </p>
       </div>

@@ -8,7 +8,7 @@ export type HostSummary = {
 export type UpcomingFestival = {
   festivalId: number;
   name: string;
-  venueName: string;
+  venueName: string | null;
   startDate: string;
   endDate: string;
   posterUrl: string | null;

@@ -84,7 +84,7 @@ export default async function FestivalsPage({ searchParams }: Props) {
 
         <div className="mt-2 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-section-title text-ink sm:text-hero">전국 대학 축제 모음</h1>
+            <h1 className="text-section-title-home text-ink sm:text-hero">전국 대학 축제 모음</h1>
             <p className="mt-2 text-body text-muted">
               전국 대학 축제 라인업을 한 곳에서 확인하세요
             </p>
